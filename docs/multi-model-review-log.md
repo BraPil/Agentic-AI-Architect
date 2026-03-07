@@ -40,11 +40,9 @@ These questions were raised in the 2026-03 review round and have not yet been re
 
 ## Decision Record
 
-*(Fill in as decisions are made)*
-
 | Decision | Chosen Option | Rationale | Date | Review Round |
 |----------|--------------|-----------|------|-------------|
-| | | | | |
+| Repository structure | Keep `Agentic-AI-Architect` as its own product repo; defer ecosystem-level repo split until at least a second real system exists | Preserves focus for Phase 1 while still designing explicit seams for later multi-repo interoperability | 2026-03 | 2026-03 |
 
 ---
 
