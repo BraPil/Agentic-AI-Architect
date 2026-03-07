@@ -1,0 +1,68 @@
+# Agentic AI Architect — Python Dependencies
+# ============================================
+# Core dependencies are required for all functionality.
+# Optional dependencies enable enhanced features (LLM-powered extraction,
+# FAISS semantic search, etc.) but the system runs without them using
+# built-in fallbacks.
+
+# ── Core ──────────────────────────────────────────────────────────────────
+
+# HTTP requests and web crawling
+requests>=2.31.0
+
+# Data validation and settings management
+pydantic>=2.5.0
+
+# Scheduling for the orchestrator
+apscheduler>=3.10.0
+
+# ── Optional: LLM providers ───────────────────────────────────────────────
+# Uncomment the providers you want to use
+
+# openai>=1.30.0
+# anthropic>=0.26.0
+
+# ── Optional: Agentic frameworks ──────────────────────────────────────────
+# LangGraph for stateful agent orchestration (Phase 4+)
+# langchain>=0.2.0
+# langgraph>=0.1.0
+# langchain-openai>=0.1.0
+# langchain-anthropic>=0.1.0
+
+# LlamaIndex for RAG pipelines (Phase 2+)
+# llama-index>=0.10.0
+
+# ── Optional: Vector search ───────────────────────────────────────────────
+# FAISS for semantic similarity search
+# faiss-cpu>=1.7.4        # CPU version
+# faiss-gpu>=1.7.4        # GPU version (requires CUDA)
+
+# Sentence transformers for local embeddings (no API key required)
+# sentence-transformers>=2.7.0
+
+# numpy required if using FAISS or sentence-transformers
+# numpy>=1.26.0
+
+# ── Optional: Web crawling enhancements ───────────────────────────────────
+# Playwright for dynamic JavaScript-rendered pages
+# playwright>=1.44.0
+
+# Firecrawl for LLM-ready web crawling
+# firecrawl-py>=0.0.16
+
+# Trafilatura for high-quality HTML extraction
+# trafilatura>=1.8.0
+
+# Beautiful Soup for HTML parsing
+# beautifulsoup4>=4.12.0
+
+# ── Optional: Document processing ─────────────────────────────────────────
+# PyMuPDF for PDF text extraction
+# pymupdf>=1.24.0
+
+# ── Optional: MLflow experiment tracking ──────────────────────────────────
+# mlflow>=2.13.0
+
+# ── Development & testing ─────────────────────────────────────────────────
+pytest>=8.2.0
+pytest-cov>=5.0.0

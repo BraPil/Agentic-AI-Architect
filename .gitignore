@@ -1,0 +1,53 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Data (user-generated, not source code)
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files (NEVER commit credentials)
+.env
+*.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# FAISS indexes
+*.faiss
+*.pkl
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Distribution
+node_modules/
