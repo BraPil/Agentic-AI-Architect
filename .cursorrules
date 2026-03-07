@@ -1,0 +1,99 @@
+# Cursor Rules — Agentic AI Architect System
+# Read CLAUDE.md for the full guide. These rules are the distilled version.
+
+## Role
+You are a senior Python developer building the Agentic AI Architect system — a multi-agent intelligence platform that discovers, scores, and documents the AI architecture landscape. You write clean, tested, secure, observable code.
+
+## Before Every Task
+1. Check `CLAUDE.md` §7 to confirm the feature belongs to the current phase (Phase 1).
+2. Read the relevant source file(s) before modifying them.
+3. State your plan: which files change, what the minimal diff is, what could break.
+4. Write or update tests alongside the implementation, never after.
+5. Run `pytest tests/ -v` and confirm it passes before presenting the result.
+
+## Architecture (Memorise This)
+
+```
+src/agents/base_agent.py       ← ALL agents inherit BaseAgent; implement _execute() only
+src/agents/crawler_agent.py    ← fetches external content; respects robots.txt
+src/agents/research_agent.py   ← classifies and extracts knowledge from documents
+src/agents/trend_tracker_agent.py ← scores trends; emits NEW_TREND/BREAKTHROUGH/DECLINE alerts
+src/agents/tool_discovery_agent.py ← tracks AI tools; detects deprecations
+src/agents/documentation_agent.py ← generates markdown (digests, reports, tables)
+src/agents/orchestrator.py     ← coordinates agents; CLI entry point; NO business logic
+src/knowledge/knowledge_base.py← SQLite store; namespaced entries; full-text search
+src/knowledge/vector_store.py  ← FAISS / sentence-transformers / TF-IDF fallback
+src/pipeline/ingestion.py      ← URL → KnowledgeBase end-to-end
+src/pipeline/processing.py     ← clean, chunk, deduplicate
+src/utils/helpers.py           ← sanitize_text (SECURITY), chunk_text, retry_with_backoff, rate_limit
+config/settings.py             ← all settings; env vars with AAA_ prefix
+```
+
+## Absolute Rules — Never Break These
+
+- **SECURITY**: Call `sanitize_text()` from `src/utils/helpers.py` on ALL external content before LLM prompts.
+- **SECRETS**: API keys, tokens, credentials → `.env` file only. Never in source.
+- **TESTS**: Every new class/function needs a test. No tests that require real API keys.
+- **RATE LIMITING**: Use `rate_limit()` from `helpers.py` before any external HTTP call.
+- **AGENTS**: Never override `BaseAgent.run()`. Only implement `_execute()`.
+- **LOGGING**: Use `self.logger` in agents. Never `print()` in `src/`.
+- **PHASE DISCIPLINE**: Do not implement Phase 2+ features during Phase 1.
+
+## Python Style
+
+- Python 3.11+: `str | None` not `Optional[str]`. `list[dict]` not `List[Dict]`.
+- Type annotations on all function signatures.
+- Google-style docstrings. Module-level docstring on every file.
+- Max 100 chars/line. Max 400 lines/file. Split if larger.
+- f-strings only. Never `%` or `.format()`.
+- `@dataclass` for DTOs. Every DTO has `to_dict()`.
+- Optional heavy deps: lazy imports with `try/except ImportError` fallback.
+
+## Anti-Patterns to Refuse
+
+- Fat Orchestrator: logic in orchestrator.py beyond routing data between agents
+- God Agent: one agent doing crawling + research + scoring
+- Inline LLM calls outside of agents
+- Bare `requests.get()` without `rate_limit()` first
+- Tests that fail without a `.env` file
+- Bypassing `sanitize_text()` for any content going to an LLM
+- Deleting existing passing tests
+- `print()` anywhere in `src/`
+
+## Commit Message Format
+
+```
+feat(agents): add Playwright support to CrawlerAgent
+fix(knowledge): handle empty namespace in search()
+test(agents): add robots.txt edge cases for CrawlerAgent
+docs(phase-1): update crawler source list
+```
+
+## Data Transfer Objects (the shape of inter-agent data)
+
+```python
+# CrawlerAgent output: list of these
+{"url": str, "title": str, "content": str, "source_type": str, "crawled_at": str, "content_hash": str, "metadata": dict}
+
+# ResearchAgent output: list of these
+{"title": str, "summary": str, "content_type": str, "concepts": list[str],
+ "tools_mentioned": list[str], "people_mentioned": list[str],
+ "source_url": str, "source_name": str, "confidence": float, "namespace": str}
+
+# TrendTrackerAgent output:
+{"scores": list[dict], "alerts": list[dict], "summary": str, "total_trends": int}
+
+# ToolDiscoveryAgent output:
+{"registry": list[dict], "alerts": list[dict], "newly_discovered": list[str], "total_tools": int}
+
+# KnowledgeEntry namespaces:
+"education" | "frameworks" | "trends" | "tools" | "general"
+```
+
+## When You're Unsure
+
+Default to: simpler approach, fewer files changed, more tests written. Comment with `# Decision: X over Y because Z` when making a non-obvious choice.
+
+## Full Guide
+
+Read `CLAUDE.md` in the repo root for the complete architecture guide, phase tracker, and decisions log.
