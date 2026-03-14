@@ -263,7 +263,7 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 ### Phase 5: API & Integration (Weeks 16–17)
 **Branch**: `feature/p5-api-integration`
 
-**Narrative**: The system opens its doors. Other agents, dashboards, and systems can now query this knowledge oracle.
+**Narrative**: The system opens its doors. Other agents, dashboards, and systems can now query this knowledge oracle. The primary integration target for v1.0 is ExMorbus V3, a medical research multi-agent platform that uses Agentic-AI-Architect as its standing architectural advisor. The full integration design is in `docs/exmorbus-v3-integration.md`.
 
 #### Objectives
 
@@ -276,8 +276,13 @@ Each phase of development moves us one circle outward. We do not skip circles. W
   - `GET /frameworks` — framework maturity matrix
   - `POST /ingest` — submit a URL for processing
   - `GET /report/{phase}` — get latest phase report
+  - `GET /recommend` — architecture recommendation for a problem statement (required by ExMorbus)
+  - `GET /alerts` — trend alerts since a given timestamp (required by ExMorbus)
+  - `GET /compare` — side-by-side tool comparison (required by ExMorbus)
+  - `GET /health/summary` — knowledge freshness and system health (required by ExMorbus)
 - OpenAPI spec generation
-- API key authentication
+- Per-client API key authentication (required for ExMorbus usage tracking)
+- All responses include `schema_version` field for forward-compatible versioning
 
 **P5.2 — Streaming Endpoint**
 - Server-Sent Events (SSE) for streaming knowledge responses
@@ -286,20 +291,29 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 
 **P5.3 — MCP Server Interface**
 - Expose knowledge base as an MCP server
-- Tools: `search_knowledge`, `get_trend_score`, `get_tool_info`, `get_latest_report`
+- Tools: `search_knowledge`, `get_trend_score`, `get_tool_info`, `get_latest_report`, `get_architecture_recommendation`
 - Resources: `knowledge://trends/current`, `knowledge://tools/database`
 - Compatible with Claude Desktop and any MCP-compliant client
+- Designed for on-demand load/unload (< 200ms cached query latency) to support token-efficient usage patterns
+- See `docs/exmorbus-v3-integration.md §4.1` for full MCP tool specifications
 
 **P5.4 — Integration Adapters**
 - LangChain tool wrappers for the knowledge API
 - LlamaIndex query engine adapter
-- Webhook support for external system notifications
+- Webhook support for external system notifications (required for ExMorbus proactive architecture alerts)
+  - Webhook contract defined in `docs/exmorbus-v3-integration.md §4.4`
+  - Events: `trend_alert`, `tool_deprecated`, `framework_emerged`, `architecture_shift`
+- **ExMorbus adapter** (`src/api/adapters/exmorbus.py`): typed client that wraps REST + MCP + webhook registration for seamless ExMorbus V3 integration
+- Optional `tags` filter on `/query` and `/recommend` for medical-adjacent architecture concerns: `medical_agents`, `data_compliance`, `evidence_pipelines`, `long_running_workflows`, `human_in_loop`
 
 #### Success Criteria
 - [ ] REST API responds to query in < 500ms for cached, < 2s for live
 - [ ] MCP server connects to Claude Desktop and returns accurate responses
 - [ ] API handles 100 concurrent requests without degradation
 - [ ] OpenAPI spec passes validation
+- [ ] ExMorbus adapter can load MCP tool, run `search_knowledge`, and unload in a single round trip under 500ms
+- [ ] Webhook delivery fires within 5 minutes of trend alert detection
+- [ ] All response types include `schema_version`; breaking changes bump major version
 
 ---
 
@@ -472,3 +486,5 @@ The system is considered **v1.0 complete** when:
 8. ✅ External AI system successfully queries knowledge base and gets useful response
 9. ✅ Trend alerts have notified about ≥ 3 genuine new trends before they went mainstream
 10. ✅ Another developer can set up and run the system with the README alone
+11. ✅ ExMorbus V3 can load the MCP tool, query `search_knowledge`, and receive a useful architectural recommendation in under 500ms (validates the on-demand low-token usage model)
+12. ✅ At least one proactive webhook alert has been delivered to a registered external system
