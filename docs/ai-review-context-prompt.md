@@ -259,7 +259,47 @@ Prompt opt:      DSPy (Phase 6)
 
 ---
 
-## Part 4: The Coding Standards and Architecture Principles Used
+## Part 4: The Broader Ecosystem — ExMorbus V3 and MoltBook
+
+### 4.1 ExMorbus V3 (External Consuming System)
+
+**ExMorbus V3** is a sister project that will use Agentic-AI-Architect as its **architectural
+oracle**.  It is a **medically-focused intelligence platform** modelled on the MoltBook
+architecture pattern, with a staged domain specialisation curriculum:
+
+```
+Broad Health (10%) → Clinical Medicine (20%) → Oncology (30%) → Cancer Immunotherapy (40%)
+```
+
+Key integration points (documented in `docs/exmorbus-v3-integration.md`):
+- ExMorbus V3 queries AAA via `GET /query`, `GET /trends`, `GET /tools` (REST, Phase 5)
+- AAA pushes tool alerts and architecture recommendations to ExMorbus via webhooks
+- AAA exposes knowledge via MCP server for direct agent consumption
+- ExMorbus has an `ArchitectAgent` that calls AAA and creates shell review records
+
+### 4.2 MoltBook Reference Architecture (Key Concepts)
+
+MoltBook is the reference pattern from which ExMorbus V3 is derived.  Its core ideas
+(documented in `docs/moltbook-research-findings.md`) are:
+
+**Shell / Flesh separation**:
+- **Shell** (persistent, IaC-defined): contracts, interfaces, event topology, governance policies
+- **Flesh** (replaceable, tech-specific): LLM providers, vector stores, crawlers, APIs
+
+**On-demand tool loading** (estimated ~3% of resident-MCP token overhead — needs
+empirical validation; treat as a design-direction estimate, not a measured figure):
+```python
+async with HeavyTool() as tool:   # load
+    result = await tool.execute(task)
+# unload happens automatically
+```
+
+**Living Architecture Doctrine**: architecture is a continuously-curated artifact, not a
+static diagram.  The Agentic-AI-Architect system is the primary engine for keeping it current.
+
+---
+
+## Part 5: The Coding Standards and Architecture Principles Used
 
 ### Python Standards
 - Python 3.11+. `str | None` not `Optional[str]`. `list[dict]` not `List[Dict]`.
@@ -286,7 +326,7 @@ Prompt opt:      DSPy (Phase 6)
 
 ---
 
-## Part 5: What We Are Asking You To Do
+## Part 6: What We Are Asking You To Do
 
 ### Your Task
 
@@ -308,6 +348,18 @@ Prompt opt:      DSPy (Phase 6)
    - How would you design the MCP server interface so this system can be called by other agentic systems during their architecture phase?
    - What is missing from the current Phase 1–7 roadmap?
 
+   **ExMorbus V3 / external system integration questions**:
+   - AAA is planned to serve as the architectural oracle for ExMorbus V3 (a medical research
+     platform modelled on MoltBook's shell/flesh pattern).  How should AAA's Phase 5 REST API
+     and MCP server be designed to serve an external system like ExMorbus efficiently and
+     securely?
+   - The MoltBook "lobster shell" pattern (persistent shell contracts + hot-swappable flesh
+     implementations + on-demand tool loading) is the reference architecture for ExMorbus V3.
+     Does this pattern apply to AAA itself?  What would it look like if AAA adopted it?
+   - ExMorbus V3 needs a staged domain curriculum (health → medicine → oncology → immunotherapy).
+     Should AAA know anything about domain-specific architecture patterns for medical AI systems,
+     or should it remain purely domain-agnostic?
+
    **Prioritization questions**:
    - If you had to deliver a *useful, production-ready v0.1* in 2 weeks, what would you build and what would you cut?
    - What is the highest-leverage capability to develop next (after current Phase 1 work)?
@@ -319,7 +371,7 @@ Prompt opt:      DSPy (Phase 6)
 
 ---
 
-## Part 6: Format of Your Response
+## Part 7: Format of Your Response
 
 Please structure your response as follows:
 
@@ -356,7 +408,7 @@ Be direct. Be specific. Cite reasons. This is a design review, not a praise sess
 
 ---
 
-## Appendix: The Repository AI Coding Agent Instructions (for reference)
+## Part 8: Appendix: The Repository AI Coding Agent Instructions (for reference)
 
 The following is the current `CLAUDE.md` (the canonical instruction file). Review it as part of your evaluation:
 
@@ -412,4 +464,4 @@ This document should be updated whenever:
 - Phase status changes (a phase completes or begins)
 - The core technology stack changes
 
-*Last updated: March 2026. Current phase: P1 Knowledge Discovery.*
+*Last updated: March 2026. Current phase: P1 Knowledge Discovery. ExMorbus V3 integration context added.*
