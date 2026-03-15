@@ -59,7 +59,8 @@ docs/
 ├── phase-2-conceptual-frameworks.md ← complete framework matrix
 ├── phase-3-trends.md             ← scored trend registry
 ├── phase-4-tools.md              ← tools landscape
-└── phase-5-implementation-plan.md← phased dev roadmap + branch structure
+├── phase-5-implementation-plan.md← phased dev roadmap + branch structure
+└── exmorbus-v3-integration.md    ← ExMorbus V3 integration: MoltBook synthesis, API contracts, vision
 
 tests/               ← mirrors src/ structure
 ```
@@ -218,7 +219,7 @@ Phase 1: Knowledge Discovery  🔄 IN PROGRESS  ← we are here
 Phase 2: Intelligence Layer   ⬜ NOT STARTED
 Phase 3: Agent Specialization ⬜ NOT STARTED
 Phase 4: Orchestration        ⬜ NOT STARTED
-Phase 5: API & Integration    ⬜ NOT STARTED
+Phase 5: API & Integration    ⬜ NOT STARTED  ← ExMorbus V3 integration target
 Phase 6: Self-Improvement     ⬜ NOT STARTED
 Phase 7: Production Hardening ⬜ NOT STARTED
 ```
@@ -228,6 +229,13 @@ Phase 7: Production Hardening ⬜ NOT STARTED
 - P1.2 Content Processing Pipeline: PDF parsing (PyMuPDF + LlamaParse)
 - P1.3 Research Agent: LLM-powered extraction (requires `llm_client` config)
 - P1.4 Ingestion Pipeline: Queue-based processing with priority
+
+**Phase 5 strategic context** (from `docs/exmorbus-v3-integration.md`):
+Phase 5 is now defined with a concrete first integration target: **ExMorbus V3**, a medical research multi-agent platform that uses Agentic-AI-Architect as its standing architectural oracle. The full integration design, API contracts, and MCP tool specifications are documented in `docs/exmorbus-v3-integration.md`. Key Phase 5 additions driven by ExMorbus:
+- `get_architecture_recommendation` MCP tool (P5.3)
+- ExMorbus adapter with < 200ms cached query latency (P5.4)
+- Outbound webhook for proactive architecture alerts (P5.4)
+- `schema_version` on all API responses (P5.1)
 
 **Before starting any new work**, check this section and the implementation plan. If the phase status above is out of date, update it.
 
@@ -410,6 +418,10 @@ A living record of significant architectural choices and the reasoning behind th
 | LLM calls in agents | `llm_client` callable injected via config | Hard-coded OpenAI | Provider-agnostic; testable without API keys |
 | Crawler UA | Custom branded string | Python-requests default | Identifies us for rate-limit friendly treatment |
 | Prompt injection defense | `sanitize_text()` in utils | Per-agent inline sanitization | Central, auditable, testable |
+| ExMorbus integration model | Oracle model (read-only, advisory, on-demand) | Embedded agent in ExMorbus | ExMorbus must remain independent; Agentic-AI-Architect advises but never blocks |
+| MCP latency target | < 200ms cached | No formal target | ExMorbus on-demand load/unload pattern only works if queries are fast |
+| API schema stability | `schema_version` on all responses; major version for breaking changes; 90-day deprecation | No versioning | ExMorbus cannot tolerate mid-project API breaks from its advisor |
+| New MCP tool | Add `get_architecture_recommendation` in P5.3 | Only CRUD knowledge endpoints | ExMorbus's primary need is targeted architectural guidance, not raw retrieval |
 
 ---
 
