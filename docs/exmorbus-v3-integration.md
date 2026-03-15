@@ -1,438 +1,798 @@
-# ExMorbus V3 Integration: Agentic-AI-Architect as the Architectural Brain
+# ExMorbus V3 ↔ Agentic-AI-Architect Integration Design
 
-> **Status**: Strategic synthesis document — reviewed 2026-03  
-> **Scope**: Defines how Agentic-AI-Architect serves ExMorbus V3, based on MoltBook architectural analysis and the ExMorbus V3 vision conversation.  
-> **Maintained by**: This document should be updated whenever the ExMorbus integration design or Agentic-AI-Architect Phase 5 API scope changes.
-
----
-
-## 1. The MoltBook Architectural Synthesis
-
-### 1.1 What MoltBook Is
-
-MoltBook is a progressive-specialization AI learning platform whose core insight is that **intelligence narrows toward expertise the same way biological organisms grow: by molting old generalist structure and replacing it with specialized capability**.
-
-The platform's architecture has four defining properties, each of which ExMorbus V3 should inherit and amplify for the medical domain:
-
-| Property | MoltBook Pattern | ExMorbus V3 Analogue |
-|----------|-----------------|----------------------|
-| **Progressive curriculum** | Broad training narrows iteratively toward deep domain expertise | General health → Clinical medicine → Oncology → Novel cancer immunotherapy |
-| **Atomized agents** | Agents are irreducible specialists; one responsibility each | Literature agents, evidence agents, hypothesis agents, experiment design agents |
-| **Agent economy** | Solutions are traded, graded, and commoditized between agents | Research findings are scored by evidence quality and exchanged as standardized artifacts |
-| **Living architecture** | The platform shell is stable IaC; implementations are hot-swappable | PostgreSQL/Redis/Playwright can be replaced without changing the research agent contracts |
-
-### 1.2 The Lobster Shell Principle
-
-The central architectural metaphor emerging from the ExMorbus V3 philosophy is the **lobster shell**: the hard shell (IaC-defined structure, agent contracts, knowledge schemas) persists and grows, while the soft body (concrete tool implementations, LLM providers, storage backends) is periodically shed and replaced with newer, better-adapted tissue.
-
-This directly implies:
-
-- **Agent contracts are first-class artifacts.** Every agent interface (inputs, outputs, error shapes) must be versioned and stable. The implementation inside the shell can change completely.
-- **Technology bindings are late-binding.** PostgreSQL, Redis, Playwright, Vercel — these are wired in at deployment time via IaC and environment variables, not hardcoded into agent logic.
-- **Architecture knowledge decays rapidly.** The AI tooling landscape changes faster than any human can track. This is exactly why ExMorbus needs Agentic-AI-Architect: to continuously watch the landscape and advise when a better implementation for any shell slot exists.
-
-### 1.3 The Agent Economy Model
-
-In MoltBook-style systems, agents do not merely cooperate — they participate in an **internal economy of research artifacts**:
-
-- **Grading**: Every output artifact carries a confidence/evidence score. Higher-graded artifacts are routed preferentially.
-- **Trading**: Agents exchange artifacts through typed message contracts. A `ResearchFinding` from a literature agent is a tradeable unit — it can be consumed by an evidence evaluator, a hypothesis generator, or a documentation agent without those agents knowing or caring about its origin.
-- **Commoditization**: High-confidence, repeatedly-validated findings are "distilled" into canonical knowledge entries — the equivalent of a research commodity that has survived market testing.
-
-For ExMorbus V3, this economy operates on **medical research artifacts**: literature citations, evidence summaries, hypothesis proposals, experiment protocols, and outcome reports.
+> **Purpose**: This document specifies the full integration contract between the
+> **Agentic-AI-Architect** system (architectural oracle, this repository) and
+> **ExMorbus V3** (medical research platform).  It is the authoritative reference for
+> both teams and is designed to be ingested by the agent's knowledge-discovery pipeline.
+>
+> **Status**: Draft — pending Phase 5 REST API and MCP server implementation.  
+> **Last updated**: March 2026  
+> **Owner**: Architecture Oracle Integration Lead (see `docs/moltbook-research-findings.md §9`)
 
 ---
 
-## 2. ExMorbus V3 Vision: MoltBook for Medical Research
+## Table of Contents
 
-### 2.1 The Specialization Ladder
-
-ExMorbus V3 structures all knowledge acquisition and agent specialization around a progressive ladder:
-
-```
-Level 0 — Broad Foundation (~10% of total training budget)
-  Health, nutrition, exercise, psychology, happiness, stress mitigation,
-  anatomy, biology, organic chemistry, biochemistry
-
-Level 1 — Clinical Medicine
-  Disease mechanisms, pharmacology, clinical trials methodology,
-  evidence-based medicine, diagnostic reasoning
-
-Level 2 — Oncology
-  Cancer biology, tumor immunology, mutation landscapes,
-  treatment modalities (surgery, radiation, chemo, immunotherapy),
-  biomarker discovery
-
-Level 3 — Focused Specialization (deepest investment)
-  Novel cancer therapy, therapeutic vaccination research,
-  experimental immunotherapy design, trial protocol generation,
-  outcome analysis and publication
-```
-
-Every agent in ExMorbus V3 is trained and scoped to a specific rung of this ladder. Agents at lower rungs produce generalized findings; agents at higher rungs consume those findings and produce specialized insights. **No single agent spans more than one rung.**
-
-### 2.2 The Atomized Research Agent Ecosystem
-
-The 23-agent architecture from ExMorbus v0.2 maps onto this ladder as follows:
-
-```
-Foundation Layer (Level 0)
-  HealthCorpusAgent      — ingests and indexes broad health content
-  AnatomyKnowledgeAgent  — curates structural biology knowledge base
-
-Discovery Layer (Levels 0–1)
-  LiteratureResearcher   — searches PubMed, arXiv, bioRxiv
-  EvidenceIdentifier     — scores literature evidence quality
-  TrialMonitorAgent      — watches ClinicalTrials.gov for new entries
-
-Analysis Layer (Levels 1–2)
-  EvidenceEvaluator      — grades evidence by GRADE/Oxford criteria
-  HypothesisGenerator    — generates testable hypotheses from evidence clusters
-  BiologyReasonerAgent   — connects mechanism-of-action reasoning chains
-
-Specialization Layer (Level 3)
-  CancerTherapyAgent     — focused on novel therapeutic modalities
-  VaccinationDesignAgent — experimental vaccination research patterns
-  TrialProtocolAgent     — generates draft trial protocols from hypotheses
-  OutcomeAnalyzerAgent   — analyzes published trial outcomes
-
-Infrastructure
-  ResearchPlanner        — coordinates discovery → analysis → specialization flow
-  ExperimentTracker      — logs and monitors active research threads
-  ValidationAgent        — cross-validates findings across agents
-  DocumentationAgent     — generates structured research summaries
-  Orchestrator           — top-level coordination (lobster shell contract)
-```
-
-### 2.3 The V3 Architecture Shell
-
-ExMorbus V3 adopts the following shell/implementation separation:
-
-```
-SHELL (IaC — stable, versioned, rarely changes)
-  Agent contracts (input/output types, error shapes, schema versions)
-  Knowledge schemas (entity types, relationship types, namespace hierarchy)
-  Pipeline topology (which agent feeds which, in what order)
-  Governance policies (data retention, access control, audit requirements)
-  Deployment topology (Docker Compose / Kubernetes manifests)
-
-IMPLEMENTATION (hot-swappable — changes as better options emerge)
-  LLM providers (Anthropic → Google → open weights as landscape evolves)
-  Vector store (FAISS → pgvector → future specialized medical vector DBs)
-  Literature sources (PubMed API → semantic scholar → direct crawl)
-  Task queue (Python Queue → Redis Streams → Temporal as scale demands)
-  Frontend (Vercel → Next.js edge → whatever comes next)
-  Infrastructure substrate (single server → Kubernetes → serverless as needed)
-```
+1. [Integration Overview](#1-integration-overview)
+2. [System Roles and Boundaries](#2-system-roles-and-boundaries)
+3. [MoltBook Synthesis for ExMorbus V3](#3-moltbook-synthesis-for-exmorbus-v3)
+4. [API Interface Proposals](#4-api-interface-proposals)
+   - 4.1 REST Endpoints (Agentic-AI-Architect → ExMorbus consumer)
+   - 4.2 Webhook Schema (Agentic-AI-Architect → ExMorbus push)
+   - 4.3 MCP Tool Contracts
+5. [ExMorbus V3 ArchitectAgent Specification](#5-exmorbus-v3-architectagent-specification)
+6. [System Integration Strategies](#6-system-integration-strategies)
+7. [Data Contracts and Schemas](#7-data-contracts-and-schemas)
+8. [Security and Compliance Requirements](#8-security-and-compliance-requirements)
+9. [Operational Runbook](#9-operational-runbook)
+10. [Roadmap Alignment](#10-roadmap-alignment)
+11. [Change Log](#11-change-log)
 
 ---
 
-## 3. Agentic-AI-Architect's Role in ExMorbus V3
+## 1. Integration Overview
 
-### 3.1 The Architectural Advisor Model
+Agentic-AI-Architect and ExMorbus V3 are **complementary systems** with a clear division of
+responsibilities:
 
-Agentic-AI-Architect serves ExMorbus V3 in a specific, bounded role: **it watches the AI architecture landscape continuously and advises ExMorbus when a better implementation for any shell slot is available**.
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│                        AGENTIC-AI-ARCHITECT                                │
+│                    "The Architectural Oracle"                              │
+│                                                                            │
+│  Continuously discovers, scores, and documents the AI architecture        │
+│  landscape.  Answers questions like:                                       │
+│  • "What is the best vector store in production today?"                    │
+│  • "Which orchestration frameworks are gaining adoption?"                  │
+│  • "Has Playwright been superseded for LLM-compatible crawling?"           │
+│                                                                            │
+│  Outputs: REST API, MCP server, SSE stream, Webhook alerts                │
+└────────────────────────────────┬───────────────────────────────────────────┘
+                                 │  queries + alert subscriptions
+                                 │
+                    ┌────────────▼────────────┐
+                    │     ArchitectAgent      │  ← lives in ExMorbus V3 repo
+                    │  (integration adapter)  │
+                    └────────────┬────────────┘
+                                 │  recommendations + alerts
+                                 ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                           EXMORBUS V3                                      │
+│                   "Medical Research Intelligence Platform"                  │
+│                                                                            │
+│  Ingests medical research, scores evidence, generates hypotheses, and      │
+│  tracks the cancer therapy / vaccination research frontier.                │
+│                                                                            │
+│  Uses Agentic-AI-Architect to keep its OWN architecture current.          │
+└────────────────────────────────────────────────────────────────────────────┘
+```
 
-It does NOT:
-- Perform medical research itself
-- Store or reason about clinical data
-- Make research decisions
+**Key principle**: Agentic-AI-Architect does **not** know about medical research.  ExMorbus
+V3 does **not** know how to evaluate software architectures.  The ArchitectAgent is the
+translation layer.
 
-It DOES:
-- Track emerging agentic patterns relevant to multi-agent medical research platforms
-- Score and rank tools that could fill ExMorbus's implementation slots
-- Alert when ExMorbus's current architecture choices are being superseded
-- Answer targeted queries: "What is the best current approach for multi-agent coordination at our scale?"
-- Provide architectural rationale for design decisions that ExMorbus must make
+---
 
-This is the **oracle model**: Agentic-AI-Architect is a read-only knowledge oracle that ExMorbus queries when it needs architectural guidance. ExMorbus remains in full control of its own decisions.
+## 2. System Roles and Boundaries
 
-### 3.2 Usage Pattern: On-Demand, Low-Token
+### 2.1 Agentic-AI-Architect Responsibilities
 
-Per the ExMorbus V3 philosophy of token efficiency (achieving MCP-like results at ~3% of standard token cost), Agentic-AI-Architect is used as an **on-demand tool, loaded at the point of necessity and immediately unloaded**:
+| Responsibility | In Scope | Out of Scope |
+|----------------|----------|--------------|
+| Track AI tooling landscape | ✅ | Medical content analysis ❌ |
+| Score framework adoption trends | ✅ | Medical research scoring ❌ |
+| Recommend architectural patterns | ✅ | Recommend research hypotheses ❌ |
+| Expose knowledge as queryable API | ✅ | Store ExMorbus research findings ❌ |
+| Alert on significant tool/framework changes | ✅ | Alert on medical breakthroughs ❌ |
+
+### 2.2 ExMorbus V3 Responsibilities
+
+| Responsibility | In Scope | Out of Scope |
+|----------------|----------|--------------|
+| Ingest medical research literature | ✅ | Track software tooling ❌ |
+| Score medical evidence quality | ✅ | Score software adoption trends ❌ |
+| Generate research hypotheses | ✅ | Generate architecture recommendations ❌ |
+| Consume architecture insights | ✅ | Produce architecture insights ❌ |
+
+### 2.3 ArchitectAgent Responsibilities (ExMorbus side)
+
+The `ArchitectAgent` is an ExMorbus V3 agent that:
+1. Periodically queries Agentic-AI-Architect for architecture insights relevant to ExMorbus
+2. Evaluates whether those insights warrant a shell-layer change
+3. Creates architecture review tickets when a change is recommended
+4. Feeds confirmed architectural decisions back to the shell's IaC and contract layer
+
+---
+
+## 3. MoltBook Synthesis for ExMorbus V3
+
+This section translates the MoltBook research findings (see `docs/moltbook-research-findings.md`)
+into concrete ExMorbus V3 architecture decisions.
+
+### 3.1 Shell Contract Definition
+
+ExMorbus V3 must define its shell before implementing any flesh:
+
+```
+exmorbus-v3/
+├── shell/
+│   ├── contracts/          ← Python ABCs + Pydantic schemas
+│   │   ├── agent.py        ← BaseAgent contract
+│   │   ├── llm_client.py   ← LLMClient interface
+│   │   ├── vector_store.py ← VectorStore interface
+│   │   ├── knowledge_store.py
+│   │   └── crawler.py
+│   ├── events/             ← typed event registry
+│   │   ├── registry.py     ← EventRegistry with transition validation
+│   │   └── schemas.py      ← Pydantic event schemas
+│   ├── curriculum/         ← staged domain specialisation config
+│   │   ├── stages.yaml
+│   │   └── namespaces.yaml
+│   ├── iac/                ← infrastructure definitions
+│   │   ├── k8s/
+│   │   └── terraform/
+│   └── policies/           ← OPA governance
+│       └── base.rego
+└── flesh/
+    └── adapters/           ← technology-specific implementations
+```
+
+### 3.2 Curriculum Namespace Configuration
+
+The staged specialisation ladder is encoded as namespace permissions:
+
+```yaml
+# shell/curriculum/stages.yaml (ExMorbus V3 — proposed)
+stages:
+  - id: broad_health
+    label: "Broad Health Knowledge"
+    training_fraction: 0.10
+    namespaces_writable:
+      - health/nutrition
+      - health/exercise
+      - health/psychology
+      - health/anatomy
+      - health/biology
+      - health/chemistry
+    advancement_criteria:
+      min_entries_per_namespace: 500
+      min_coverage_score: 0.75
+
+  - id: clinical_medicine
+    label: "Clinical Medicine"
+    training_fraction: 0.20
+    namespaces_writable:
+      - medicine/clinical
+      - medicine/pharmacology
+      - medicine/diagnostics
+    advancement_criteria:
+      min_entries_per_namespace: 1000
+      min_evidence_grade_rct_fraction: 0.15
+
+  - id: oncology
+    label: "Oncology"
+    training_fraction: 0.30
+    namespaces_writable:
+      - oncology/solid_tumors
+      - oncology/hematologic
+      - oncology/pediatric
+    advancement_criteria:
+      min_entries_per_namespace: 2000
+      min_clinical_trial_coverage: 0.20
+
+  - id: cancer_immunotherapy
+    label: "Cancer Immunotherapy and Novel Therapeutics"
+    training_fraction: 0.40
+    namespaces_writable:
+      - immunotherapy/checkpoint_inhibitors
+      - immunotherapy/car_t
+      - immunotherapy/cancer_vaccines
+      - immunotherapy/novel_experimental
+    advancement_criteria: null  # terminal stage — no advancement
+```
+
+### 3.3 On-Demand Tool Loading Protocol
+
+ExMorbus V3 should implement the load-use-unload pattern for all heavy tools:
 
 ```python
-# ExMorbus usage pattern (conceptual)
-# 1. Load the Agentic-AI-Architect MCP tool — only when an architectural
-#    question needs answering (e.g., during architecture review cycles,
-#    when a shell slot is being reconsidered, or when a new agent is
-#    being designed).
-arch_tool = await mcp_manager.load_tool("agentic-ai-architect")
+# Proposed: exmorbus-v3/shell/contracts/tool_lifecycle.py
 
-# 2. Query with a targeted, specific question
-result = await arch_tool.call("search_knowledge", {
-    "query": "best multi-agent coordination patterns for medical research 2026",
-    "namespace": "frameworks",
-    "top_k": 5
-})
+from abc import ABC, abstractmethod
+from typing import Any
 
-# 3. Unload immediately — do not keep resident
-await mcp_manager.unload_tool("agentic-ai-architect")
+class HeavyTool(ABC):
+    """Shell contract for tools that are expensive to keep resident."""
+
+    @abstractmethod
+    async def load(self) -> None:
+        """Instantiate the tool and acquire all resources.
+
+        Raises:
+            RuntimeError: If the tool cannot be instantiated (e.g. missing
+                binary, OOM, port conflict).  The caller must not call
+                ``execute()`` if ``load()`` raises.
+        """
+
+    @abstractmethod
+    async def execute(self, task: dict[str, Any]) -> dict[str, Any]:
+        """Execute one task. Must be called between load() and unload()."""
+
+    @abstractmethod
+    async def unload(self) -> None:
+        """Release all resources. Called even if execute() raised."""
+
+    async def __aenter__(self) -> "HeavyTool":
+        await self.load()
+        return self
+
+    async def __aexit__(self, *_: Any) -> None:
+        await self.unload()
 ```
 
-This pattern means Agentic-AI-Architect must be **fast to respond** (< 500ms for cached queries) and **precise in its answers** (high-signal, low-noise responses that don't require follow-up queries to be useful).
+### 3.4 ArchitectAgent Design Pattern
 
-### 3.3 Integration Touch Points
+```python
+# Proposed: exmorbus-v3/src/agents/architect_agent.py (sketch)
 
-Agentic-AI-Architect is integrated into ExMorbus V3 at the following specific points:
+class ArchitectAgent(BaseAgent):
+    """
+    Queries Agentic-AI-Architect for architectural recommendations relevant to
+    ExMorbus V3 and evaluates whether they warrant a shell-layer change.
 
-| Integration Point | When It Fires | Query Type | Expected Response Shape |
-|-------------------|--------------|------------|------------------------|
-| New agent design review | Developer designing a new ExMorbus agent | Architecture patterns for the agent's responsibility | Top 3–5 current patterns with maturity scores |
-| Shell slot evaluation | Before choosing/replacing an implementation (e.g., switching task queues) | Tool comparison for the slot category | Comparison matrix: current options ranked by recency + fitness |
-| Architecture cycle alert | Weekly architectural health check | Trend alerts for ExMorbus-relevant topics | List of alerts: "X is replacing Y", "Z has emerged as a new option" |
-| Hypothesis about architecture | Any agent wondering about an architectural approach | Free-form architectural query | Summarized finding with source references |
-| V3 shell design review | When ExMorbus redefines its shell contracts | Architectural validation query | Risk assessment, pattern recommendations, alternative approaches |
+    Configuration keys:
+        aaa_base_url (str): Base URL of the Agentic-AI-Architect REST API.
+        aaa_api_key (str): API key for Agentic-AI-Architect (from env).
+        review_interval_days (int): How often to run a full review. Default: 7.
+        confidence_threshold (float): Minimum confidence to auto-flag a review
+            ticket.  Default: 0.75.
+    """
+```
 
 ---
 
-## 4. Required API and Integration Contracts
+## 4. API Interface Proposals
 
-### 4.1 MCP Tool Interface (Phase 5 Priority)
+### 4.1 REST Endpoints (Agentic-AI-Architect serves, ExMorbus consumes)
 
-The following MCP tool definitions must be available in Agentic-AI-Architect's Phase 5 MCP server to serve ExMorbus:
+These endpoints will be implemented in **Phase 5** of Agentic-AI-Architect.  The contracts
+are defined here so ExMorbus V3 can design its ArchitectAgent against a stable interface.
 
-```python
-# Tool: search_knowledge
-# Purpose: Semantic search over the knowledge base
-# ExMorbus use: finding best architectural patterns for a given need
+#### `GET /query`
+
+Semantic search across the full knowledge base.
+
+**Request**:
+```
+GET /query?q={query_text}&namespace={namespace}&top_k={n}&min_confidence={float}
+```
+
+**Response** (`200 OK`):
+```json
 {
-    "name": "search_knowledge",
-    "description": "Search the AI architecture knowledge base for relevant findings",
-    "inputSchema": {
-        "query": "str — natural language question or topic",
-        "namespace": "str — one of: frameworks, trends, tools, education, general",
-        "top_k": "int — number of results (default 5, max 20)",
-        "min_confidence": "float — minimum confidence threshold (default 0.6)",
-        "recency_weight": "float — weight for recency in scoring (0.0–1.0, default 0.5)"
-    },
-    "outputSchema": {
-        "results": "list[KnowledgeResult]",
-        "query_time_ms": "int",
-        "schema_version": "str"
+  "query": "vector store production 2026",
+  "results": [
+    {
+      "id": "kb-entry-uuid",
+      "namespace": "tools",
+      "title": "pgvector vs Qdrant vs Pinecone — 2026 comparison",
+      "summary": "...",
+      "confidence": 0.88,
+      "source_url": "https://...",
+      "extracted_at": "2026-03-01T12:00:00Z",
+      "trend_score": 74.2
     }
-}
-
-# Tool: get_trend_score
-# Purpose: Get current trend score and trajectory for a specific topic
-# ExMorbus use: evaluating whether to adopt an emerging technology
-{
-    "name": "get_trend_score",
-    "description": "Get the current trend score and trajectory for an AI topic",
-    "inputSchema": {
-        "topic": "str — topic name or identifier",
-        "include_signals": "bool — include raw signal data (default false)"
-    },
-    "outputSchema": {
-        "topic": "str",
-        "score": "float — 0.0–1.0",
-        "trajectory": "str — rising | stable | declining | emerging | unknown",
-        "last_updated": "datetime",
-        "signal_count": "int",
-        "alerts": "list[TrendAlert]"
-    }
-}
-
-# Tool: get_tool_info
-# Purpose: Get structured information about a specific AI tool or framework
-# ExMorbus use: evaluating a tool for a shell implementation slot
-{
-    "name": "get_tool_info",
-    "description": "Get structured information about an AI tool, framework, or library",
-    "inputSchema": {
-        "tool_name": "str — exact name or fuzzy match",
-        "include_alternatives": "bool — include ranked alternatives (default true)"
-    },
-    "outputSchema": {
-        "name": "str",
-        "description": "str",
-        "category": "str",
-        "maturity": "str — emerging | growing | stable | declining",
-        "last_significant_change": "date",
-        "alternatives": "list[ToolSummary]",
-        "architecture_fit_notes": "str"
-    }
-}
-
-# Tool: get_architecture_recommendation
-# Purpose: Get a targeted architectural recommendation for a specific problem
-# ExMorbus use: designing new agents, choosing between patterns
-{
-    "name": "get_architecture_recommendation",
-    "description": "Get an architecture recommendation for a specific design question",
-    "inputSchema": {
-        "problem_statement": "str — description of the architecture decision to make",
-        "constraints": "list[str] — known constraints (e.g., 'must work offline', 'Python 3.11+')",
-        "current_stack": "dict[str, str] — current technology choices by category"
-    },
-    "outputSchema": {
-        "recommendation": "str — primary recommendation",
-        "rationale": "str — reasoning behind recommendation",
-        "alternatives": "list[AlternativeApproach]",
-        "risk_factors": "list[str]",
-        "confidence": "float",
-        "sources": "list[SourceReference]"
-    }
-}
-
-# Tool: get_latest_report
-# Purpose: Retrieve a pre-generated phase document or trend report
-# ExMorbus use: periodic architecture health reviews
-{
-    "name": "get_latest_report",
-    "description": "Retrieve the latest generated report for a knowledge domain",
-    "inputSchema": {
-        "report_type": "str — one of: trends, tools, frameworks, education, weekly_digest"
-    },
-    "outputSchema": {
-        "report_type": "str",
-        "generated_at": "datetime",
-        "content": "str — markdown-formatted report",
-        "entry_count": "int"
-    }
+  ],
+  "total": 12,
+  "query_time_ms": 143
 }
 ```
 
-### 4.2 REST API Requirements (Phase 5)
+#### `GET /trends`
 
-ExMorbus needs the following REST endpoints beyond the base plan:
+Current trend scores and rankings, optionally filtered by domain.
 
+**Request**:
 ```
-GET  /query                     (already planned)
-GET  /trends                    (already planned)
-GET  /tools                     (already planned)
-GET  /frameworks                (already planned)
-POST /ingest                    (already planned)
-GET  /report/{phase}            (already planned)
-
-NEW — required for ExMorbus integration:
-GET  /recommend?problem=...     — architecture recommendation endpoint
-GET  /alerts?since=...          — trend alerts since a given timestamp
-GET  /compare?tools=a,b,c       — side-by-side tool comparison
-GET  /health/summary            — system health + knowledge freshness summary
+GET /trends?domain={domain_hint}&limit={n}&min_score={float}&since={ISO8601}
 ```
 
-### 4.3 Knowledge Namespaces for Medical/Research Context
+**Response** (`200 OK`):
+```json
+{
+  "generated_at": "2026-03-14T00:00:00Z",
+  "trends": [
+    {
+      "topic": "Model Context Protocol (MCP)",
+      "score": 91.4,
+      "velocity": 12.3,
+      "status": "emerging",
+      "first_seen": "2025-11-01",
+      "recent_sources": ["https://..."],
+      "summary": "..."
+    }
+  ]
+}
+```
 
-The current knowledge namespaces (`education`, `frameworks`, `trends`, `tools`, `general`) are sufficient for Agentic-AI-Architect's internal use. However, ExMorbus queries will often carry implicit medical context. The following **query tags** (not new namespaces) should be supported in search and recommendation endpoints to filter results for medical-adjacent architectural concerns:
+#### `GET /tools`
+
+Tool registry with filter support.
+
+**Request**:
+```
+GET /tools?category={category}&since={ISO8601}&status={active|deprecated|emerging}
+```
+
+**Response** (`200 OK`):
+```json
+{
+  "tools": [
+    {
+      "name": "Playwright",
+      "category": "crawler",
+      "status": "active",
+      "stars": 68000,
+      "last_commit": "2026-03-10",
+      "summary": "...",
+      "alternatives": ["Firecrawl", "Puppeteer"],
+      "deprecation_risk": "low"
+    }
+  ]
+}
+```
+
+#### `GET /frameworks`
+
+Framework maturity matrix.
+
+**Request**:
+```
+GET /frameworks?maturity={emerging|growing|stable|declining}&type={orchestration|rag|vector|llm}
+```
+
+#### `POST /ingest`
+
+Submit a URL or text for priority processing.
+
+**Request body**:
+```json
+{
+  "url": "https://arxiv.org/abs/...",
+  "priority": "high",
+  "namespace": "tools",
+  "requester": "exmorbus-v3-architect-agent"
+}
+```
+
+**Response** (`202 Accepted`):
+```json
+{
+  "job_id": "ingest-uuid",
+  "status": "queued",
+  "estimated_completion_seconds": 45
+}
+```
+
+#### `GET /report/{phase}`
+
+Get the latest auto-generated phase report.
+
+**Response** (`200 OK`): Markdown document as `text/markdown`.
+
+### 4.2 Webhook Schema (Agentic-AI-Architect → ExMorbus push)
+
+Agentic-AI-Architect will push events to ExMorbus V3 via webhooks registered through a
+subscription API.
+
+#### Webhook Registration
 
 ```
-medical_agents         — agent patterns specific to research/medical domains
-data_compliance        — HIPAA, GDPR, clinical data governance patterns
-evidence_pipelines     — patterns for literature ingestion and evidence grading
-long_running_workflows — patterns for multi-day/multi-week research orchestration
-human_in_loop          — patterns for researcher review and approval workflows
+POST /webhooks/subscribe
+{
+  "target_url": "https://exmorbus.example.com/hooks/aaa",
+  "events": ["tool_alert", "trend_alert", "arch_recommendation"],
+  "secret": "webhook-hmac-secret",
+  "filters": {
+    "tool_categories": ["crawler", "vector_store", "orchestration", "llm"],
+    "min_trend_score": 80.0
+  }
+}
 ```
 
-These are passed as optional `tags` filter on search/recommendation calls, not as separate namespaces.
+#### Tool Alert Webhook
 
-### 4.4 Event Webhook for Proactive Alerts
-
-ExMorbus V3 should register a webhook endpoint with Agentic-AI-Architect to receive proactive notifications without polling. The webhook contract:
+Fired when a tracked tool's status changes (new major version, deprecation signal, or
+replacement detected).
 
 ```json
 {
-  "event_type": "trend_alert | tool_deprecated | framework_emerged | architecture_shift",
-  "severity": "info | warning | critical",
-  "topic": "string",
-  "summary": "string",
-  "affected_shell_categories": ["task_queue", "vector_store", "orchestration", ...],
-  "recommendation": "string",
-  "source_url": "string",
-  "timestamp": "ISO 8601 datetime",
-  "schema_version": "1.0"
+  "event": "tool_alert",
+  "timestamp": "2026-03-14T19:46:10Z",
+  "payload": {
+    "tool_name": "Scrapy",
+    "alert_type": "replacement_detected",
+    "severity": "medium",
+    "message": "Firecrawl adoption surpassed Scrapy in AI-adjacent projects (2026 Q1)",
+    "replacement_candidate": "Firecrawl",
+    "confidence": 0.82,
+    "sources": ["https://...", "https://..."],
+    "recommendation": "Evaluate Firecrawl as primary crawler for LLM-optimized extraction"
+  },
+  "signature": "sha256=..."
 }
 ```
 
-Agentic-AI-Architect sends this to ExMorbus's registered webhook URL when a significant architectural development is detected. ExMorbus's architecture review agent consumes these events and decides whether to trigger a shell evaluation.
+#### Trend Alert Webhook
 
----
+Fired when a trend crosses the configured score threshold or changes velocity significantly.
 
-## 5. System Integration Requirements for Agentic-AI-Architect
-
-The following requirements, derived from ExMorbus's needs, should be incorporated into Agentic-AI-Architect's Phase 5 planning:
-
-### 5.1 Response Latency
-- Cached knowledge queries: < 200ms (ExMorbus uses on-demand tool loading; slow first response defeats the efficiency goal)
-- Live queries with LLM synthesis: < 3 seconds
-- Trend alert generation: asynchronous; webhook delivery < 5 minutes from detection
-
-### 5.2 Schema Versioning (Non-Negotiable)
-All API responses must include `schema_version`. ExMorbus may be pinned to a version while Agentic-AI-Architect evolves. Version negotiation should follow standard semantic versioning. Breaking changes require a new major version and a 90-day deprecation window.
-
-### 5.3 Offline / Degraded Operation
-ExMorbus must continue functioning if Agentic-AI-Architect is unavailable. The integration must be purely advisory — no ExMorbus research workflow should block on an Agentic-AI-Architect response. All queries from ExMorbus should have a timeout (configurable, default 5 seconds) and a graceful fallback (log the query, return a cached or empty result, continue).
-
-### 5.4 Authentication
-ExMorbus authenticates to Agentic-AI-Architect using an API key (`AAA_API_KEY`) set at deployment time. Agentic-AI-Architect should support per-client API keys to allow usage tracking and rate limiting per integration. Rate limit: 1,000 queries/day per key for the free tier.
-
-### 5.5 Audit Trail
-Every query from ExMorbus that influences an architectural decision in ExMorbus should be logged on both sides:
-- Agentic-AI-Architect logs: query text, response schema, latency, client ID
-- ExMorbus logs: what architectural decision was made, which query informed it, timestamp
-
-This creates a traceable chain from "Agentic-AI-Architect told us to use tool X" to "we chose tool X for shell slot Y on date Z."
-
----
-
-## 6. Actionable Conclusions and Recommendations
-
-### 6.1 What ExMorbus V3 Needs to Build (Not Agentic-AI-Architect's Job)
-
-The following are ExMorbus's own architectural responsibilities — Agentic-AI-Architect advises on them but does not implement them:
-
-1. **The specialization ladder engine** — the mechanism by which agents at Level 0 produce artifacts that feed agents at Levels 1–2–3
-2. **The agent economy protocols** — the typed contracts by which research artifacts are traded between agents, including grading and commoditization schemas
-3. **The lobster shell IaC** — the Kubernetes/Terraform/Docker Compose manifests that define the stable shell
-4. **The medical knowledge corpus** — the curated ingestion pipelines for PubMed, ClinicalTrials.gov, bioRxiv, etc.
-
-### 6.2 What Agentic-AI-Architect Should Prioritize for ExMorbus
-
-Ranked by impact on ExMorbus V3's development:
-
-1. **MCP server with `search_knowledge` and `get_architecture_recommendation`** — these two tools alone provide 80% of the value to ExMorbus (Phase 5.3 — move up to Phase 2/3 stub)
-2. **Trend alerts for medical-adjacent AI categories** — specifically: multi-agent medical research, long-running workflow orchestration, clinical data pipelines, evidence-based AI systems
-3. **Tool comparison matrix** — ExMorbus will need to choose between competing options at every shell slot; a queryable comparison endpoint accelerates these decisions
-4. **Schema versioning and stability guarantees** — ExMorbus V3 cannot afford to have its architectural advisor change its API mid-project; stability matters more than feature velocity here
-5. **Webhook delivery for proactive alerts** — architecture changes in the medical AI space can have compliance and safety implications; proactive alerting is more valuable than reactive querying
-
-### 6.3 The V3 Decision: Reuse, Not Restart
-
-The honest assessment: ExMorbus V2's bones are valuable but the organizing philosophy needs a reframe. Specifically:
-
-| V2 Component | V3 Disposition | Reason |
-|---|---|---|
-| MCP foundation | **Keep and evolve** | Already built for on-demand tool loading; aligns perfectly with V3 token-efficiency philosophy |
-| 23-agent architecture | **Reframe, not rebuild** | Architecture is sound; it just needs to be re-expressed through the specialization ladder lens |
-| Phase 1B orchestration adapters | **Keep, with abstraction** | LangGraph and Temporal adapters are valid implementations; wrap them in the lobster shell |
-| Context/handoff documentation | **Archive** | Valuable historical record; replace with V3 architecture manifesto as active guide |
-| Phase 2 roadmap (Literature Researcher first) | **Resequence** | Start with shell definition and agent contracts; implement Literature Researcher second |
-
----
-
-## 7. Final Vision: Agentic-AI-Architect's Role in the Medical Research Platform
-
-Agentic-AI-Architect is the **standing brain for AI architecture knowledge** that ExMorbus uses the way a company uses a specialized consultant: not resident, not decision-making, but deeply knowledgeable and always available when needed.
-
-The relationship is:
-
-```
-ExMorbus V3 (the researcher)
-  ← asks architectural questions →
-    Agentic-AI-Architect (the architectural oracle)
-      ← continuously learns from →
-        The global AI architecture landscape
+```json
+{
+  "event": "trend_alert",
+  "timestamp": "2026-03-14T19:46:10Z",
+  "payload": {
+    "topic": "Mixture-of-Experts routing for agent specialisation",
+    "alert_type": "threshold_crossed",
+    "score": 83.7,
+    "previous_score": 61.2,
+    "velocity": "+22.5 in 30 days",
+    "relevance_to_medical_ai": "high",
+    "summary": "...",
+    "sources": ["https://..."]
+  },
+  "signature": "sha256=..."
+}
 ```
 
-In the medical research context, this means:
+#### Architecture Recommendation Webhook
 
-- When ExMorbus is deciding how to implement a new agent, it asks the oracle: *"What are the best current patterns for literature-ingestion agents?"*
-- When a new orchestration framework emerges that could replace Temporal, the oracle proactively alerts ExMorbus
-- When ExMorbus is evaluating its own architecture annually, the oracle can say: *"Your task queue choice from 2026 is now two generations behind — here's the current landscape"*
-- When a new medical AI benchmark emerges (e.g., a new standard for clinical evidence grading AI), the oracle surfaces it before the ExMorbus team discovers it manually
+Fired when Agentic-AI-Architect's trend analysis produces a pattern-level recommendation.
 
-The ideal end state is an ExMorbus V3 where **no architectural decision is made without first querying the oracle**, and where the oracle's answers are specific, confident, and grounded in the most current evidence — making ExMorbus's architectural evolution as evidence-based as the medical research it produces.
+```json
+{
+  "event": "arch_recommendation",
+  "timestamp": "2026-03-14T19:46:10Z",
+  "payload": {
+    "recommendation_id": "rec-uuid",
+    "category": "orchestration",
+    "title": "Migrate task queue from APScheduler to Temporal for long-horizon medical research workflows",
+    "confidence": 0.79,
+    "impact": "high",
+    "effort": "medium",
+    "rationale": "...",
+    "evidence": ["https://...", "https://..."],
+    "affects_shell_layer": true,
+    "suggested_action": "Schedule shell review within 30 days"
+  },
+  "signature": "sha256=..."
+}
+```
+
+### 4.3 MCP Tool Contracts
+
+Agentic-AI-Architect exposes its knowledge base as an MCP server (Phase 5).
+
+#### MCP Tools
+
+| Tool Name | Description | Required Parameters |
+|-----------|-------------|---------------------|
+| `search_knowledge` | Semantic search across knowledge base | `query: str`, `namespace?: str`, `top_k?: int` |
+| `get_trend_score` | Get current score for a named topic | `topic: str` |
+| `get_tool_info` | Get details for a named tool | `tool_name: str` |
+| `get_latest_report` | Get latest auto-generated phase report | `phase: int` |
+| `list_trending_tools` | List tools with rising adoption | `category?: str`, `limit?: int` |
+
+#### MCP Resources
+
+| Resource URI | Description |
+|-------------|-------------|
+| `knowledge://trends/current` | Latest trend scores (JSON) |
+| `knowledge://tools/database` | Full tool registry (JSON) |
+| `knowledge://frameworks/matrix` | Framework maturity matrix (Markdown) |
+| `knowledge://reports/phase-{n}` | Phase report documents (Markdown) |
+
+#### Example MCP Tool Call (ExMorbus ArchitectAgent)
+
+```python
+# In ExMorbus V3 ArchitectAgent._execute():
+result = await mcp_client.call_tool(
+    server="agentic-ai-architect",
+    tool="search_knowledge",
+    arguments={
+        "query": "vector store for medical research 2026",
+        "namespace": "tools",
+        "top_k": 5
+    }
+)
+```
 
 ---
 
-*Document created: March 2026. Update when Phase 5 API contracts are finalized or when ExMorbus V3 integration points are confirmed.*
+## 5. ExMorbus V3 ArchitectAgent Specification
+
+### 5.1 Agent Purpose
+
+The `ArchitectAgent` in ExMorbus V3 is the **sole point of contact** with Agentic-AI-Architect.
+It runs on a configured schedule (default: weekly) and:
+
+1. Queries Agentic-AI-Architect for relevant architecture updates
+2. Correlates results with ExMorbus V3's current shell layer
+3. Assigns a **shell impact score** to each finding
+4. If impact score ≥ threshold: creates a shell review record
+5. Publishes a weekly architecture briefing to the ExMorbus knowledge base
+
+### 5.2 Query Strategy
+
+The ArchitectAgent should maintain a **standing query set** aligned to ExMorbus V3's
+shell components:
+
+```python
+STANDING_QUERIES = [
+    # Vector store tracking
+    {"q": "vector store medical research 2026", "namespace": "tools", "category": "vector_store"},
+    # LLM routing for specialised medical tasks
+    {"q": "LLM medical domain specialisation", "namespace": "tools", "category": "llm"},
+    # Orchestration for long-horizon research workflows
+    {"q": "agent orchestration long horizon task", "namespace": "frameworks", "category": "orchestration"},
+    # Crawler for medical literature (PubMed, arXiv, bioRxiv)
+    {"q": "scientific literature crawler LLM optimised", "namespace": "tools", "category": "crawler"},
+    # On-demand tool loading patterns
+    {"q": "on demand tool loading agentic systems", "namespace": "frameworks", "category": "patterns"},
+]
+```
+
+### 5.3 Shell Impact Scoring
+
+The ArchitectAgent uses a simple impact matrix to avoid alert fatigue:
+
+| Factor | Weight | Notes |
+|--------|--------|-------|
+| Affects a shell contract (interface or schema) | 0.4 | Any change to ABCs or Pydantic schemas |
+| Confidence ≥ 0.80 | 0.2 | High-confidence recommendation |
+| Trend velocity > +15 in 30 days | 0.2 | Fast-moving change signal |
+| Replacement candidate for currently-used tool | 0.2 | Direct substitution available |
+
+**Score ≥ 0.6**: Create shell review record (but do not block current cycle).  
+**Score ≥ 0.85**: Create shell review record AND notify Architecture Oracle Integration Lead.
+
+### 5.4 Architecture Briefing Format
+
+The weekly briefing should be stored as a knowledge base entry with:
+- `namespace`: `general`
+- `title`: `Architecture Briefing — Week of {date}`
+- Content sections:
+  1. **Trend Movements**: Topics that rose or fell ≥ 10 points
+  2. **Tool Alerts**: Any tool deprecation or replacement signals
+  3. **Recommendations**: Architecture recommendations scored ≥ 0.6
+  4. **Shell Stability**: Assessment of whether any shell contracts need review
+
+---
+
+## 6. System Integration Strategies
+
+### Strategy 1: Polling with Local Cache (Phase 1 — before AAA REST API is live)
+
+**Use when**: Agentic-AI-Architect Phase 5 REST API is not yet deployed.
+
+The ArchitectAgent reads directly from the Agentic-AI-Architect **SQLite knowledge base**
+if ExMorbus V3 and Agentic-AI-Architect are on the same host:
+
+```python
+# Temporary integration: read-only SQLite access
+# ⚠️ CONCURRENT ACCESS WARNING: ensure AAA is not mid-write when this runs.
+# Use a scheduled window when AAA's intelligence cycle is idle (e.g. between cycles).
+# SQLite's WAL mode (PRAGMA journal_mode=WAL) on the AAA side reduces but does not
+# eliminate the risk of a reader seeing a partial transaction.
+import sqlite3
+conn = sqlite3.connect(
+    "/path/to/aaa/data/knowledge.db",
+    timeout=30,  # wait up to 30s for a lock
+    check_same_thread=False,
+)
+conn.execute("PRAGMA query_only = ON")  # enforce read-only at connection level
+# Query namespaces = 'tools' | 'frameworks' | 'trends'
+```
+
+**Limitations**: Read-only; no real-time alerts; requires co-location; concurrent-write risk.  
+**Transition**: Replace with REST API when Phase 5 is deployed.
+
+### Strategy 2: REST API + Scheduled Polling (Phase 5 — primary strategy)
+
+**Use when**: Agentic-AI-Architect Phase 5 REST API is deployed.
+
+```
+ExMorbus ArchitectAgent (weekly schedule)
+    ↓ GET /trends + GET /tools + GET /query (standing queries)
+Agentic-AI-Architect REST API
+    ↓ structured JSON responses
+ExMorbus ArchitectAgent processes → shell review records
+```
+
+### Strategy 3: MCP Server Integration (Phase 5 — for Claude Desktop / agent-native use)
+
+**Use when**: An AI agent (Claude, GPT-4, etc.) is directly helping an ExMorbus V3
+developer and needs live architecture data.
+
+```
+Developer assistant (Claude Desktop + MCP)
+    ↓ tool call: search_knowledge("vector store options 2026")
+Agentic-AI-Architect MCP server
+    ↓ structured response
+Developer assistant incorporates into recommendation
+```
+
+### Strategy 4: Webhook Push + Event Bus (Phase 5+ — for real-time alerts)
+
+**Use when**: High-value, time-sensitive alerts (tool deprecation, major framework shift)
+need to reach the ExMorbus shell review queue immediately rather than waiting for the next
+polling cycle.
+
+```
+Agentic-AI-Architect TrendTrackerAgent detects major shift
+    ↓ emits TrendAlert event
+Agentic-AI-Architect webhook dispatcher
+    ↓ POST /exmorbus/hooks/aaa (HMAC-signed)
+ExMorbus V3 webhook handler
+    ↓ creates shell review record with priority = "urgent"
+ExMorbus ArchitectAgent processes at next available cycle
+```
+
+---
+
+## 7. Data Contracts and Schemas
+
+### 7.1 Shared Knowledge Entry Schema
+
+Both systems should use compatible knowledge entry formats to allow future shared indexing:
+
+```python
+from dataclasses import dataclass, field
+from datetime import datetime
+
+@dataclass
+class KnowledgeEntry:
+    """Shared schema for knowledge entries across both systems."""
+    id: str                         # UUID
+    namespace: str                  # e.g. "tools", "frameworks", "trends"
+    title: str
+    summary: str
+    source_url: str | None
+    confidence: float               # 0.0 – 1.0
+    extracted_at: datetime
+    tags: list[str] = field(default_factory=list)
+    trend_score: float | None = None
+    provenance: dict | None = None  # ExMorbus extension: evidence-grade metadata
+    domain_stage: str | None = None # ExMorbus extension: curriculum stage
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "namespace": self.namespace,
+            "title": self.title,
+            "summary": self.summary,
+            "source_url": self.source_url,
+            "confidence": self.confidence,
+            "extracted_at": self.extracted_at.isoformat(),
+            "tags": self.tags,
+            "trend_score": self.trend_score,
+            "provenance": self.provenance,
+            "domain_stage": self.domain_stage,
+        }
+```
+
+### 7.2 Webhook HMAC Verification
+
+All webhooks from Agentic-AI-Architect include an HMAC-SHA256 signature:
+
+```python
+import hashlib
+import hmac
+
+def verify_webhook(payload_bytes: bytes, signature_header: str, secret: str) -> bool:
+    """Return True if signature_header matches the HMAC-SHA256 of payload_bytes.
+
+    Validates that the header is well-formed (starts with "sha256=") before
+    comparing, avoiding a timing attack on an unexpected header format.
+    """
+    if not isinstance(signature_header, str) or not signature_header.startswith("sha256="):
+        return False
+    expected = "sha256=" + hmac.new(
+        secret.encode(), payload_bytes, hashlib.sha256
+    ).hexdigest()
+    # compare_digest is constant-time — safe against timing side-channels
+    return hmac.compare_digest(expected, signature_header)
+```
+
+---
+
+## 8. Security and Compliance Requirements
+
+### 8.1 General
+
+| Requirement | Mechanism |
+|-------------|-----------|
+| API authentication | Bearer token (JWT or API key) in `Authorization` header |
+| Webhook integrity | HMAC-SHA256 signature verification |
+| Secrets management | Environment variables only; never in source code |
+| Rate limiting | Both systems implement rate limiting on outbound calls |
+| Input sanitisation | All content from Agentic-AI-Architect is sanitised before use in ExMorbus LLM prompts |
+
+### 8.2 ExMorbus V3 Medical-Specific Requirements
+
+| Requirement | Notes |
+|-------------|-------|
+| No patient data in Agentic-AI-Architect | AAA receives only architectural queries, never medical data |
+| Architecture recommendations are not medical advice | Clear labelling required in ExMorbus UI |
+| Audit log for all ArchitectAgent queries | Required for research reproducibility |
+| Architecture changes require human review before shell deployment | ArchitectAgent creates records; humans approve deployments |
+
+---
+
+## 9. Operational Runbook
+
+### 9.1 ArchitectAgent Health Check
+
+```bash
+# From ExMorbus V3 repo:
+python -c "from src.agents.architect_agent import ArchitectAgent; a = ArchitectAgent(); a.initialize(); print(a.health_check())"
+```
+
+Expected output: `{'status': 'healthy', 'aaa_reachable': True, 'last_review': '...'}`
+
+### 9.2 Manual Architecture Review Trigger
+
+```bash
+# Trigger an immediate ArchitectAgent review cycle:
+python -m src.agents.architect_agent --run-now
+```
+
+### 9.3 Webhook Test
+
+```bash
+# Send a test webhook to ExMorbus from Agentic-AI-Architect:
+curl -X POST https://aaa.example.com/webhooks/test \
+  -H "Authorization: Bearer $AAA_API_KEY" \
+  -d '{"target_url": "https://exmorbus.example.com/hooks/aaa", "event": "tool_alert"}'
+```
+
+### 9.4 Troubleshooting
+
+| Symptom | Likely Cause | Resolution |
+|---------|-------------|------------|
+| ArchitectAgent returns no results | AAA REST API not deployed yet | Switch to Strategy 1 (SQLite direct read) |
+| Webhook HMAC verification failing | Secret mismatch | Re-sync `AAA_WEBHOOK_SECRET` env var |
+| Standing queries returning stale data | AAA knowledge base not yet populated | Trigger ingestion with `POST /ingest` for seed URLs |
+| Too many shell review records | Impact score threshold too low | Increase `confidence_threshold` config |
+
+---
+
+## 10. Roadmap Alignment
+
+| Agentic-AI-Architect Phase | ExMorbus V3 Milestone | Integration Available |
+|---------------------------|----------------------|----------------------|
+| P0 Foundation ✅ | Can read AAA docs manually | Manual research only |
+| P1 Knowledge Discovery 🔄 | AAA docs improving; SQLite readable | Strategy 1 (SQLite direct) |
+| P2 Intelligence Layer | Rich trend scores available | Strategy 1 + local query script |
+| P3 Agent Specialisation | Tool discovery agent operational | Better tool alerts |
+| P4 Orchestration | Full intelligence cycle running | Strategy 1 at scale |
+| **P5 API & Integration** | **REST API + MCP + Webhooks live** | **Strategies 2, 3, 4 all active** |
+| P6 Self-Improvement | AAA improves its own recommendations | Higher confidence scores |
+| P7 Production Hardening | AAA is a reliable production dependency | Full production integration |
+
+**Current recommended action**: ExMorbus V3 should design and stub its `ArchitectAgent`
+now (using Strategy 1 for local dev) so the integration is ready when AAA Phase 5 ships.
+
+---
+
+## 11. Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2026-03 | Agentic-AI-Architect research cycle | Initial document — synthesised from ExMorbus/MoltBook conversation context |
+
+---
+
+*This document is part of the Agentic-AI-Architect knowledge base.*  
+*Namespace*: `general` (cross-project architecture)  
+*Related*: `docs/moltbook-research-findings.md`, `docs/phase-5-implementation-plan.md`
