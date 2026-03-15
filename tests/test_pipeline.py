@@ -4,7 +4,13 @@ Unit tests for the data processing pipeline components.
 
 import pytest
 
+from src.knowledge.knowledge_base import KnowledgeBase
 from src.pipeline.processing import ContentProcessor, ProcessedDocument
+from src.pipeline.linkedin_pdf_ingest import (
+    LinkedInPdfIngestPipeline,
+    LinkedInPdfIngestResult,
+    LinkedInPostRecord,
+)
 from src.utils.helpers import (
     chunk_text,
     hash_content,
@@ -132,6 +138,246 @@ class TestContentProcessor:
         d = result.to_dict()
         for key in ("url", "title", "text", "chunks", "source_type", "content_hash", "word_count"):
             assert key in d
+
+
+class TestLinkedInPdfIngestPipeline:
+    def test_split_posts_tracks_post_ids_across_pages(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        raw_text = (
+            "Feed post number 1\nPost one body\f"
+            "continuation of post one\f"
+            "Feed post number 2\nPost two body"
+        )
+
+        page_to_post, post_pages = pipeline._split_posts(raw_text)
+
+        assert page_to_post == {1: 1, 2: 1, 3: 2}
+        assert len(post_pages[1]) == 2
+        assert len(post_pages[2]) == 1
+
+    def test_classify_visual_detects_architecture_diagram(self):
+        pipeline = LinkedInPdfIngestPipeline()
+
+        visual_type = pipeline._classify_visual(
+            "End-to-End Agentic Architecture with Ontology, Security, and Observability layers"
+        )
+
+        assert visual_type == "architecture_diagram"
+
+    def test_extract_patterns_and_hooks_from_context_engineering_text(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        text = "Context engineering and observability matter. Claude prompt assets should be reusable."
+
+        patterns = pipeline._extract_patterns(text)
+        hooks = pipeline._derive_research_hooks(text)
+
+        assert "Context engineering as a first-class architecture layer" in patterns
+        assert "End-to-end observability for agentic systems" in patterns
+        assert any("context vaults" in hook.lower() for hook in hooks)
+
+    def test_extract_body_text_removes_linkedin_chrome(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        raw_post_text = "\n".join(
+            [
+                "Feed post number 4",
+                "Brandt Pileggi likes this",
+                "Visible to anyone on or off LinkedIn",
+                "This is the useful post body.",
+                "Activate to view larger image,",
+                "Like",
+            ]
+        )
+
+        body_text = pipeline._extract_body_text(raw_post_text)
+
+        assert body_text == "This is the useful post body."
+
+    def test_extract_author_prefers_profile_name_over_feed_chrome(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        raw_post_text = "\n".join(
+            [
+                "Feed post number 14",
+                "Brandt Pileggi likes this",
+                "Mayank A.",
+                "Mayank A.",
+                "• 2nd",
+                "Premium • 2nd",
+                "View my blog",
+                "2d •",
+                "2 days ago • Visible to anyone on or off LinkedIn",
+                "Follow",
+                "Someone finally documented how to actually use Claude Code.",
+            ]
+        )
+
+        author = pipeline._extract_author(raw_post_text)
+
+        assert author == "Mayank A."
+
+    def test_extract_body_text_starts_after_timestamp_and_profile_chrome(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        raw_post_text = "\n".join(
+            [
+                "Feed post number 2",
+                "Brandt Pileggi likes this",
+                "Allie K. Miller",
+                "Allie K. Miller",
+                "Influencer • Following",
+                "View my newsletter",
+                "22h •",
+                "22 hours ago • Visible to anyone on or off LinkedIn",
+                "Last week my team held a one-hour context engineering sprint.",
+                "Massively valuable.",
+                "Activate to view larger image,",
+                "172",
+            ]
+        )
+
+        body_text = pipeline._extract_body_text(raw_post_text)
+
+        assert body_text == (
+            "Last week my team held a one-hour context engineering sprint.\n"
+            "Massively valuable."
+        )
+
+    def test_extract_body_text_strips_embedded_repost_profile_header(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        raw_post_text = "\n".join(
+            [
+                "Feed post number 3",
+                "Brandt Pileggi likes this",
+                "김지환",
+                "Verified • 3rd+",
+                "1d •",
+                "1 day ago • Visible to anyone on or off LinkedIn",
+                "Nice NVIDIA!",
+                "Paolo Perrone",
+                "Premium • Following",
+                "3d •",
+                "3 days ago • Visible to anyone on or off LinkedIn",
+                "NVIDIA just dropped a FREE 120B reasoning model.",
+                "Only 12B active during inference.",
+            ]
+        )
+
+        body_text = pipeline._extract_body_text(raw_post_text)
+
+        assert body_text == (
+            "Nice NVIDIA!\n"
+            "NVIDIA just dropped a FREE 120B reasoning model.\n"
+            "Only 12B active during inference."
+        )
+
+    def test_filter_relevant_posts_excludes_social_noise(self):
+        pipeline = LinkedInPdfIngestPipeline()
+        useful_post = LinkedInPostRecord(
+            post_number=1,
+            author="Builder",
+            page_numbers=[1],
+            body_text="Agentic architecture with evaluation, observability, and ontology layers.",
+            raw_text="",
+            summary="Agentic architecture with evaluation and observability.",
+            diagram_intent="Layered architecture diagram with ontology and governance.",
+            architecture_patterns=["End-to-end agentic architecture as the competitive layer"],
+            research_hooks=["Map the minimum viable observability stack for agent tool calls, data access, and decision traces."],
+            namespace="frameworks",
+        )
+        useful_post.signal_score = pipeline._score_post_signal(useful_post)
+        useful_post.is_relevant, useful_post.exclusion_reason = pipeline._judge_post_relevance(useful_post)
+
+        noisy_post = LinkedInPostRecord(
+            post_number=2,
+            author="Friend",
+            page_numbers=[2],
+            body_text="Thrilled to announce my promotion to Senior Manager. Congratulations to the team!",
+            raw_text="",
+            summary="Thrilled to announce my promotion.",
+            diagram_intent="No diagram OCR was recovered for this post; interpret the visual from surrounding text only.",
+            architecture_patterns=[],
+            research_hooks=[],
+            namespace="general",
+        )
+        noisy_post.signal_score = pipeline._score_post_signal(noisy_post)
+        noisy_post.is_relevant, noisy_post.exclusion_reason = pipeline._judge_post_relevance(noisy_post)
+
+        filtered = pipeline._filter_relevant_posts([useful_post, noisy_post])
+
+        assert [post.post_number for post in filtered] == [1]
+        assert noisy_post.exclusion_reason
+
+    def test_seed_knowledge_base_persists_high_signal_posts(self, tmp_path):
+        pipeline = LinkedInPdfIngestPipeline()
+        output_dir = tmp_path / "ingest"
+        output_dir.mkdir()
+        (output_dir / "raw_text.txt").write_text("raw text", encoding="utf-8")
+
+        high_signal_post = LinkedInPostRecord(
+            post_number=4,
+            author="Paolo Perrone",
+            page_numbers=[8, 9],
+            body_text="Agent lifecycle, evaluation suites, governance, and context engineering are all part of the architecture.",
+            raw_text="",
+            summary="End-to-end agentic architecture with governance and evaluation.",
+            diagram_intent="Layered architecture diagram with observability and ontology control plane.",
+            architecture_patterns=[
+                "End-to-end agentic architecture as the competitive layer",
+                "Evaluation integrated into the agent lifecycle",
+            ],
+            research_hooks=[
+                "Compare ontology-centric control planes with knowledge graph, event log, and RAG-first architectures.",
+            ],
+            namespace="frameworks",
+            is_relevant=True,
+        )
+        high_signal_post.signal_score = 9.4
+
+        lower_signal_post = LinkedInPostRecord(
+            post_number=5,
+            author="Someone Else",
+            page_numbers=[10],
+            body_text="Short AI note.",
+            raw_text="",
+            summary="Short AI note.",
+            diagram_intent="No diagram OCR was recovered for this post; interpret the visual from surrounding text only.",
+            architecture_patterns=[],
+            research_hooks=[],
+            namespace="general",
+            is_relevant=True,
+            signal_score=4.8,
+        )
+
+        result = LinkedInPdfIngestResult(
+            pdf_path="docs/test.pdf",
+            output_dir=str(output_dir),
+            page_count=10,
+            post_count=2,
+            total_posts_detected=2,
+            filtered_out_count=0,
+            recurring_patterns=high_signal_post.architecture_patterns,
+            curiosity_queue=high_signal_post.research_hooks,
+            posts=[high_signal_post, lower_signal_post],
+        )
+
+        db_path = tmp_path / "kb.db"
+        stored = pipeline.seed_knowledge_base(
+            result=result,
+            db_path=str(db_path),
+            min_signal_score=7.0,
+            limit=10,
+        )
+
+        kb = KnowledgeBase(db_path=str(db_path))
+        kb.initialize()
+        try:
+            results = kb.search(query="agentic architecture", limit=10)
+        finally:
+            kb.close()
+
+        assert stored == 1
+        assert result.knowledge_entries_seeded == 1
+        assert len(results) == 1
+        assert results[0].metadata["post_number"] == 4
+        assert results[0].namespace == "frameworks"
 
 
 # ---------------------------------------------------------------------------
