@@ -50,6 +50,15 @@ A multi-agent Python system that continuously discovers, scores, and documents t
 
 ---
 
+## Repository Memory — Always
+
+- Keep durable records in `docs/` for important decisions, discoveries, lessons learned, and completed work.
+- Use `docs/work-index.md` as the entry point.
+- Do not rely on chat history, issue comments, or PR descriptions as the only record of important context.
+- If a meaningful decision or lesson emerges, update the relevant log in the same session when practical.
+
+---
+
 ## What NOT to Do
 
 - ❌ Add logic to `orchestrator.py` beyond agent coordination — logic goes in agents.
@@ -60,6 +69,7 @@ A multi-agent Python system that continuously discovers, scores, and documents t
 - ❌ Skip sanitizing content because "it's from a trusted source".
 - ❌ Store any secret, token, or key in source code.
 - ❌ Delete or weaken existing passing tests.
+- ❌ Leave important decisions or completed work undocumented if they affect future contributors.
 
 ---
 
