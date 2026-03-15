@@ -1,0 +1,22 @@
+# Decision Log
+
+## Purpose
+
+This file records durable decisions that affect future repository work.
+
+Use it as the compact ledger of accepted choices. Long-form memos can exist elsewhere, but important decisions should also appear here.
+
+## Decision Ledger
+
+| Date | Decision | Status | Rationale | Primary References |
+|------|----------|--------|-----------|--------------------|
+| 2026-03 | Keep `Agentic-AI-Architect` as a standalone product repository for now | Accepted | Product focus is more important than premature ecosystem platform design; future interoperability should be designed through explicit seams instead | `docs/repo-structure-decision-memo.md` |
+| 2026-03 | Sequence ecosystem work as AI Architect → shared substrate → Data Architect → downstream specialist systems | Accepted | Reduces duplication of contracts, evaluation, provenance, and review logic before the second specialist system is opened | `docs/ecosystem-sequencing-memo.md` |
+| 2026-03 | Develop ExMorbus through AAA before opening the next standalone specialist repo | Accepted | Treating ExMorbus as AAA's first real external design customer gives the repo a concrete way to surface real shared substrate needs without forcing premature multi-repo expansion | `docs/exmorbus-through-aaa-operating-model-v1.md`, `docs/ecosystem-sequencing-memo.md` |
+| 2026-03 | Keep ExMorbus-specific pieces in ExMorbus, while architecture data gathering and decision-making stay in AAA | Accepted | Preserves AAA as the architecture oracle and prevents medical-domain specifics from polluting the reusable shell layer too early | `docs/aaa-exmorbus-ownership-matrix-v0.md`, `docs/exmorbus-through-aaa-operating-model-v1.md` |
+| 2026-03 | ExMorbus owns its domain knowledge and dissemination interfaces, while AAA retains architectural performance learning about the systems it designs | Accepted | Clarifies that AAA is the architect, design lab, and institutional memory, not the long-term owner of ExMorbus runtime knowledge | `docs/aaa-exmorbus-ownership-matrix-v0.md`, `docs/exmorbus-through-aaa-operating-model-v1.md` |
+| 2026-03 | Use `Mouseion` as the proper name for the shared substrate while it remains housed inside AAA | Accepted | Gives the reusable shell and ontological grounds a stable identity without prematurely extracting them into a separate repo | `docs/shared-substrate-candidate-spec-v0.md`, `docs/mouseion-core-v0.md` |
+| 2026-03 | The first ExMorbus bridge should be an adapter layer that maps existing runtime classes into Mouseion payloads rather than replacing ExMorbus domain models | Accepted | Preserves ExMorbus runtime autonomy while letting Mouseion pressure-test real shell contracts against a live downstream system | `docs/mouseion-exmorbus-code-boundary-map-v0.md`, `workspaces/ExMorbus-v0.1/agents/mouseion_adapter.py` |
+| 2026-03 | Use repo docs as living specification, not commentary | Accepted | Keeps human and AI contributors aligned on the actual intended system behavior | `CLAUDE.md`, `docs/phase-5-implementation-plan.md` |
+| 2026-03 | Complete influencer source ingestion before applying pruning rules | Accepted | Current priority is ingestion and training readiness; pruning can wait until the baseline source set is fully captured and later shows extended dormancy | `docs/influencer-tracker.md`, `docs/influencer-source-registry.yaml` |
+| 2026-03 | Make machine-readable schema the canonical answer contract and derive human output from it | Accepted | Future agentic systems and dashboards need stable structured responses, while humans should still be able to query the same system through rendered views of the same payload | `docs/first-answer-contract-v0.md` |

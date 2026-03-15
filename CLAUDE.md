@@ -27,6 +27,7 @@ This is a Python project. Every line of code you write should move us measurably
 | §9 Anti-Patterns | What NOT to do |
 | §10 Workflow | How to work session-to-session |
 | §11 Context & State | Managing long coding sessions |
+| §14 Repository Memory | Logging, indexing, and preserving lessons learned |
 
 ---
 
@@ -124,6 +125,9 @@ For any task that will take more than 5 minutes of implementation, write a brief
 3. What could go wrong?
 
 State this plan in your response before writing any code.
+
+### P11 — Durable Repository Memory
+If work produces a durable decision, discovery, lesson learned, or completed milestone, update the repository memory files in `docs/` so the project does not repeatedly lose context. Do not rely on chat history or PR text as the only record.
 
 ---
 
@@ -229,6 +233,18 @@ Phase 7: Production Hardening ⬜ NOT STARTED
 - P1.2 Content Processing Pipeline: PDF parsing (PyMuPDF + LlamaParse)
 - P1.3 Research Agent: LLM-powered extraction (requires `llm_client` config)
 - P1.4 Ingestion Pipeline: Queue-based processing with priority
+- P1.5 Canonical answer contract and typed external schemas
+- P1.6 Initial evaluation set, executable scoring, and persisted evaluation history
+- P1.7 Explicit source weighting, enterprise overlay fields, and segment-aware evaluation
+- P1.8 Curated-source ingest improvements, including user-provided LinkedIn PDF ingest
+
+Important clarification:
+
+Minimal API and query-surface work has already been pulled forward conceptually because contract,
+evaluation, and downstream reuse depend on it. Do not treat all API work as deferred until Phase 5.
+
+However, do not let that pull-forward become an excuse to overbuild the external surface before the
+core queryable product is trustworthy.
 
 **Phase 5 strategic context** (from `docs/exmorbus-v3-integration.md`):
 Phase 5 is now defined with a concrete first integration target: **ExMorbus V3**, a medical research multi-agent platform that uses Agentic-AI-Architect as its standing architectural oracle. The full integration design, API contracts, and MCP tool specifications are documented in `docs/exmorbus-v3-integration.md`. Key Phase 5 additions driven by ExMorbus:
@@ -340,7 +356,7 @@ Every entry stored in `KnowledgeBase` must have a `namespace`. Valid values: `ed
 3. **Write the plan.** State: what files change, what the minimal diff is, what could go wrong.
 4. **Write the test first** (or alongside), not after.
 5. **Implement the minimal change** that makes the test pass.
-6. **Update docs** if behaviour or architecture changed.
+6. **Update docs and repo memory** if behaviour, architecture, decisions, or meaningful lessons changed.
 7. **Run the full suite.** `pytest tests/ -v` must pass clean.
 
 ### Naming Branches (Git)
@@ -377,6 +393,7 @@ Before writing any code:
 2. Read this file (`CLAUDE.md`) fully.
 3. Read the relevant phase doc (`docs/phase-X-*.md`) for the work at hand.
 4. Run `pytest tests/ -v` to confirm the baseline is green.
+5. Check `docs/work-index.md` for durable decisions, discoveries, and prior work that may affect the task.
 
 ### When a Session Gets Long
 
@@ -432,6 +449,26 @@ A living record of significant architectural choices and the reasoning behind th
 - **Heavy optional dependencies** (FAISS, Playwright, sentence-transformers, openai) remain optional — the system degrades gracefully without them. Wrap imports in try/except ImportError blocks with a logged fallback.
 - **Check for known vulnerabilities** before adding any package.
 - **Lock major versions only** in `requirements.txt`. Never exact-pin unless a bug forces it.
+
+---
+
+## 14. Repository Memory and Logging
+
+The repository must preserve operational memory in durable files.
+
+Use these files:
+
+- `docs/instruction-hierarchy.md` — explains which instruction sources govern work
+- `docs/repo-memory-protocol.md` — rules for capturing decisions, discoveries, lessons, and completed work
+- `docs/work-index.md` — master index for repository memory
+- `docs/decision-log.md` — compact accepted decision ledger
+- `docs/discovery-log.md` — important discoveries that affect future work
+- `docs/lessons-learned-log.md` — mistakes, surprises, and preventive lessons
+- `docs/work-log.md` — major completed work and validation history
+
+These files are not optional bookkeeping. They are the repository's persistent memory surface.
+
+When meaningful work lands, update the relevant logs in the same session whenever practical.
 
 ---
 

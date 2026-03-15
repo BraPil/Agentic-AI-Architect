@@ -44,6 +44,36 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 
 **Total estimated development**: ~24 weeks for full v1.0
 
+## 5.2.1 Current Direction Update
+
+The original roadmap is still useful as a phase scaffold, but repository work has already clarified a
+more specific execution order.
+
+The most important change is this:
+
+- contract, evaluation, provenance, and query-surface work were pulled earlier than the original
+  roadmap implied
+
+That change was intentional.
+
+The repository is no longer just proving that agents can crawl and store information. It is also
+proving that AAA can serve structured, machine-readable architectural answers that can later be reused by
+other systems.
+
+In practical terms, the current direction inside Phase 1 now includes:
+
+- canonical answer contract definition
+- initial evaluation set and executable scoring
+- source weighting and learned weighting
+- enterprise overlay and segment-aware evaluation
+- durable repository memory
+- curated-source ingest improvements, including LinkedIn PDF ingest for user-provided research inputs
+
+This means the roadmap should now be read with one governing rule:
+
+build the smallest trustworthy queryable intelligence system first, then widen autonomy and
+orchestration around it.
+
 ---
 
 ## 5.3 Detailed Phase Breakdown
@@ -128,11 +158,31 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 - Deduplication at ingestion point
 - Error handling and dead letter queue
 
+**P1.5 — Canonical Contract And Evaluation Backbone**
+- Define the first machine-readable answer contract
+- Implement typed request and response schemas
+- Define and expose the initial scored evaluation set
+- Add executable scoring for query responses
+- Persist evaluation history for later trend and weighting analysis
+
+**P1.6 — Source Weighting And Enterprise Overlay**
+- Make retrieval source weighting explicit and auditable
+- Add learned source multipliers from persisted evaluation outcomes
+- Add enterprise overlay fields to the answer contract
+- Add segment-aware evaluation and comparison paths
+
+**P1.7 — Curated Input Expansion**
+- Capture high-signal influencer and post watchlists as durable source inputs
+- Support user-provided LinkedIn PDF ingest as a practical boundary for auth-gated social content
+- Seed high-signal retained posts into the knowledge base with provenance metadata
+
 #### Success Criteria
 - [ ] Crawler successfully extracts clean text from 100 diverse URLs
 - [ ] Research Agent correctly classifies content type with ≥ 85% accuracy
 - [ ] Full pipeline ingests 50 arXiv papers and stores structured summaries
 - [ ] No robots.txt violations in crawl history
+- [ ] Canonical answer contract is stable enough to score repeatedly across a defined question set
+- [ ] Evaluation history can be persisted and queried over time
 
 ---
 
@@ -142,6 +192,11 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 **Narrative**: Raw data is not knowledge. The intelligence layer transforms crawled content into structured, queryable, evolving knowledge — with semantic search that understands meaning, not just keywords.
 
 #### Objectives
+
+Phase 2 now assumes that a minimal queryable surface and evaluation backbone already exist.
+
+The emphasis therefore shifts from "can the system answer at all" to "can the system answer with
+better synthesis, ranking, and reliability over time."
 
 **P2.1 — Enhanced Research Agent**
 - Relationship extraction: "Tool X is an alternative to Tool Y"
@@ -226,7 +281,8 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 #### Objectives
 
 **P4.1 — Orchestrator Agent**
-- LangGraph-based state machine for agent coordination
+- Decide and lock the orchestration strategy before broadening runtime complexity
+- Implement either a LangGraph-based state machine or a deliberately retained custom orchestration layer
 - Scheduled cycle: daily crawl → research → trend update → documentation refresh
 - Dynamic agent spawning based on workload
 - Inter-agent message passing with typed messages
@@ -267,13 +323,24 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 
 #### Objectives
 
+Some API work has already been pulled forward because contract and evaluation discipline depend on it.
+
+That means Phase 5 should now be read as "expand and harden the external surface" rather than "create
+the first external surface from scratch."
+
 **P5.1 — REST API**
 - FastAPI-based REST endpoint
 - Endpoints:
-  - `GET /query` — semantic search across knowledge base
+  - `GET /query` — canonical contract-backed answer surface
   - `GET /trends` — current trend scores and rankings
   - `GET /tools` — tool database with filters
   - `GET /frameworks` — framework maturity matrix
+  - `GET /evaluation-set` — served evaluation backbone
+  - `GET /evaluate/query` — score one query response
+  - `GET /evaluate/query-set` — score question batches
+  - `GET /evaluate/query-segments` — compare one query across segments
+  - `GET /evaluate/history` — persisted evaluation run history
+  - `GET /evaluate/performance` — compact performance summary over evaluation runs
   - `POST /ingest` — submit a URL for processing
   - `GET /report/{phase}` — get latest phase report
   - `GET /recommend` — architecture recommendation for a problem statement (required by ExMorbus)
@@ -400,9 +467,7 @@ Each phase of development moves us one circle outward. We do not skip circles. W
 
 ```
 main
-├── develop                              # Integration branch
-│
-├── feature/p0-foundation               # ✅ Current branch
+├── feature/p0-foundation
 │   ├── task/p0.1-scaffolding           # ✅ Completed
 │   ├── task/p0.2-base-agent
 │   ├── task/p0.3-knowledge-base
@@ -413,15 +478,37 @@ main
 │   ├── task/p1.1-crawler-agent
 │   ├── task/p1.2-content-processing
 │   ├── task/p1.3-research-agent
-│   └── task/p1.4-ingestion-pipeline
+│   ├── task/p1.4-ingestion-pipeline
+│   ├── task/p1.5-answer-contract-v0
+│   ├── task/p1.6-eval-question-set
+│   ├── task/p1.7-source-weighting-model
+│   ├── task/p1.8-enterprise-overlay-fields
+│   ├── task/p1.9-evaluation-persistence
+│   └── task/p1.10-linkedin-pdf-ingest
 │
 ├── feature/p2-intelligence-layer
 │   ├── task/p2.1-enhanced-research
 │   ├── task/p2.2-trend-tracker
 │   ├── task/p2.3-vector-enhancement
 │   └── task/p2.4-knowledge-graph
+
+├── research/exmorbus-through-aaa-v1
 │
-├── feature/p3-agent-specialization
+└── spike/exmorbus-shell-poc-v1
+```
+
+Branch usage should follow the operating guidance in `docs/branch-strategy-summary.md`.
+
+The practical rule is:
+
+- use `task/...` for bounded implementation work
+- use `research/...` for durable ontology and contract work
+- use `spike/...` for fast validation of shell shape
+
+Additional planned feature branches remain:
+
+```
+feature/p3-agent-specialization
 │   ├── task/p3.1-tool-discovery
 │   ├── task/p3.2-documentation-agent
 │   ├── task/p3.3-evaluation-framework
@@ -445,7 +532,7 @@ main
 │   ├── task/p6.3-prompt-optimization
 │   └── task/p6.4-knowledge-distillation
 │
-└── feature/p7-production
+feature/p7-production
     ├── task/p7.1-observability
     ├── task/p7.2-cost-optimization
     ├── task/p7.3-security-hardening
@@ -459,10 +546,10 @@ main
 | Layer | Choice | Alternative | Rationale |
 |-------|--------|-------------|-----------|
 | Language | Python 3.11+ | TypeScript | ML ecosystem; LangChain/LlamaIndex native |
-| Agent Framework | LangGraph | AutoGen | State-based; production-ready; persistent state |
+| Agent Framework | Custom `BaseAgent` contract now; orchestration strategy still open | LangGraph / AutoGen | BaseAgent is already the working lifecycle contract; orchestration should not be treated as implicitly settled before an explicit decision |
 | LLM (primary) | Claude 3.5 Sonnet | GPT-4o | Best instruction following; long context |
 | LLM (fast/cheap) | Claude 3 Haiku | GPT-4o-mini | Cost-optimized for classification tasks |
-| Vector Store | FAISS (local) / Pinecone (cloud) | Qdrant | FAISS for dev; Pinecone for production |
+| Vector Store | FAISS (local) / PostgreSQL + pgvector or Pinecone later | Qdrant | FAISS remains the simplest local baseline; production target should remain open until retrieval and hosting needs are clearer |
 | Relational Store | SQLite → PostgreSQL | DynamoDB | Simple start; scale when needed |
 | API Framework | FastAPI | Flask | Async; automatic OpenAPI; Pydantic integration |
 | Crawler | Firecrawl + Playwright | Scrapy | LLM-ready output; dynamic site support |
