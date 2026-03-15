@@ -18,6 +18,7 @@ Schema:
 
 import json
 import logging
+import re
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
@@ -29,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 # Default database path
 DEFAULT_DB_PATH = "data/knowledge_base.db"
+MIN_QUERY_TOKEN_LENGTH = 3
 
 
 # ---------------------------------------------------------------------------
@@ -102,6 +104,72 @@ class KnowledgeEntry:
                 "people_mentioned": finding.get("people_mentioned", []),
             },
         )
+
+
+@dataclass
+class EvaluationRunRecord:
+    """A persisted evaluation run record stored in SQLite."""
+
+    run_type: str
+    payload: dict[str, Any]
+    average_normalized_score: float
+    verdict_summary: str
+    query: str = ""
+    question_id: str = ""
+    run_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "run_id": self.run_id,
+            "run_type": self.run_type,
+            "query": self.query,
+            "question_id": self.question_id,
+            "average_normalized_score": self.average_normalized_score,
+            "verdict_summary": self.verdict_summary,
+            "created_at": self.created_at.isoformat(),
+            "payload": self.payload,
+        }
+
+    @classmethod
+    def from_row(cls, row: tuple) -> "EvaluationRunRecord":
+        """Reconstruct an EvaluationRunRecord from a database row tuple."""
+        (
+            run_id,
+            run_type,
+            query,
+            question_id,
+            average_normalized_score,
+            verdict_summary,
+            created_at,
+            payload_json,
+        ) = row
+        return cls(
+            run_id=run_id,
+            run_type=run_type,
+            query=query or "",
+            question_id=question_id or "",
+            average_normalized_score=average_normalized_score,
+            verdict_summary=verdict_summary,
+            created_at=datetime.fromisoformat(created_at),
+            payload=json.loads(payload_json),
+        )
+
+
+@dataclass
+class LearnedWeightProfile:
+    """Derived weighting multipliers learned from persisted evaluation runs."""
+
+    source_multipliers: dict[str, float] = field(default_factory=dict)
+    segment_source_multipliers: dict[str, dict[str, float]] = field(default_factory=dict)
+    sample_count: int = 0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "source_multipliers": self.source_multipliers,
+            "segment_source_multipliers": self.segment_source_multipliers,
+            "sample_count": self.sample_count,
+        }
 
 
 # ---------------------------------------------------------------------------
@@ -204,6 +272,87 @@ class KnowledgeBase:
         self._conn.commit()
         return cursor.rowcount > 0
 
+    def store_evaluation_run(self, record: EvaluationRunRecord) -> str:
+        """Insert a persisted evaluation run record and return its run ID."""
+        assert self._conn is not None, "KnowledgeBase not initialized"
+        self._conn.execute(
+            """
+            INSERT INTO evaluation_runs
+              (run_id, run_type, query, question_id, average_normalized_score,
+               verdict_summary, created_at, payload)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                record.run_id,
+                record.run_type,
+                record.query,
+                record.question_id,
+                record.average_normalized_score,
+                record.verdict_summary,
+                record.created_at.isoformat(),
+                json.dumps(record.payload),
+            ),
+        )
+        self._conn.commit()
+        return record.run_id
+
+    def list_evaluation_runs(
+        self,
+        limit: int = 20,
+        run_type: str | None = None,
+    ) -> list[EvaluationRunRecord]:
+        """Return recent evaluation runs, newest first."""
+        assert self._conn is not None, "KnowledgeBase not initialized"
+
+        clauses: list[str] = []
+        params: list[Any] = []
+        if run_type:
+            clauses.append("run_type = ?")
+            params.append(run_type)
+
+        where_clause = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+        sql = f"""
+            SELECT run_id, run_type, query, question_id, average_normalized_score,
+                   verdict_summary, created_at, payload
+            FROM evaluation_runs
+            {where_clause}
+            ORDER BY created_at DESC
+            LIMIT ?
+        """
+        params.append(limit)
+        cursor = self._conn.execute(sql, params)
+        return [EvaluationRunRecord.from_row(tuple(row)) for row in cursor.fetchall()]
+
+    def derive_learned_weight_profile(self, limit: int = 100) -> LearnedWeightProfile:
+        """Derive conservative source multipliers from recent evaluation outcomes."""
+        observations = self._extract_evaluation_observations(limit=limit)
+        source_scores: dict[str, list[float]] = {}
+        segment_source_scores: dict[str, dict[str, list[float]]] = {}
+
+        for observation in observations:
+            normalized_score = observation["normalized_score"]
+            segment = observation["segment"]
+            for source in observation["retrieval_sources"]:
+                source_scores.setdefault(source, []).append(normalized_score)
+                segment_source_scores.setdefault(segment, {}).setdefault(source, []).append(
+                    normalized_score
+                )
+
+        return LearnedWeightProfile(
+            source_multipliers={
+                source: self._score_to_multiplier(scores)
+                for source, scores in source_scores.items()
+            },
+            segment_source_multipliers={
+                segment: {
+                    source: self._score_to_multiplier(scores)
+                    for source, scores in source_map.items()
+                }
+                for segment, source_map in segment_source_scores.items()
+            },
+            sample_count=len(observations),
+        )
+
     # ------------------------------------------------------------------
     # Search
     # ------------------------------------------------------------------
@@ -237,9 +386,17 @@ class KnowledgeBase:
         params: list[Any] = [min_confidence]
 
         if query:
-            clauses.append("(title LIKE ? OR content LIKE ?)")
-            like = f"%{query}%"
-            params.extend([like, like])
+            search_values = [query.strip()]
+            search_values.extend(self._extract_query_terms(query))
+
+            token_clauses: list[str] = []
+            for value in dict.fromkeys(search_values):
+                like = f"%{value}%"
+                token_clauses.append("title LIKE ?")
+                token_clauses.append("content LIKE ?")
+                params.extend([like, like])
+
+            clauses.append(f"({' OR '.join(token_clauses)})")
 
         if namespace:
             clauses.append("namespace = ?")
@@ -262,6 +419,50 @@ class KnowledgeBase:
 
         cursor = self._conn.execute(sql, params)
         return [KnowledgeEntry.from_row(tuple(row)) for row in cursor.fetchall()]
+
+    def _extract_query_terms(self, query: str) -> list[str]:
+        """Extract normalized tokens for broader LIKE-based retrieval."""
+        return [
+            token
+            for token in re.findall(r"[a-zA-Z0-9_+-]+", query.lower())
+            if len(token) >= MIN_QUERY_TOKEN_LENGTH
+        ]
+
+    def _extract_evaluation_observations(self, limit: int = 100) -> list[dict[str, Any]]:
+        """Flatten recent evaluation payloads into scored retrieval observations."""
+        observations: list[dict[str, Any]] = []
+        for record in self.list_evaluation_runs(limit=limit):
+            if record.run_type == "query":
+                payloads = [record.payload]
+            else:
+                payloads = record.payload.get("results", [])
+
+            for payload in payloads:
+                answer = payload.get("answer", {})
+                recommendation = answer.get("recommendation", {})
+                retrieval_sources = recommendation.get("retrieval_sources", [])
+                segment = str(answer.get("segment", "cross-segment"))
+                normalized_score = float(payload.get("normalized_score", 0.0))
+                if not retrieval_sources:
+                    continue
+                observations.append(
+                    {
+                        "segment": segment,
+                        "normalized_score": normalized_score,
+                        "retrieval_sources": retrieval_sources,
+                    }
+                )
+        return observations
+
+    def _score_to_multiplier(self, scores: list[float]) -> float:
+        """Convert historical normalized scores into a conservative learned multiplier."""
+        if not scores:
+            return 1.0
+
+        average_score = sum(scores) / len(scores)
+        sample_factor = min(len(scores) / 5.0, 1.0)
+        adjustment = (average_score - 0.7) * 0.5 * sample_factor
+        return round(max(0.85, min(1.15, 1.0 + adjustment)), 4)
 
     def count(self, namespace: str | None = None) -> int:
         """Return total entry count, optionally filtered by namespace."""
@@ -308,6 +509,20 @@ class KnowledgeBase:
             CREATE INDEX IF NOT EXISTS idx_content_type ON knowledge_entries (content_type);
             CREATE INDEX IF NOT EXISTS idx_confidence ON knowledge_entries (confidence DESC);
             CREATE INDEX IF NOT EXISTS idx_updated_at ON knowledge_entries (updated_at DESC);
+
+            CREATE TABLE IF NOT EXISTS evaluation_runs (
+                run_id TEXT PRIMARY KEY,
+                run_type TEXT NOT NULL,
+                query TEXT,
+                question_id TEXT,
+                average_normalized_score REAL NOT NULL,
+                verdict_summary TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                payload TEXT NOT NULL
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_eval_runs_created_at ON evaluation_runs (created_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_eval_runs_type ON evaluation_runs (run_type);
         """)
         self._conn.commit()
 

@@ -30,6 +30,9 @@ Agentic-AI-Architect/
 │   ├── phase-4-tools.md             # Fast-moving AI tools landscape
 │   └── phase-5-implementation-plan.md   # Phased dev plan with GitHub branches
 ├── src/
+│   ├── contracts/
+│   │   ├── __init__.py
+│   │   └── answer_contract.py     # Typed external request/response schemas
 │   ├── agents/
 │   │   ├── __init__.py
 │   │   ├── base_agent.py            # Abstract base for all agents
@@ -142,8 +145,21 @@ python -m src.agents.orchestrator --mode trends
 # Query the knowledge base
 python -m src.knowledge.knowledge_base query "What are the latest agentic AI frameworks?"
 
-# Start as an API endpoint
-python -m src.agents.orchestrator --mode server --port 8080
+# Start the REST API
+uvicorn src.api.rest:app --host 0.0.0.0 --port 8080
+
+# Example endpoints
+curl "http://localhost:8080/"
+curl "http://localhost:8080/frameworks"
+curl "http://localhost:8080/frameworks?trajectory=growing%20fast"
+curl "http://localhost:8080/evaluation-set"
+curl "http://localhost:8080/evaluate/history"
+curl "http://localhost:8080/evaluate/performance"
+curl "http://localhost:8080/evaluate/query?question_id=stack-current-enterprise&q=LangGraph"
+curl "http://localhost:8080/evaluate/query-segments?question_id=stack-current-enterprise&segments=startup&segments=enterprise&q=LangGraph"
+curl "http://localhost:8080/evaluate/query-set?question_type=change_watch"
+curl "http://localhost:8080/report/frameworks"
+curl "http://localhost:8080/query?q=LangGraph&response_mode=both"
 ```
 
 ---
@@ -155,6 +171,20 @@ python -m src.agents.orchestrator --mode server --port 8080
 - [Phase 3: Trends — What's Setting the Stage for Tomorrow](docs/phase-3-trends.md)
 - [Phase 4: Tools — The Fast-Moving AI Tools Landscape](docs/phase-4-tools.md)
 - [Phase 5: Implementation Plan — Phased Dev Roadmap](docs/phase-5-implementation-plan.md)
+- [Instruction Hierarchy](docs/instruction-hierarchy.md)
+- [Repository Memory Protocol](docs/repo-memory-protocol.md)
+- [Work Index](docs/work-index.md)
+- [Decision Log](docs/decision-log.md)
+- [Discovery Log](docs/discovery-log.md)
+- [Lessons Learned Log](docs/lessons-learned-log.md)
+- [Work Log](docs/work-log.md)
+- [First Answer Contract v0](docs/first-answer-contract-v0.md)
+- [Enterprise Overlay Fields v0](docs/enterprise-overlay-fields-v0.md)
+- [Initial Eval Question Set v0](docs/initial-eval-question-set-v0.md)
+- [Source Weighting Model v0](docs/source-weighting-model-v0.md)
+- [Source Weighting Model v2](docs/source-weighting-model-v2.md)
+- [Segment-Aware Evaluation v2](docs/segment-aware-evaluation-v2.md)
+- [Research And Training Cycle v1](docs/research-training-cycle-v1.md)
 
 ---
 

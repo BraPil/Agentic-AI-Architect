@@ -16,6 +16,10 @@ pydantic>=2.5.0
 # Scheduling for the orchestrator
 apscheduler>=3.10.0
 
+# REST API surface
+fastapi>=0.115.0
+uvicorn>=0.30.0
+
 # ── Optional: LLM providers ───────────────────────────────────────────────
 # Uncomment the providers you want to use
 

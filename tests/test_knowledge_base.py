@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from src.knowledge.knowledge_base import KnowledgeBase, KnowledgeEntry
+from src.knowledge.knowledge_base import EvaluationRunRecord
 
 
 # ---------------------------------------------------------------------------
@@ -163,6 +164,11 @@ class TestKnowledgeBaseSearch:
         # Both should find the FAISS entry
         assert len(results_upper) == len(results_lower)
 
+    def test_search_matches_multi_term_partial_query(self, kb):
+        self._populate(kb)
+        results = kb.search(query="LangGraph orchestration")
+        assert any("LangGraph" in result.title for result in results)
+
     def test_search_by_namespace(self, kb):
         self._populate(kb)
         results = kb.search(namespace="frameworks")
@@ -216,3 +222,83 @@ class TestKnowledgeBaseRepr:
         r = repr(kb)
         assert "KnowledgeBase" in r
         assert "entries=1" in r
+
+
+class TestKnowledgeBaseEvaluationRuns:
+    def test_store_and_list_evaluation_runs(self, kb):
+        record = EvaluationRunRecord(
+            run_type="query-set",
+            average_normalized_score=0.82,
+            verdict_summary='{"strong": 2, "partial": 0, "weak": 0}',
+            payload={"result_count": 2},
+        )
+
+        run_id = kb.store_evaluation_run(record)
+        records = kb.list_evaluation_runs(limit=5)
+
+        assert run_id == record.run_id
+        assert len(records) == 1
+        assert records[0].run_id == run_id
+        assert records[0].payload["result_count"] == 2
+
+    def test_list_evaluation_runs_filters_by_type(self, kb):
+        kb.store_evaluation_run(
+            EvaluationRunRecord(
+                run_type="query",
+                query="LangGraph",
+                question_id="stack-current-enterprise",
+                average_normalized_score=0.6,
+                verdict_summary="partial",
+                payload={"verdict": "partial"},
+            )
+        )
+        kb.store_evaluation_run(
+            EvaluationRunRecord(
+                run_type="query-set",
+                average_normalized_score=0.8,
+                verdict_summary='{"strong": 1}',
+                payload={"result_count": 1},
+            )
+        )
+
+        records = kb.list_evaluation_runs(limit=10, run_type="query")
+
+        assert len(records) == 1
+        assert records[0].run_type == "query"
+
+    def test_derive_learned_weight_profile_from_recent_runs(self, kb):
+        kb.store_evaluation_run(
+            EvaluationRunRecord(
+                run_type="query",
+                average_normalized_score=0.92,
+                verdict_summary="strong",
+                payload={
+                    "normalized_score": 0.92,
+                    "answer": {
+                        "segment": "enterprise",
+                        "recommendation": {"retrieval_sources": ["framework_matrix"]},
+                    },
+                },
+            )
+        )
+        kb.store_evaluation_run(
+            EvaluationRunRecord(
+                run_type="query",
+                average_normalized_score=0.45,
+                verdict_summary="weak",
+                payload={
+                    "normalized_score": 0.45,
+                    "answer": {
+                        "segment": "startup",
+                        "recommendation": {"retrieval_sources": ["tool_registry"]},
+                    },
+                },
+            )
+        )
+
+        profile = kb.derive_learned_weight_profile(limit=10)
+
+        assert profile.sample_count == 2
+        assert profile.source_multipliers["framework_matrix"] > 1.0
+        assert profile.source_multipliers["tool_registry"] < 1.0
+        assert profile.segment_source_multipliers["enterprise"]["framework_matrix"] > 1.0
