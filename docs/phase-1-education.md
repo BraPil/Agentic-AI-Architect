@@ -156,5 +156,7 @@ The `ResearchAgent` is configured to continuously monitor:
 - Course releases from Coursera, DeepLearning.AI, Fast.ai, and similar platforms
 - New books and O'Reilly publications on AI architecture
 - Conference talks at NeurIPS, ICLR, ICML, AI Engineer Summit
+- Curated influencer and influential-post watchlists in `docs/influencer-tracker.md`
+- Structured source registry records in `docs/influencer-source-registry.yaml`
 
 Updates are stored in the knowledge base under the `education` namespace and surfaced in the `ResearchAgent`'s weekly digest.

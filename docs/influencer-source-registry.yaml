@@ -1,0 +1,496 @@
+version: 1
+updated_on: 2026-03-07
+purpose: >-
+  Machine-ingestable registry of influencer profiles and influential post URLs
+  relevant to the AI Architect knowledge surface.
+ingestion_notes:
+  - Many LinkedIn URLs are likely auth-blocked during anonymous collection.
+  - Review state must distinguish between captured links and actually reviewed content.
+  - Topic labels should remain conservative unless content is directly accessible.
+sources:
+  - source_id: influencer_allie_k_miller
+    name: Allie K. Miller
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/alliekmiller/
+    areas:
+      - tooling
+      - ai-builder-onboarding
+      - prototyping
+    posts:
+      - post_id: post_allie_claude_code_in_5_minutes
+        url: https://www.alliekmiller.com/claude-code-in-5-minutes
+        access: public
+        review_status: reviewed
+        tags:
+          - tooling
+          - claude-code
+          - ai-builder-onboarding
+          - productivity
+        namespace_candidates:
+          - education
+          - tools
+        summary: >-
+          Beginner-oriented guide positioning Claude Code as a fast path to building
+          an AI-powered app, from quick setup to more advanced integrations.
+        why_it_matters: >-
+          Captures practical adoption framing for AI coding tools and lowers the barrier
+          to rapid experimentation.
+      - post_id: post_allie_multi_task_claude
+        url: https://www.linkedin.com/posts/alliekmiller_4-ways-to-work-on-multiple-tasks-with-claude-ugcPost-7432860722893754368-z6d2?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - claude-code
+          - workflow
+          - productivity
+        namespace_candidates:
+          - tools
+          - trends
+  - source_id: influencer_nikki_siapno
+    name: Nikki Siapno
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/nikkisiapno/
+    areas:
+      - product-architecture
+      - platform-strategy
+    posts:
+      - post_id: post_nikki_feature_vs_ai_native_platform
+        url: https://www.linkedin.com/posts/nikkisiapno_ai-feature-vs-ai-native-platform-they-are-activity-7435588654045220865-nGPp?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - platform-strategy
+          - ai-native
+          - product-architecture
+        namespace_candidates:
+          - education
+          - trends
+  - source_id: influencer_gabriel_ohaike
+    name: Gabriel Ohaike
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/gabriel-ohaike/
+    areas:
+      - governance
+      - enterprise-ai
+      - agentic-systems
+    posts:
+      - post_id: post_gabriel_agentic_governance_enterprise
+        url: https://www.linkedin.com/posts/gabriel-ohaike_agenticai-aigovernance-enterpriseai-activity-7434238980528795648-m13L?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - agentic-systems
+          - governance
+          - enterprise-ai
+        namespace_candidates:
+          - education
+          - trends
+  - source_id: influencer_paolo_perrone
+    name: Paolo Perrone
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/paoloperrone/
+    areas:
+      - context-engineering
+      - staff-engineering
+      - education-resources
+    posts:
+      - post_id: post_paolo_agent_skills_context_engineering
+        url: https://www.linkedin.com/posts/paoloperrone_github-muratcankoylanagent-skills-for-context-engineering-activity-7435884570715045894-gB6V?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - context-engineering
+          - agent-skills
+          - github
+        namespace_candidates:
+          - education
+          - tools
+      - post_id: post_paolo_meta_staff_engineer_takeaways
+        url: https://www.linkedin.com/posts/paoloperrone_my-meta-staff-engineer-friends-shared-their-activity-7435339090650181634-5yBv?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - staff-engineering
+          - system-design
+          - leadership
+        namespace_candidates:
+          - education
+      - post_id: post_paolo_stanford_resource_giveaway
+        url: https://www.linkedin.com/posts/paoloperrone_stanford-is-giving-away-what-bootcamps-charge-activity-7433598005053698048-ur2n?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - education
+          - courses
+          - resources
+        namespace_candidates:
+          - education
+  - source_id: influencer_priyanka_vergadia
+    name: Priyanka Vergadia
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/pvergadia/
+    areas:
+      - rag
+      - agentic-systems
+    posts:
+      - post_id: post_priyanka_rag_agent_agentic
+        url: https://www.linkedin.com/posts/pvergadia_rag-aiagent-agenticai-activity-7435519561933942785-wAjB?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - rag
+          - ai-agents
+          - agentic-ai
+        namespace_candidates:
+          - education
+          - trends
+          - tools
+  - source_id: influencer_aishwarya_srinivasan
+    name: Aishwarya Srinivasan
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/aishwarya-srinivasan/
+    areas:
+      - tool-selection
+      - ai-engineering
+    posts:
+      - post_id: post_aishwarya_perfect_tool_paralysis
+        url: https://www.linkedin.com/posts/aishwarya-srinivasan_ive-seen-teams-spend-weeks-picking-the-perfect-activity-7435871725759795200-iv4y?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - tool-selection
+          - ai-engineering
+          - execution
+        namespace_candidates:
+          - education
+          - tools
+  - source_id: influencer_genai_works
+    name: GenAI Works
+    entity_type: company
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/company/genai-works/posts/?feedView=all
+    areas:
+      - ai
+      - llms
+      - generative-ai
+    posts:
+      - post_id: post_genai_works_ai_llm_genai
+        url: https://www.linkedin.com/posts/genai-works_ai-llm-generativeai-activity-7435934794036838400-Mwxc?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - ai
+          - llms
+          - generative-ai
+        namespace_candidates:
+          - trends
+          - tools
+  - source_id: influencer_own_your_ai
+    name: Mitko Vasilev / Own Your AI
+    entity_type: person
+    tier: core
+    monitor: true
+    profile_url: https://www.linkedin.com/in/ownyourai/
+    areas:
+      - agents
+      - observability
+      - tooling
+      - model-landscape
+    posts:
+      - post_id: post_ownyourai_qwen35_27b
+        url: https://www.linkedin.com/posts/ownyourai_now-were-cooking-with-gas-qwen35-27b-activity-7432473047158190080-aKRz?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - models
+          - open-models
+          - tooling
+        namespace_candidates:
+          - trends
+          - tools
+      - post_id: post_ownyourai_anthropic_news
+        url: https://www.linkedin.com/posts/ownyourai_saturday-coffee-news-headline-1-anthropic-activity-7433470362195156992-WRdR?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - anthropic
+          - news
+          - market-signal
+        namespace_candidates:
+          - trends
+      - post_id: post_ownyourai_agents_rewrite_code
+        url: https://www.linkedin.com/posts/ownyourai_i-taught-my-ai-agents-to-rewrite-their-own-activity-7431250231335313408-nhIw?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - self-improvement
+          - agents
+          - code-generation
+        namespace_candidates:
+          - trends
+          - tools
+      - post_id: post_ownyourai_agent_chatter
+        url: https://www.linkedin.com/posts/ownyourai_i-tapped-into-my-agents-chatter-today-not-ugcPost-7430236181704884224-UVNi?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - observability
+          - agents
+          - runtime-behavior
+        namespace_candidates:
+          - trends
+          - tools
+      - post_id: post_ownyourai_agent_interface
+        url: https://www.linkedin.com/posts/ownyourai_i-finally-found-the-agent-interface-for-the-activity-7429928520988102657-zslF?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - agent-interface
+          - ux
+          - runtime-control
+        namespace_candidates:
+          - trends
+          - tools
+      - post_id: post_ownyourai_latest_release_review
+        url: https://www.linkedin.com/posts/ownyourai_i-just-carved-out-time-to-dig-into-the-latest-activity-7428461100246966272-GCAY?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - agents
+          - release-review
+          - tooling
+        namespace_candidates:
+          - trends
+          - tools
+  - source_id: influencer_utkarsh_bajaj
+    name: Utkarsh Bajaj
+    entity_type: person
+    tier: active
+    monitor: true
+    profile_url: https://www.linkedin.com/in/utkarsh-bajaj/
+    posts:
+      - post_id: post_utkarsh_llms_ml_ai_engineering
+        url: https://www.linkedin.com/posts/utkarsh-bajaj_llms-machinelearning-aiengineering-activity-7434968426592354305-TqUT?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - llms
+          - machine-learning
+          - ai-engineering
+        namespace_candidates:
+          - education
+          - trends
+          - tools
+  - source_id: influencer_brenn_hill
+    name: Brenn Hill
+    entity_type: person
+    tier: active
+    monitor: true
+    profile_url: https://www.linkedin.com/in/brennhill/
+    posts:
+      - post_id: post_brenn_claude_code_god_mode
+        url: https://www.linkedin.com/posts/brennhill_claude-code-just-went-into-god-mode-activity-7435353287882665984-fnkD?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - claude-code
+          - tooling
+          - builder-workflow
+        namespace_candidates:
+          - trends
+          - tools
+  - source_id: influencer_dr_arpit_yadav
+    name: Dr. Arpit Yadav
+    entity_type: person
+    tier: active
+    monitor: true
+    profile_url: https://www.linkedin.com/in/dr-arpit-yadav-78687936/
+    posts:
+      - post_id: post_arpit_generativeai_claudeai_productivity
+        url: https://www.linkedin.com/posts/dr-arpit-yadav-78687936_generativeai-claudeai-aiproductivity-activity-7435381028510273538-tiRg?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - generative-ai
+          - claude
+          - productivity
+        namespace_candidates:
+          - trends
+          - tools
+  - source_id: influencer_lenny_rachitsky
+    name: Lenny Rachitsky
+    entity_type: person
+    tier: active
+    monitor: true
+    profile_url: https://www.linkedin.com/in/lennyrachitsky/
+    posts:
+      - post_id: post_lenny_takeaways_lazar_jovanovic
+        url: https://www.linkedin.com/posts/lennyrachitsky_my-biggest-takeaways-from-lazar-jovanovic-activity-7426707988507295744--V_u?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - operator-insights
+          - product
+          - leadership
+        namespace_candidates:
+          - education
+          - trends
+  - source_id: influencer_stanislav_beliaev
+    name: Stanislav Beliaev
+    entity_type: person
+    tier: active
+    monitor: true
+    profile_url: https://www.linkedin.com/in/stasbel/
+    posts:
+      - post_id: post_stas_mit_cs_courses
+        url: https://www.linkedin.com/posts/stasbel_someone-compiled-every-cs-course-from-mit-activity-7435311141238546433-5GtS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - education
+          - cs-learning
+          - resources
+        namespace_candidates:
+          - education
+      - post_id: post_stas_useful_repo_for_claude
+        url: https://www.linkedin.com/posts/stasbel_just-found-the-most-useful-repo-for-claude-activity-7434583488349097986-l2G9?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - claude-code
+          - repos
+          - tooling
+        namespace_candidates:
+          - tools
+          - trends
+      - post_id: post_stas_yc_ceo_claude
+        url: https://www.linkedin.com/posts/stasbel_ceo-of-y-combinator-shared-his-%F0%9D%97%96%F0%9D%97%9F%F0%9D%97%94%F0%9D%97%A8%F0%9D%97%97-activity-7432015955280642049-nuie?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - claude
+          - founder-signal
+          - ecosystem
+        namespace_candidates:
+          - trends
+  - source_id: influencer_steven_ouri
+    name: Steve Nouri
+    entity_type: person
+    tier: backlog
+    monitor: true
+    profile_url: https://www.linkedin.com/in/stevenouri/
+  - source_id: influencer_victoria_l_slocum
+    name: Victoria L. Slocum
+    entity_type: person
+    tier: active
+    monitor: true
+    posts:
+      - post_id: post_victoria_multi_agent_architecture_caution
+        url: https://www.linkedin.com/posts/victorialslocum_not-all-%F0%9D%97%BA%F0%9D%98%82%F0%9D%97%B9%F0%9D%98%81%F0%9D%97%B6-%F0%9D%97%AE%F0%9D%97%B4%F0%9D%97%B2%F0%9D%97%BB%F0%9D%98%81-%F0%9D%97%AE%F0%9D%97%BF%F0%9D%97%B0%F0%9D%97%B5%F0%9D%97%B6%F0%9D%98%81%F0%9D%97%B2%F0%9D%97%B0%F0%9D%98%81%F0%9D%98%82%F0%9D%97%BF%F0%9D%97%B2%F0%9D%98%80-activity-7435266853398040576--1hN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - multi-agent
+          - architecture
+          - constraints
+        namespace_candidates:
+          - education
+          - trends
+  - source_id: influencer_lucia_mendoza_zumaran
+    name: Lucia Mendoza Zumaran
+    entity_type: person
+    tier: active
+    monitor: true
+    posts:
+      - post_id: post_lucia_claude_ai_coding_prompt_engineering
+        url: https://www.linkedin.com/posts/lucia-mendoza-zumaran-pro_claudeai-aicoding-promptengineering-activity-7434954851278770176-_yBM?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - claude
+          - ai-coding
+          - prompt-engineering
+        namespace_candidates:
+          - tools
+          - trends
+  - source_id: influencer_ved_vekhande
+    name: Ved Vekhande
+    entity_type: person
+    tier: active
+    monitor: true
+    posts:
+      - post_id: post_ved_anthropic_hackathon_claude
+        url: https://www.linkedin.com/posts/ved-vekhande_anthropic-hackathon-winner-dropped-the-claude-activity-7435288688680632322-mHlP?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - anthropic
+          - hackathon
+          - claude
+        namespace_candidates:
+          - trends
+          - tools
+  - source_id: influencer_charly_wargnier
+    name: Charly Wargnier
+    entity_type: person
+    tier: active
+    monitor: true
+    posts:
+      - post_id: post_charly_best_repo_claude
+        url: https://www.linkedin.com/posts/charlywargnier_just-stumbled-upon-the-absolute-best-repo-activity-7434656834516434948-w3kn?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - repos
+          - claude
+          - tooling
+        namespace_candidates:
+          - tools
+          - trends
+  - source_id: influencer_john_wernfeldt
+    name: John Wernfeldt
+    entity_type: person
+    tier: active
+    monitor: true
+    posts:
+      - post_id: post_john_ai_amplifies_weak_governance
+        url: https://www.linkedin.com/posts/john-wernfeldt-82894b58_ai-doesnt-fix-weak-governance-it-amplifies-activity-7431258339776458753-odWV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - governance
+          - risk
+          - enterprise-ai
+        namespace_candidates:
+          - education
+          - trends
+  - source_id: influencer_khizer_abbas
+    name: Khizer Abbas
+    entity_type: person
+    tier: active
+    monitor: true
+    posts:
+      - post_id: post_khizer_claude_code_founder_dropped_material
+        url: https://www.linkedin.com/posts/khizer-abbas_damn-the-founder-of-claude-code-just-dropped-activity-7432419488270147584-empE?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U
+        access: auth-blocked
+        review_status: pending-review
+        tags:
+          - claude-code
+          - ecosystem
+          - tooling
+        namespace_candidates:
+          - trends
+          - tools
