@@ -33,6 +33,7 @@ Current strategy:
 - `docs/repo-structure-decision-memo.md`
 - `docs/ecosystem-sequencing-memo.md`
 - `docs/exmorbus-through-aaa-operating-model-v1.md`
+- `docs/exmorbus-state-gap-analysis-v0.md`
 - `docs/exmorbus-moltbook-poc-scope-v1.md`
 - `docs/exmorbus-shell-ontology-v1.md`
 - `docs/shared-substrate-candidate-spec-v0.md`
@@ -82,6 +83,7 @@ Repository memory system:
 ### Discoveries
 
 - Architecture/trends/tools discoveries — see `docs/discovery-log.md`
+- AAA-side analysis of ExMorbus current state, destination, and required path forward — see `docs/exmorbus-state-gap-analysis-v0.md`
 - ExMorbus MoltBook-style PoC scope and training-funnel direction — see `docs/exmorbus-moltbook-poc-scope-v1.md`
 - ExMorbus shell ontology for PoC pressure-testing — see `docs/exmorbus-shell-ontology-v1.md`
 - Shared cross-system contract candidates — see `docs/shared-substrate-candidate-spec-v0.md`
