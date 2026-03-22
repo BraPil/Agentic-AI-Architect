@@ -25,6 +25,7 @@ Current strategy:
 
 - `docs/phase-5-implementation-plan.md`
 - `docs/branch-strategy-summary.md`
+- `docs/hardware-scaling-plan-v1.md`
 - `docs/aaa-exmorbus-ownership-matrix-v0.md`
 - `docs/mouseion-core-v0.md`
 - `docs/mouseion-exmorbus-code-boundary-map-v0.md`
@@ -77,6 +78,7 @@ Repository memory system:
 - Explicit source weighting basis — see `docs/source-weighting-model-v0.md`
 - Learned and freshness-aware source weighting basis — see `docs/source-weighting-model-v2.md`
 - Segment-comparison evaluation path — see `docs/segment-aware-evaluation-v2.md`
+- Hardware scaling plan for 3-month 24/7 sprint at 1×, 10×, 100× scale — see `docs/hardware-scaling-plan-v1.md`
 
 ### Discoveries
 
