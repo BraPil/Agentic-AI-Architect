@@ -13,13 +13,35 @@
 // Post selectors — LinkedIn's classes change; try multiple in order
 // ---------------------------------------------------------------------------
 
-// Ordered by specificity — FIRST selector with ≥1 match wins (not most matches)
+// Fallback container selectors for non-reactions pages (feed, profile, etc.)
 const POST_CONTAINERS = [
-  '[data-urn*="activity"]',    // most precise: actual activity posts
-  '.feed-shared-update-v2',    // classic feed posts
-  '.occludable-update',        // broader wrapper — fallback only
+  '[data-urn*="activity"]',
+  '.feed-shared-update-v2',
+  '.occludable-update',
   '.feed-shared-article',
 ];
+
+// Find the post containers for the current page.
+// On the reactions page LinkedIn injects "suggested" posts throughout the DOM,
+// so a flat querySelectorAll picks up old out-of-order posts from those sections.
+// The actual reactions are direct <li> children of a single <ul> inside the
+// main section — scope to that to get them in chronological order only.
+function findPostContainers() {
+  // Reactions / posts activity pages: main section > ul > li (direct children)
+  const activityUl = document.querySelector(
+    "main section ul, main div[role='main'] ul, .scaffold-finite-scroll__content ul"
+  );
+  if (activityUl) {
+    const items = [...activityUl.children].filter(el => el.tagName === "LI");
+    if (items.length >= 2) return items;   // ≥2 = looks like a real list
+  }
+  // Fallback: flat selector approach for feed / profile pages
+  for (const sel of POST_CONTAINERS) {
+    const found = [...document.querySelectorAll(sel)];
+    if (found.length > 0) return found;
+  }
+  return [];
+}
 
 const TEXT_SELECTORS = [
   // Structural selectors (derived from observed XPath — most reliable)
@@ -334,15 +356,7 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
 async function scrapePosts(options = {}) {
   const { expandAll = true } = options;
 
-  // Find post container elements — use FIRST selector with ≥1 match (priority order)
-  let containers = [];
-  for (const sel of POST_CONTAINERS) {
-    const found = [...document.querySelectorAll(sel)];
-    if (found.length > 0) {
-      containers = found;
-      break;
-    }
-  }
+  const containers = findPostContainers();
 
   // De-duplicate (nested selectors can match parent + child)
   const unique = [];
@@ -365,7 +379,7 @@ async function scrapePosts(options = {}) {
   }
 
   const runLog = [];
-  runLog.push(`containers: selector=[data-urn*="activity"] → ${unique.length} unique`);
+  runLog.push(`containers: ${containers.length} found → ${unique.length} unique after dedup`);
 
   const posts = [];
   for (let idx = 0; idx < unique.length; idx++) {
@@ -508,5 +522,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "6";
+const AAA_CONTENT_VERSION = "7";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
