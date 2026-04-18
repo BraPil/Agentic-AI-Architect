@@ -47,6 +47,7 @@ Current strategy:
 - `docs/source-weighting-model-v2.md`
 - `docs/segment-aware-evaluation-v2.md`
 - `docs/research-training-cycle-v1.md`
+- `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 
 Repository memory system:
 
@@ -96,6 +97,7 @@ Repository memory system:
 - Influencer and influential post watchlist — see `docs/influencer-tracker.md`
 - Machine-ingestable influencer source registry — see `docs/influencer-source-registry.yaml`
 - Research and training operating cycle — see `docs/research-training-cycle-v1.md`
+- Consolidated ExMorbus system inventory, runtime usage, architecture diagrams, and autonomy knowledge graph — see `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 
 ### Lessons Learned
 
