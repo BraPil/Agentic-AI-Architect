@@ -21,21 +21,24 @@ const POST_CONTAINERS = [
   '.feed-shared-article',
 ];
 
-// Find the post containers for the current page.
-// On the reactions page LinkedIn injects "suggested" posts throughout the DOM,
-// so a flat querySelectorAll picks up old out-of-order posts from those sections.
-// The actual reactions are direct <li> children of a single <ul> inside the
-// main section — scope to that to get them in chronological order only.
+// Find the reactions list <ul> by locating whichever <ul> in main has the most
+// direct <li> children that contain a [data-urn*="activity"] descendant.
+// This survives LinkedIn injecting "suggested posts" sections elsewhere in the DOM.
 function findPostContainers() {
-  // Reactions / posts activity pages: main section > ul > li (direct children)
-  const activityUl = document.querySelector(
-    "main section ul, main div[role='main'] ul, .scaffold-finite-scroll__content ul"
-  );
-  if (activityUl) {
-    const items = [...activityUl.children].filter(el => el.tagName === "LI");
-    if (items.length >= 2) return items;   // ≥2 = looks like a real list
+  // Walk every <ul> inside <main>, score by how many direct <li> children
+  // contain an activity element. Highest scorer = reactions list.
+  const uls = [...document.querySelectorAll("main ul")];
+  let bestUl = null, bestScore = 0;
+  for (const ul of uls) {
+    const score = [...ul.children].filter(
+      li => li.tagName === "LI" && li.querySelector('[data-urn*="activity"]')
+    ).length;
+    if (score > bestScore) { bestScore = score; bestUl = ul; }
   }
-  // Fallback: flat selector approach for feed / profile pages
+  if (bestUl && bestScore >= 1) {
+    return [...bestUl.children].filter(li => li.tagName === "LI");
+  }
+  // Fallback for feed / profile pages
   for (const sel of POST_CONTAINERS) {
     const found = [...document.querySelectorAll(sel)];
     if (found.length > 0) return found;
@@ -384,41 +387,42 @@ async function scrapePosts(options = {}) {
   const posts = [];
   for (let idx = 0; idx < unique.length; idx++) {
     const el = unique[idx];
-    const urn = el.getAttribute("data-urn") || `idx-${idx}`;
+    // When containers are <li> elements, content lives inside the activity div.
+    // Resolve it so findForkNode starts at the right depth.
+    const contentEl = el.querySelector('[data-urn*="activity"]') || el;
+    const urn = contentEl.getAttribute("data-urn") || el.getAttribute("data-urn") || `idx-${idx}`;
 
-    // Text extraction — log which path succeeded
+    // Text extraction — all operations on contentEl (activity div), not li
     let text = "", textVia = "none";
-    const fromSel = firstText(el, TEXT_SELECTORS);
+    const fromSel = firstText(contentEl, TEXT_SELECTORS);
     if (fromSel) {
       text = fromSel; textVia = "selector";
     } else {
-      const fork = findForkNode(el);
-      const forkDepth = (() => { let n = el, d = 0; while (n !== fork) { n = n.children[0]; d++; } return d; })();
+      const fork = findForkNode(contentEl);
+      const forkDepth = (() => { let n = contentEl, d = 0; while (n !== fork) { n = n.children[0]; d++; } return d; })();
       runLog.push(`[${idx}] urn=${urn.slice(-12)} fork_depth=${forkDepth} fork_children=${fork.children.length}`);
       if (fork.children.length >= 2) {
         const t = (fork.children[1].innerText || fork.children[1].textContent || "").trim();
-        if (t.length > 20) { text = t; textVia = `fork.children[1]`; }
+        if (t.length > 20) { text = t; textVia = "fork.children[1]"; }
       }
       if (!text) {
-        const raw = (el.innerText || el.textContent || "");
+        const raw = (contentEl.innerText || contentEl.textContent || "");
         const lines = raw.split("\n").map(l => l.trim()).filter(l => l.length > 30);
         if (lines.length) { text = lines.join("\n").slice(0, 8000); textVia = `innerText(${lines.length}lines)`; }
       }
     }
 
-    const images = extractImagesFromFork(el);
+    const images = extractImagesFromFork(contentEl);
     const kept = !!(text || images.length);
     runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}`);
     if (!kept) continue;
 
-    // Author name: try named selectors, then pick the first name-like line
-    // from the header child (fork.children[0]).
-    // Must skip the reaction attribution line ("Brandt Pileggi likes this").
+    // Author — must skip reaction attribution line ("Brandt Pileggi likes this")
     const REACTION_VERBS = ["likes", "reacted", "commented", "reshared",
                             "celebrated", "shared", "posted", "follows"];
-    let author = firstText(el, AUTHOR_SELECTORS);
+    let author = firstText(contentEl, AUTHOR_SELECTORS);
     if (!author) {
-      const fork = findForkNode(el);
+      const fork = findForkNode(contentEl);
       const headerText = (fork.children[0]?.innerText || "").trim();
       const nameLine = headerText.split("\n")
         .map(l => l.trim())
@@ -430,16 +434,15 @@ async function scrapePosts(options = {}) {
       if (nameLine) author = nameLine;
     }
 
-    // Author URL: href may already be absolute — avoid double-prepending domain
-    const authorHref = firstAttr(el, AUTHOR_URL_SELECTORS, "href");
+    const authorHref = firstAttr(contentEl, AUTHOR_URL_SELECTORS, "href");
     const authorUrl = authorHref
       ? (authorHref.startsWith("http") ? authorHref : `https://www.linkedin.com${authorHref}`)
       : "";
 
-    const timestamp = firstText(el, TIMESTAMP_SELECTORS);
-    const postUrl = extractPostUrl(el);
-    const articleUrl = extractArticleUrl(el);
-    const postType = detectPostType(el);
+    const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
+    const postUrl = extractPostUrl(contentEl);
+    const articleUrl = extractArticleUrl(contentEl);
+    const postType = detectPostType(contentEl);
 
     // Extract all link URLs from post text (external references)
     const links = [...el.querySelectorAll("a[href]")]
@@ -522,5 +525,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "7";
+const AAA_CONTENT_VERSION = "8";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
