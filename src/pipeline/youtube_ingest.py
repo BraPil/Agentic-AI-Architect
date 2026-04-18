@@ -2,16 +2,26 @@
 YouTube Transcript Ingest Pipeline — fetches transcripts from public YouTube videos.
 
 Flow:
-    VideoTarget list → TranscriptFetcher → clean/chunk → raw artifact write → KnowledgeBase seed
+    VideoTarget list → TranscriptFetcher → clean → raw artifact write → KnowledgeBase seed
 
-Requires: youtube-transcript-api>=0.6.0 (optional dependency).
-Falls back gracefully if the library is not installed.
+Fetch strategy (in priority order):
+  1. youtube-transcript-api with optional proxy config (fastest, no subprocess)
+  2. yt-dlp with optional cookies.txt (handles IP blocks via browser session)
 
-No API key required for publicly available auto-generated or manual captions.
+For Codespace / cloud environments YouTube will block direct requests.
+See scripts/fetch_youtube_transcripts.py for the CLI wrapper with cookie/proxy guidance.
+
+Optional dependencies:
+  youtube-transcript-api>=0.6.0   (pip install youtube-transcript-api)
+  yt-dlp                          (pip install yt-dlp)
 """
 
+import json
 import logging
 import re
+import shutil
+import subprocess
+import tempfile
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -20,8 +30,8 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-_REQUEST_DELAY = 2.0  # seconds between transcript fetches
-_MAX_KB_CHARS = 10_000  # KB entry content cap; raw file has full transcript
+_REQUEST_DELAY = 2.0   # seconds between fetches
+_MAX_KB_CHARS = 10_000  # KB entry cap; raw file has full transcript
 
 
 # ---------------------------------------------------------------------------
@@ -34,7 +44,8 @@ class VideoTarget:
 
     video_id: str
     persona_id: str
-    title_hint: str = ""
+    title: str = ""
+    published_at: str = ""
     url: str = ""
 
     def __post_init__(self) -> None:
@@ -42,9 +53,9 @@ class VideoTarget:
             self.url = f"https://www.youtube.com/watch?v={self.video_id}"
 
     @classmethod
-    def from_url(cls, url: str, persona_id: str, title_hint: str = "") -> "VideoTarget":
+    def from_url(cls, url: str, persona_id: str, title: str = "", published_at: str = "") -> "VideoTarget":
         vid = _extract_video_id(url)
-        return cls(video_id=vid, persona_id=persona_id, title_hint=title_hint, url=url)
+        return cls(video_id=vid, persona_id=persona_id, title=title, published_at=published_at, url=url)
 
 
 @dataclass
@@ -53,7 +64,7 @@ class TranscriptIngestResult:
 
     video_id: str
     persona_id: str
-    title_hint: str = ""
+    title: str = ""
     success: bool = False
     raw_path: str = ""
     transcript_chars: int = 0
@@ -65,7 +76,7 @@ class TranscriptIngestResult:
         return {
             "video_id": self.video_id,
             "persona_id": self.persona_id,
-            "title_hint": self.title_hint,
+            "title": self.title,
             "success": self.success,
             "raw_path": self.raw_path,
             "transcript_chars": self.transcript_chars,
@@ -76,98 +87,173 @@ class TranscriptIngestResult:
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Text helpers
 # ---------------------------------------------------------------------------
 
 def _extract_video_id(url: str) -> str:
     """Extract YouTube video ID from various URL formats."""
-    patterns = [
-        r"(?:v=|youtu\.be/)([A-Za-z0-9_-]{11})",
-        r"(?:embed/)([A-Za-z0-9_-]{11})",
-    ]
-    for pat in patterns:
+    for pat in (r"(?:v=|youtu\.be/)([A-Za-z0-9_-]{11})", r"(?:embed/)([A-Za-z0-9_-]{11})"):
         m = re.search(pat, url)
         if m:
             return m.group(1)
-    # Assume the input is already a bare video ID
     if re.fullmatch(r"[A-Za-z0-9_-]{11}", url):
         return url
     raise ValueError(f"Cannot extract video ID from: {url}")
 
 
 def _segments_to_text(segments: list[dict]) -> str:
-    """Convert transcript segment list to a clean readable string."""
-    parts = []
-    for seg in segments:
-        text = seg.get("text", "").strip()
-        if text:
-            parts.append(text)
-    return " ".join(parts)
+    return " ".join(seg.get("text", "").strip() for seg in segments if seg.get("text", "").strip())
+
+
+def _json3_to_text(raw: str) -> str:
+    """Convert YouTube json3 subtitle format to plain text."""
+    data = json.loads(raw)
+    words = []
+    for event in data.get("events", []):
+        for seg in event.get("segs", []):
+            word = seg.get("utf8", "").strip()
+            if word and word != "\n":
+                words.append(word)
+    text = " ".join(words)
+    # Remove immediate duplicate phrases (auto-caption artifact)
+    text = re.sub(r"(\b.{10,40}\b) \1", r"\1", text)
+    return text.strip()
+
+
+def _vtt_to_text(vtt: str) -> str:
+    """Strip VTT timestamps and deduplicate repeated lines."""
+    lines, seen = [], set()
+    for line in vtt.splitlines():
+        line = re.sub(r"<[^>]+>", "", line.strip())
+        line = re.sub(r"^\d+$", "", line).strip()
+        if line and "-->" not in line and not line.startswith("WEBVTT") and line not in seen:
+            seen.add(line)
+            lines.append(line)
+    return " ".join(lines)
 
 
 def _clean_transcript(raw: str) -> str:
-    """Remove common transcript noise patterns."""
-    # Remove [Music], [Applause], etc.
-    cleaned = re.sub(r"\[[\w\s]+\]", "", raw)
-    # Collapse multiple spaces
+    """Remove noise patterns common to auto-generated captions."""
+    cleaned = re.sub(r"\[[\w\s]+\]", "", raw)   # [Music], [Applause], etc.
     cleaned = re.sub(r" {2,}", " ", cleaned)
     return cleaned.strip()
 
 
 # ---------------------------------------------------------------------------
-# Fetcher
+# Fetchers
 # ---------------------------------------------------------------------------
 
-class TranscriptFetcher:
-    """
-    Wraps youtube-transcript-api with graceful fallback if not installed.
+class _APIFetcher:
+    """Uses youtube-transcript-api (fast, but blocked from cloud IPs without proxy)."""
 
-    Prefers manual English captions, falls back to auto-generated.
-    """
-
-    def __init__(self) -> None:
+    def __init__(self, proxy_url: str | None = None) -> None:
+        self._proxy_url = proxy_url
         try:
             from youtube_transcript_api import YouTubeTranscriptApi
-            self._api = YouTubeTranscriptApi()  # v1.x requires an instance
+            kwargs: dict[str, Any] = {}
+            if proxy_url:
+                try:
+                    from youtube_transcript_api.proxies import GenericProxyConfig
+                    kwargs["proxy_config"] = GenericProxyConfig(
+                        http_url=proxy_url, https_url=proxy_url
+                    )
+                except ImportError:
+                    pass
+            self._api = YouTubeTranscriptApi(**kwargs)
             self._available = True
         except ImportError:
-            logger.warning(
-                "youtube-transcript-api not installed. "
-                "Run: pip install youtube-transcript-api"
-            )
             self._available = False
 
-    @property
-    def available(self) -> bool:
-        return self._available
-
-    def fetch(self, video_id: str) -> tuple[list[dict], str] | tuple[None, str]:
-        """
-        Fetch transcript segments for a video.
-
-        Returns:
-            (segments, language) on success, (None, error_message) on failure.
-        """
+    def fetch(self, video_id: str) -> tuple[str, int] | None:
+        """Return (clean_text, segment_count) or None on failure."""
         if not self._available:
-            return None, "youtube-transcript-api not installed"
-
-        # Prefer manual English, fall back through variants, then any language
+            return None
         for lang_codes in (("en",), ("en-US", "en-GB")):
             try:
                 fetched = self._api.fetch(video_id, languages=lang_codes)
-                segments = [{"text": s.text} for s in fetched]
-                return segments, "en"
+                segs = [{"text": s.text} for s in fetched]
+                text = _clean_transcript(_segments_to_text(segs))
+                return text, len(segs)
             except Exception:  # noqa: BLE001
                 pass
-        # Final fallback: let the library pick any available language
         try:
             transcript_list = self._api.list(video_id)
             t = next(iter(transcript_list))
             fetched = self._api.fetch(video_id, languages=(t.language_code,))
-            segments = [{"text": s.text} for s in fetched]
-            return segments, t.language_code
-        except Exception as exc:  # noqa: BLE001
-            return None, str(exc)
+            segs = [{"text": s.text} for s in fetched]
+            text = _clean_transcript(_segments_to_text(segs))
+            return text, len(segs)
+        except Exception:  # noqa: BLE001
+            return None
+
+
+class _YtDlpFetcher:
+    """Uses yt-dlp to download auto-generated subtitles (handles cookies/proxies)."""
+
+    def __init__(self, cookies_path: str | None = None, proxy_url: str | None = None) -> None:
+        self._cookies = cookies_path
+        self._proxy = proxy_url
+        self._available = shutil.which("yt-dlp") is not None
+
+    def fetch(self, video_id: str) -> tuple[str, int] | None:
+        """Return (clean_text, 0) or None on failure."""
+        if not self._available:
+            return None
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            cmd = [
+                "yt-dlp",
+                "--write-auto-sub", "--sub-lang", "en-orig,en",
+                "-f", "sb3",
+                "--skip-download",
+                "--sub-format", "json3",
+                "--output", f"{tmpdir}/%(id)s",
+                "--no-warnings", "--quiet",
+            ]
+            if self._cookies:
+                cmd += ["--cookies", self._cookies]
+            if self._proxy:
+                cmd += ["--proxy", self._proxy]
+            cmd.append(f"https://www.youtube.com/watch?v={video_id}")
+
+            subprocess.run(cmd, capture_output=True, text=True)
+
+            sub_files = list(Path(tmpdir).glob("*.json3")) or list(Path(tmpdir).glob("*.vtt"))
+            if not sub_files:
+                return None
+
+            raw = sub_files[0].read_text(encoding="utf-8")
+            if sub_files[0].suffix == ".json3":
+                text = _clean_transcript(_json3_to_text(raw))
+            else:
+                text = _clean_transcript(_vtt_to_text(raw))
+            return text, 0
+
+
+class TranscriptFetcher:
+    """
+    Two-stage transcript fetcher: youtube-transcript-api → yt-dlp fallback.
+
+    Args:
+        cookies_path: Path to a cookies.txt file exported from a logged-in browser.
+                      Needed for cloud environments blocked by YouTube.
+        proxy_url:    Optional proxy URL (e.g. http://user:pass@host:port).
+    """
+
+    def __init__(self, cookies_path: str | None = None, proxy_url: str | None = None) -> None:
+        self._api_fetcher = _APIFetcher(proxy_url=proxy_url)
+        self._ytdlp_fetcher = _YtDlpFetcher(cookies_path=cookies_path, proxy_url=proxy_url)
+
+    @property
+    def available(self) -> bool:
+        return self._api_fetcher._available or self._ytdlp_fetcher._available
+
+    def fetch(self, video_id: str) -> tuple[str, int] | None:
+        """Return (clean_text, segment_count) or None if both fetchers fail."""
+        result = self._api_fetcher.fetch(video_id)
+        if result is not None:
+            return result
+        return self._ytdlp_fetcher.fetch(video_id)
 
 
 # ---------------------------------------------------------------------------
@@ -176,17 +262,17 @@ class TranscriptFetcher:
 
 class YouTubeIngestPipeline:
     """
-    Ingests YouTube video transcripts and seeds them into the wiki raw layer
-    and optionally into the KnowledgeBase.
+    Ingests YouTube video transcripts into the wiki raw layer and KnowledgeBase.
 
     Usage::
 
         from src.pipeline.youtube_ingest import YouTubeIngestPipeline, VideoTarget
-        from src.knowledge.knowledge_base import KnowledgeBase
 
-        kb = KnowledgeBase(); kb.initialize()
-        pipeline = YouTubeIngestPipeline(raw_dir="data/wiki/raw", kb=kb)
-        targets = [VideoTarget.from_url("https://youtu.be/...", "karpathy")]
+        pipeline = YouTubeIngestPipeline(
+            raw_dir="data/wiki/raw",
+            cookies_path="scripts/cookies.txt",  # needed in cloud envs
+        )
+        targets = [VideoTarget("kCc8FmEb1nY", "karpathy", title="Neural Net Zero to Hero")]
         results = pipeline.run(targets)
     """
 
@@ -194,24 +280,21 @@ class YouTubeIngestPipeline:
         self,
         raw_dir: str = "data/wiki/raw",
         kb: Any = None,
+        cookies_path: str | None = None,
+        proxy_url: str | None = None,
         request_delay: float = _REQUEST_DELAY,
     ) -> None:
         self._raw_dir = Path(raw_dir)
         self._kb = kb
-        self._fetcher = TranscriptFetcher()
+        self._fetcher = TranscriptFetcher(cookies_path=cookies_path, proxy_url=proxy_url)
         self._delay = request_delay
 
     def run(self, targets: list[VideoTarget]) -> list[TranscriptIngestResult]:
-        """Ingest all targets; return one result per target."""
         if not self._fetcher.available:
-            logger.error("TranscriptFetcher unavailable; install youtube-transcript-api")
+            logger.error("No transcript fetcher available. Install youtube-transcript-api or yt-dlp.")
             return [
-                TranscriptIngestResult(
-                    video_id=t.video_id,
-                    persona_id=t.persona_id,
-                    title_hint=t.title_hint,
-                    error="youtube-transcript-api not installed",
-                )
+                TranscriptIngestResult(video_id=t.video_id, persona_id=t.persona_id, title=t.title,
+                                       error="no fetcher available")
                 for t in targets
             ]
 
@@ -219,68 +302,65 @@ class YouTubeIngestPipeline:
         for i, target in enumerate(targets):
             if i > 0:
                 time.sleep(self._delay)
-            result = self._ingest_one(target)
+            # Skip if raw file already exists
+            persona_dir = self._raw_dir / target.persona_id
+            safe_title = re.sub(r"[^\w\-]", "_", target.title or target.video_id)[:60]
+            raw_path = persona_dir / f"youtube_{target.video_id}_{safe_title}.txt"
+            if raw_path.exists():
+                logger.info("[%d/%d] %s — SKIP (already ingested)", i + 1, len(targets), target.video_id)
+                results.append(TranscriptIngestResult(
+                    video_id=target.video_id, persona_id=target.persona_id,
+                    title=target.title, success=True, raw_path=str(raw_path),
+                ))
+                continue
+
+            result = self._ingest_one(target, raw_path)
             results.append(result)
-            status = "OK" if result.success else f"FAIL: {result.error}"
-            logger.info(
-                "[%d/%d] %s (%s) — %s",
-                i + 1, len(targets), target.video_id, target.title_hint, status,
-            )
+            status = "OK" if result.success else f"FAIL: {result.error[:80]}"
+            logger.info("[%d/%d] %s (%s) — %s", i + 1, len(targets), target.video_id, target.title, status)
         return results
 
-    def _ingest_one(self, target: VideoTarget) -> TranscriptIngestResult:
-        result = TranscriptIngestResult(
-            video_id=target.video_id,
-            persona_id=target.persona_id,
-            title_hint=target.title_hint,
-        )
+    def _ingest_one(self, target: VideoTarget, raw_path: Path) -> TranscriptIngestResult:
+        result = TranscriptIngestResult(video_id=target.video_id, persona_id=target.persona_id, title=target.title)
 
-        segments, lang_or_error = self._fetcher.fetch(target.video_id)
-        if segments is None:
-            result.error = lang_or_error
+        fetched = self._fetcher.fetch(target.video_id)
+        if fetched is None:
+            result.error = (
+                "All fetchers failed. In cloud environments, YouTube blocks requests. "
+                "Pass cookies_path= (see scripts/fetch_youtube_transcripts.py for instructions)."
+            )
             return result
 
-        raw_text = _segments_to_text(segments)
-        clean_text = _clean_transcript(raw_text)
+        clean_text, segment_count = fetched
         result.transcript_chars = len(clean_text)
-        result.segment_count = len(segments)
+        result.segment_count = segment_count
 
-        # Write raw artifact
-        persona_dir = self._raw_dir / target.persona_id
-        persona_dir.mkdir(parents=True, exist_ok=True)
-        safe_title = re.sub(r"[^\w\-]", "_", target.title_hint or target.video_id)[:60]
-        raw_path = persona_dir / f"youtube_{target.video_id}_{safe_title}.txt"
+        raw_path.parent.mkdir(parents=True, exist_ok=True)
         header = (
-            f"# Transcript: {target.title_hint or target.video_id}\n"
+            f"# Transcript: {target.title or target.video_id}\n"
             f"video_id: {target.video_id}\n"
             f"url: {target.url}\n"
             f"persona_id: {target.persona_id}\n"
-            f"language: {lang_or_error}\n"
+            f"published_at: {target.published_at}\n"
             f"ingested_at: {result.ingested_at.isoformat()}\n"
-            f"segments: {result.segment_count}\n"
-            f"chars: {result.transcript_chars}\n\n"
-            "---\n\n"
+            f"chars: {result.transcript_chars}\n\n---\n\n"
         )
         raw_path.write_text(header + clean_text, encoding="utf-8")
         result.raw_path = str(raw_path)
 
-        # Seed into KnowledgeBase if provided
         if self._kb is not None:
-            self._seed_kb(target, clean_text, lang_or_error)
+            self._seed_kb(target, clean_text)
 
         result.success = True
         return result
 
-    def _seed_kb(self, target: VideoTarget, clean_text: str, language: str) -> None:
+    def _seed_kb(self, target: VideoTarget, clean_text: str) -> None:
         from ..knowledge.knowledge_base import KnowledgeEntry
         from ..utils.helpers import sanitize_text
 
-        safe_content = sanitize_text(clean_text)
-        content_excerpt = safe_content[:_MAX_KB_CHARS]
-
         entry = KnowledgeEntry(
-            title=f"YouTube Transcript: {target.title_hint or target.video_id}",
-            content=content_excerpt,
+            title=f"YouTube: {target.title or target.video_id}",
+            content=sanitize_text(clean_text)[:_MAX_KB_CHARS],
             namespace="education",
             content_type="youtube_transcript",
             source_url=target.url,
@@ -289,12 +369,11 @@ class YouTubeIngestPipeline:
             metadata={
                 "persona_id": target.persona_id,
                 "video_id": target.video_id,
-                "language": language,
+                "published_at": target.published_at,
                 "full_chars": len(clean_text),
             },
         )
         try:
             self._kb.store(entry)
-            logger.info("Seeded KB: %s", entry.title)
         except Exception as exc:  # noqa: BLE001
             logger.warning("KB seed failed for %s: %s", target.video_id, exc)
