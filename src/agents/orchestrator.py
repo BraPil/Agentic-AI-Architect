@@ -24,11 +24,13 @@ Usage (Python):
 import argparse
 import logging
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from .base_agent import AgentStatus
+from .base_agent import AgentResult, AgentStatus, BaseAgent
 from .crawler_agent import CrawlerAgent
 from .documentation_agent import DocumentationAgent
 from .research_agent import ResearchAgent
@@ -151,6 +153,42 @@ class Orchestrator:
                 logger.warning("Error shutting down %s: %s", agent.name, exc)
 
     # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    def _run_agent_step(
+        self,
+        agent: BaseAgent,
+        task_input: Any = None,
+        max_retries: int = 2,
+        retry_delay: float = 1.0,
+    ) -> AgentResult:
+        """Run an agent step with exponential-backoff retry on ERROR status."""
+        result = agent.run(task_input)
+        attempts = 1
+        while result.status == AgentStatus.ERROR and attempts < max_retries:
+            delay = retry_delay * (2 ** (attempts - 1))
+            logger.warning(
+                "%s failed (attempt %d/%d), retrying in %.1fs: %s",
+                agent.name, attempts, max_retries, delay, result.error,
+            )
+            time.sleep(delay)
+            result = agent.run(task_input)
+            attempts += 1
+        return result
+
+    def _run_parallel_analysis(
+        self, findings: list[dict[str, Any]]
+    ) -> tuple[AgentResult, AgentResult]:
+        """Run TrendTracker and ToolDiscovery concurrently; return (trend_result, tool_result)."""
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            trend_future = pool.submit(self._run_agent_step, self.trend_tracker, findings)
+            tool_future = pool.submit(self._run_agent_step, self.tool_discovery, findings)
+            trend_result = trend_future.result()
+            tool_result = tool_future.result()
+        return trend_result, tool_result
+
+    # ------------------------------------------------------------------
     # Intelligence cycle
     # ------------------------------------------------------------------
 
@@ -208,10 +246,24 @@ class Orchestrator:
             self._cycle_history.append(cycle)
             return cycle
 
-        # Step 3: Trend tracking
+        # Steps 3 + 4: Trend tracking and tool discovery — run in parallel (independent)
         trend_data: dict[str, Any] = {}
-        if mode in ("full", "trends"):
-            trend_result = self.trend_tracker.run(findings)
+        tool_data: dict[str, Any] = {}
+        run_trends = mode in ("full", "trends")
+        run_tools = mode in ("full", "tools")
+
+        if run_trends and run_tools:
+            trend_result, tool_result = self._run_parallel_analysis(findings)
+        elif run_trends:
+            trend_result = self._run_agent_step(self.trend_tracker, findings)
+            tool_result = None
+        elif run_tools:
+            tool_result = self._run_agent_step(self.tool_discovery, findings)
+            trend_result = None
+        else:
+            trend_result = tool_result = None
+
+        if trend_result is not None:
             if trend_result.status == AgentStatus.SUCCESS:
                 trend_data = trend_result.data or {}
                 cycle.trend_alerts = len(trend_data.get("alerts", []))
@@ -224,10 +276,7 @@ class Orchestrator:
                 cycle.errors.append(f"TrendTrackerAgent: {trend_result.error}")
                 error_count += 1
 
-        # Step 4: Tool discovery
-        tool_data: dict[str, Any] = {}
-        if mode in ("full", "tools"):
-            tool_result = self.tool_discovery.run(findings)
+        if tool_result is not None:
             if tool_result.status == AgentStatus.SUCCESS:
                 tool_data = tool_result.data or {}
                 cycle.tool_alerts = len(tool_data.get("alerts", []))

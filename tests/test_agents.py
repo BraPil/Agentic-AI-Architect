@@ -591,3 +591,69 @@ class TestOrchestrator:
         assert d["cycle_number"] == 1
         assert d["crawled_count"] == 10
         assert "success" in d
+
+    def test_parallel_analysis_runs_both_agents(self):
+        """Both TrendTracker and ToolDiscovery execute when mode=full."""
+        orch = Orchestrator()
+        orch.initialize()
+        executed = []
+
+        class TrackingTrendTracker(TrendTrackerAgent):
+            def _execute(self, task_input=None):
+                executed.append("trend")
+                return {}
+
+        class TrackingToolDiscovery(ToolDiscoveryAgent):
+            def _execute(self, task_input=None):
+                executed.append("tool")
+                return {}
+
+        orch.trend_tracker = TrackingTrendTracker()
+        orch.trend_tracker.initialize()
+        orch.tool_discovery = TrackingToolDiscovery()
+        orch.tool_discovery.initialize()
+
+        orch._run_parallel_analysis([])
+
+        assert "trend" in executed
+        assert "tool" in executed
+
+    def test_run_agent_step_retries_on_error(self):
+        """_run_agent_step retries and returns success on second attempt."""
+        orch = Orchestrator()
+        orch.initialize()
+        call_count = 0
+
+        class FlakyTrendTracker(TrendTrackerAgent):
+            def _execute(self, task_input=None):
+                nonlocal call_count
+                call_count += 1
+                if call_count == 1:
+                    raise RuntimeError("transient failure")
+                return {}
+
+        orch.trend_tracker = FlakyTrendTracker()
+        orch.trend_tracker.initialize()
+
+        result = orch._run_agent_step(orch.trend_tracker, [], max_retries=2, retry_delay=0)
+        assert result.status == AgentStatus.SUCCESS
+        assert call_count == 2
+
+    def test_run_agent_step_exhausts_retries(self):
+        """_run_agent_step returns ERROR result after all retries fail."""
+        orch = Orchestrator()
+        orch.initialize()
+        call_count = 0
+
+        class AlwaysFailingAgent(TrendTrackerAgent):
+            def _execute(self, task_input=None):
+                nonlocal call_count
+                call_count += 1
+                raise RuntimeError("always fails")
+
+        orch.trend_tracker = AlwaysFailingAgent()
+        orch.trend_tracker.initialize()
+
+        result = orch._run_agent_step(orch.trend_tracker, [], max_retries=2, retry_delay=0)
+        assert result.status == AgentStatus.ERROR
+        assert call_count == 2
