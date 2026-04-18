@@ -28,22 +28,35 @@ function findPostContainers() {
   // Walk every <ul> inside <main>, score by how many direct <li> children
   // contain an activity element. Highest scorer = reactions list.
   const uls = [...document.querySelectorAll("main ul")];
+  const scores = [];
   let bestUl = null, bestScore = 0;
   for (const ul of uls) {
-    const score = [...ul.children].filter(
+    const liCount = [...ul.children].filter(
       li => li.tagName === "LI" && li.querySelector('[data-urn*="activity"]')
     ).length;
-    if (score > bestScore) { bestScore = score; bestUl = ul; }
+    scores.push({ ul, liCount });
+    if (liCount > bestScore) { bestScore = liCount; bestUl = ul; }
   }
+
+  // Log all UL scores so we can verify which one wins
+  console.log("[AAA] findPostContainers: scored", scores.length, "ULs:",
+    scores.map(s => `${s.liCount}li`).join(", "),
+    "| winner:", bestScore, "li");
+
   if (bestUl && bestScore >= 1) {
-    return [...bestUl.children].filter(li => li.tagName === "LI");
+    const items = [...bestUl.children].filter(li => li.tagName === "LI");
+    console.log("[AAA] reactions UL chosen:", items.length, "LI children");
+    return { containers: items, log: `ul-score: ${scores.map(s=>s.liCount).join(",")} → winner=${bestScore}li` };
   }
   // Fallback for feed / profile pages
   for (const sel of POST_CONTAINERS) {
     const found = [...document.querySelectorAll(sel)];
-    if (found.length > 0) return found;
+    if (found.length > 0) {
+      console.log("[AAA] fallback selector", sel, "→", found.length, "items");
+      return { containers: found, log: `fallback-sel:${sel} → ${found.length}` };
+    }
   }
-  return [];
+  return { containers: [], log: "no containers found" };
 }
 
 const TEXT_SELECTORS = [
@@ -359,7 +372,7 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
 async function scrapePosts(options = {}) {
   const { expandAll = true } = options;
 
-  const containers = findPostContainers();
+  const { containers, log: containerLog } = findPostContainers();
 
   // De-duplicate (nested selectors can match parent + child)
   const unique = [];
@@ -382,7 +395,8 @@ async function scrapePosts(options = {}) {
   }
 
   const runLog = [];
-  runLog.push(`containers: ${containers.length} found → ${unique.length} unique after dedup`);
+  runLog.push(`containers: ${containerLog}`);
+  runLog.push(`dedup: ${containers.length} found → ${unique.length} unique`);
 
   const posts = [];
   for (let idx = 0; idx < unique.length; idx++) {
@@ -414,7 +428,8 @@ async function scrapePosts(options = {}) {
 
     const images = extractImagesFromFork(contentEl);
     const kept = !!(text || images.length);
-    runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}`);
+    const preview = text.slice(0, 60).replace(/\n/g, " ");
+    runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}${kept ? ` | "${preview}"` : ""}`);
     if (!kept) continue;
 
     // Author — must skip reaction attribution line ("Brandt Pileggi likes this")
@@ -440,6 +455,7 @@ async function scrapePosts(options = {}) {
       : "";
 
     const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
+    runLog.push(`[${idx}] author="${author}" ts="${timestamp}"`);
     const postUrl = extractPostUrl(contentEl);
     const articleUrl = extractArticleUrl(contentEl);
     const postType = detectPostType(contentEl);
@@ -525,5 +541,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "8";
+const AAA_CONTENT_VERSION = "9";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
