@@ -643,15 +643,15 @@ The machine-readable spec lives in `docs/influencer-source-registry.yaml`. The h
 
 | Persona | YouTube | LinkedIn | GitHub |
 |---------|---------|----------|--------|
-| Andrej Karpathy (#1) | 10 most recent videos (transcripts) | 10 most recent posts | 5 repos: nanoGPT, llm.c, micrograd, makemore, arxiv-sanity-preserver |
+| Andrej Karpathy (#1) | 10 most recent videos (transcripts) | 10 most recent posts | 4 repos: nanoGPT, micrograd, makemore, autoresearch + 1 gist: LLM Wiki |
 | Cole Medin (#2) | 10 most recent videos (transcripts) | 10 most recent posts | 3 most popular repos |
 | Stanislav Beliaev (#3) | — no channel | 10 most recent posts | 3 most popular repos |
 | Paolo Perrone (#4) | — no channel | 10 most recent posts | 3 most popular repos |
 | Alex Wang (#5) | — no channel | 10 most recent posts | — no personal GitHub |
 
-**Note on Karpathy's pinned repos:** The user flagged "outresearch" and "llm wiki" as must-includes.
-Best current interpretation: `arxiv-sanity-preserver` (Karpathy's arXiv discovery/filtering tool → "outresearch")
-and `llm.c` (C-language GPT-2 with extensive inline documentation → "llm wiki"). Confirm before pipeline build.
+**Note on Karpathy's pinned targets:** Confirmed by user — `autoresearch` (https://github.com/karpathy/autoresearch)
+and `LLM Wiki` gist (https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The gist is ingested
+as a document, not a repo.
 
 **LinkedIn access:** All LinkedIn posts are auth-blocked. Ingest requires authenticated session or user-exported content.
 **YouTube:** Transcript-only ingest via yt-dlp or YouTube Data API v3. No video file download.

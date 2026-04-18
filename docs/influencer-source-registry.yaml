@@ -71,18 +71,19 @@ sources:
           - repo: nanoGPT
             url: https://github.com/karpathy/nanoGPT
             why: canonical GPT-2 reimplementation used as a teaching baseline across the field
-          - repo: llm.c
-            url: https://github.com/karpathy/llm.c
-            why: LLM training in pure C; likely "llm wiki" candidate given extensive README documentation
           - repo: micrograd
             url: https://github.com/karpathy/micrograd
             why: minimal autograd engine; foundational teaching tool for backprop
           - repo: makemore
             url: https://github.com/karpathy/makemore
             why: character-level language model series companion to the nn-zero-to-hero YouTube course
-          - repo: arxiv-sanity-preserver
-            url: https://github.com/karpathy/arxiv-sanity-preserver
-            why: likely "outresearch" candidate — Karpathy's arxiv paper discovery and filtering tool; confirm with user
+          - repo: autoresearch
+            url: https://github.com/karpathy/autoresearch
+            why: user-confirmed must-include
+        pinned_gists:
+          - gist: LLM Wiki
+            url: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+            why: user-confirmed must-include; Karpathy's reference wiki on LLMs; ingest as a document, not a repo
     posts: []
 
   - source_id: influencer_cole_medin
