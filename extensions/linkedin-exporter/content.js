@@ -343,8 +343,25 @@ async function scrapePosts(options = {}) {
     runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}`);
     if (!kept) continue;
 
-    const author = firstText(el, AUTHOR_SELECTORS);
-    const authorUrl = firstAttr(el, AUTHOR_URL_SELECTORS, "href");
+    // Author name: try named selectors, then fall back to first short line
+    // of the header child (fork.children[0]) which contains actor info.
+    let author = firstText(el, AUTHOR_SELECTORS);
+    if (!author) {
+      const fork = findForkNode(el);
+      const headerText = (fork.children[0]?.innerText || "").trim();
+      const nameLine = headerText.split("\n")
+        .map(l => l.trim())
+        .find(l => l.length > 2 && l.length < 80 &&
+              !l.includes("•") && !l.match(/^\d/) && !l.toLowerCase().includes("follow"));
+      if (nameLine) author = nameLine;
+    }
+
+    // Author URL: href may already be absolute — avoid double-prepending domain
+    const authorHref = firstAttr(el, AUTHOR_URL_SELECTORS, "href");
+    const authorUrl = authorHref
+      ? (authorHref.startsWith("http") ? authorHref : `https://www.linkedin.com${authorHref}`)
+      : "";
+
     const timestamp = firstText(el, TIMESTAMP_SELECTORS);
     const postUrl = extractPostUrl(el);
     const articleUrl = extractArticleUrl(el);
@@ -358,7 +375,7 @@ async function scrapePosts(options = {}) {
     posts.push({
       post_url: postUrl || articleUrl,
       author,
-      author_url: authorUrl ? `https://www.linkedin.com${authorUrl}` : "",
+      author_url: authorUrl,
       timestamp,
       post_type: postType,
       text,
@@ -427,5 +444,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "4";
+const AAA_CONTENT_VERSION = "5";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
