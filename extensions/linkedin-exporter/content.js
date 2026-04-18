@@ -22,19 +22,22 @@ const POST_CONTAINERS = [
 ];
 
 const TEXT_SELECTORS = [
-  // Current LinkedIn markup (no dir attribute required)
+  // Structural selectors (derived from observed XPath — most reliable)
+  // The activity container's 2nd direct child div holds the post text
+  ':scope > div:nth-child(2)',
+  ':scope > div:nth-child(2) > div',
+  // Named class selectors — current LinkedIn markup
   '.update-components-text__text-view',
   '.update-components-text',
   '.feed-shared-update-v2__commentary',
   '.update-components-update-v2__commentary',
-  // With dir attribute (older markup — kept for compatibility)
+  // With dir attribute (older markup)
   '.update-components-text span[dir="ltr"]',
   '.feed-shared-update-v2__description span[dir="ltr"]',
   '.feed-shared-text span[dir="ltr"]',
-  // Broader class-prefix matches
+  // Broader fallbacks
   '[class*="commentary"]',
   '[class*="update-components-text"]',
-  // Article/reshared content
   '.feed-shared-update-v2__description',
   '.feed-shared-text',
 ];
@@ -59,6 +62,10 @@ const TIMESTAMP_SELECTORS = [
 ];
 
 const IMAGE_SELECTORS = [
+  // Structural (3rd direct child of activity container holds media)
+  ':scope > div:nth-child(3) img',
+  ':scope > div:nth-child(3) [data-delayed-url]',
+  // Named class selectors
   '.update-components-image__image',
   '.feed-shared-image__image',
   'img[data-delayed-url]',
@@ -68,11 +75,17 @@ const IMAGE_SELECTORS = [
 ];
 
 const READ_MORE_SELECTORS = [
+  // Current LinkedIn markup
+  '.see-more-less-html__button',          // reactions/feed pages
+  '.see-more-less-text__button',
   '.feed-shared-inline-show-more-text__see-more-less-toggle',
-  '.see-more',
   'button.inline-show-more-text__button',
+  // Structural: "see more" button is inside div[2] of the activity container
+  ':scope > div:nth-child(2) button',
+  // Attribute fallbacks
   'button[aria-label*="more"]',
-  '.show-more-less-html__button',
+  'button[aria-label*="see"]',
+  '.see-more',
 ];
 
 // ---------------------------------------------------------------------------
@@ -159,6 +172,16 @@ function extractPostUrl(el) {
   // Try permalink elements
   const permalink = el.querySelector('[data-control-name="actor_container"] a, a[href*="/posts/"], a[href*="/feed/update/"]');
   if (permalink) return permalink.href;
+  // Structural fallback: header is div[1], controls are in header's div[2]
+  // The "Copy link to post" button stores the urn in a nearby data attribute
+  const headerControls = el.querySelector(':scope > div:nth-child(1)');
+  if (headerControls) {
+    const urnEl = headerControls.closest('[data-urn]');
+    if (urnEl) {
+      const m = urnEl.getAttribute("data-urn")?.match(/activity:(\d+)/);
+      if (m) return `https://www.linkedin.com/feed/update/urn:li:activity:${m[1]}/`;
+    }
+  }
   return "";
 }
 
