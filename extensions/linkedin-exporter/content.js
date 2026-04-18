@@ -94,30 +94,62 @@ const READ_MORE_SELECTORS = [
 
 function firstText(el, selectors) {
   for (const sel of selectors) {
-    const found = el.querySelector(sel);
-    if (found && found.innerText.trim()) {
-      return found.innerText.trim();
-    }
+    try {
+      const found = el.querySelector(sel);
+      if (found) {
+        const t = (found.innerText || found.textContent || "").trim();
+        if (t.length > 20) return t;
+      }
+    } catch (_) {}
   }
   return "";
 }
 
-// Fallback when all selectors fail: extract meaningful lines from container innerText.
-// Drops short UI strings (like/comment counts, navigation labels) and returns the
-// longest coherent block — typically the post body.
-function extractTextFallback(el) {
-  const raw = el.innerText || "";
-  const lines = raw.split("\n")
-    .map(l => l.trim())
-    .filter(l => l.length > 30);        // short lines are usually UI chrome
-  if (!lines.length) return "";
-  // Return longest contiguous block (most likely the post text)
-  let best = "", current = "";
-  for (const line of lines) {
-    current += (current ? "\n" : "") + line;
-    if (current.length > best.length) best = current;
+// Walk the single-child chain from el until we reach a node with multiple children.
+// LinkedIn wraps post content in a deep single-child tunnel before forking into
+// header / text / media siblings. Returns the fork node, or el if none found.
+function findForkNode(el, maxDepth = 15) {
+  let node = el;
+  for (let i = 0; i < maxDepth; i++) {
+    if (node.children.length !== 1) return node;
+    node = node.children[0];
   }
-  return best.slice(0, 8000);           // cap at 8 KB
+  return node;
+}
+
+// Extract post text using the fork-node pattern:
+// fork.children[0] = header (author, timestamp, controls)
+// fork.children[1] = text body  ← we want this
+// fork.children[2] = media (images, video)
+function extractPostText(el) {
+  // Try class-based selectors first (fast path)
+  const fromSelectors = firstText(el, TEXT_SELECTORS);
+  if (fromSelectors) return fromSelectors;
+
+  // Traverse the single-child tunnel to the fork
+  const fork = findForkNode(el);
+  if (fork.children.length >= 2) {
+    const textArea = fork.children[1];
+    const t = (textArea.innerText || textArea.textContent || "").trim();
+    if (t.length > 20) return t;
+  }
+
+  // Final fallback: full innerText, drop short UI chrome lines
+  const raw = el.innerText || el.textContent || "";
+  const lines = raw.split("\n").map(l => l.trim()).filter(l => l.length > 30);
+  return lines.join("\n").slice(0, 8000);
+}
+
+// Extract images using the fork-node pattern:
+// fork.children[2] = media section
+function extractImagesFromFork(el) {
+  const fork = findForkNode(el);
+  if (fork.children.length >= 3) {
+    const mediaArea = fork.children[2];
+    const imgs = extractImages(mediaArea);
+    if (imgs.length) return imgs;
+  }
+  return extractImages(el);
 }
 
 function firstAttr(el, selectors, attr) {
@@ -278,17 +310,20 @@ async function scrapePosts(options = {}) {
     await sleep(300);
   }
 
+  console.log(`[AAA] scrapePosts: ${unique.length} containers`);
+
   const posts = [];
   for (const el of unique) {
-    const text = firstText(el, TEXT_SELECTORS) || extractTextFallback(el);
-    if (!text && !extractImages(el).length) continue; // Skip empty containers
+    const text = extractPostText(el);
+    const images = extractImagesFromFork(el);
+    console.log(`[AAA] container text=${text.length}chars images=${images.length}`);
+    if (!text && !images.length) continue; // Skip empty containers
 
     const author = firstText(el, AUTHOR_SELECTORS);
     const authorUrl = firstAttr(el, AUTHOR_URL_SELECTORS, "href");
     const timestamp = firstText(el, TIMESTAMP_SELECTORS);
     const postUrl = extractPostUrl(el);
     const articleUrl = extractArticleUrl(el);
-    const images = extractImages(el);
     const postType = detectPostType(el);
 
     // Extract all link URLs from post text (external references)
@@ -318,7 +353,7 @@ async function scrapePosts(options = {}) {
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === "ping") {
-    sendResponse({ ok: true, url: window.location.href });
+    sendResponse({ ok: true, url: window.location.href, version: AAA_CONTENT_VERSION });
     return true;
   }
 
@@ -362,4 +397,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-console.log("[AAA LinkedIn Exporter] Content script loaded on", window.location.href);
+const AAA_CONTENT_VERSION = "3";
+console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);

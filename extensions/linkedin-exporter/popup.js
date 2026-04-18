@@ -47,11 +47,16 @@ async function init() {
     return;
   }
 
-  // Ping content script to confirm it's loaded
+  // Ping content script; reinject if missing or stale version
+  const EXPECTED_VERSION = "3";
+  let needsInject = false;
   try {
-    await chrome.tabs.sendMessage(tab.id, { action: "ping" });
+    const pong = await chrome.tabs.sendMessage(tab.id, { action: "ping" });
+    if (pong?.version !== EXPECTED_VERSION) needsInject = true;
   } catch (_) {
-    // Content script may not be injected yet — inject it
+    needsInject = true;
+  }
+  if (needsInject) {
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ["content.js"],
