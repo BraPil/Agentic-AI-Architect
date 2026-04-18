@@ -23,6 +23,9 @@ htmlcov/
 
 # Data (user-generated, not source code)
 data/
+# Seed documents are tracked source — they are the curated starting content for the KB
+!data/seeds/
+!data/seeds/**
 *.db
 *.sqlite
 *.sqlite3

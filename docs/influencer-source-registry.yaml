@@ -1,4 +1,4 @@
-version: 3
+version: 4
 updated_on: 2026-04-18
 purpose: >-
   Machine-ingestable registry of influencer profiles and influential post URLs
@@ -70,20 +70,36 @@ sources:
         pinned_repos:
           - repo: nanoGPT
             url: https://github.com/karpathy/nanoGPT
+            foundational: false
             why: canonical GPT-2 reimplementation used as a teaching baseline across the field
           - repo: micrograd
             url: https://github.com/karpathy/micrograd
+            foundational: false
             why: minimal autograd engine; foundational teaching tool for backprop
           - repo: makemore
             url: https://github.com/karpathy/makemore
+            foundational: false
             why: character-level language model series companion to the nn-zero-to-hero YouTube course
           - repo: autoresearch
             url: https://github.com/karpathy/autoresearch
-            why: user-confirmed must-include
+            foundational: true
+            why: >-
+              user-confirmed must-include; potentially foundational — Karpathy's
+              autonomous research tooling; evaluate for direct adoption or influence
+              on AAA's research pipeline design
         pinned_gists:
           - gist: LLM Wiki
             url: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
-            why: user-confirmed must-include; Karpathy's reference wiki on LLMs; ingest as a document, not a repo
+            seed_file: data/seeds/karpathy_llm_wiki.md
+            foundational: true
+            why: >-
+              user-confirmed must-include; specifies the three-layer knowledge
+              architecture (raw sources / wiki / schema) and Ingest-Query-Lint
+              operations that directly inform AAA's knowledge layer design (P2.4,
+              P6.4); treat as a primary architectural specification, not just a
+              source. NOTE: WebFetch processing returned a prompt-injected
+              response on this URL — raw content fetched via curl and verified
+              clean; see seed file header for details.
     posts: []
 
   - source_id: influencer_cole_medin
@@ -111,8 +127,50 @@ sources:
         max_videos: 10
         strategy: most_recent
       github:
-        max_repos: 3
-        strategy: most_popular_by_stars
+        max_repos: 5
+        strategy: pinned
+        pinned_repos:
+          - repo: dark-factory-experiment
+            url: https://github.com/coleam00/dark-factory-experiment
+            foundational: true
+            why: >-
+              autonomous software factory pattern — Archon + Claude Code + LLM;
+              GitHub as state machine; issue/PR lifecycle with label-based
+              orchestration; budget caps and validation independence; directly
+              relevant to AAA Phase 4 (orchestration) and Phase 6
+              (self-improvement loop)
+          - repo: Archon
+            url: https://github.com/coleam00/Archon
+            foundational: true
+            why: >-
+              open-source YAML-defined workflow engine for AI coding agents;
+              makes AI coding deterministic and repeatable; strong candidate for
+              AAA's Phase 4 orchestration strategy — evaluate against LangGraph
+              and custom BaseAgent approach before P4.1 decision
+          - repo: adversarial-dev
+            url: https://github.com/coleam00/adversarial-dev
+            foundational: true
+            why: >-
+              GAN-inspired Planner/Generator/Evaluator harness; evaluator
+              actively tries to break what the generator builds; sprint contracts
+              negotiated before coding; directly relevant to AAA Phase 3
+              evaluation framework (P3.3) and Phase 6 self-improvement; based on
+              Anthropic harness design article
+          - repo: second-brain-starter
+            url: https://github.com/coleam00/second-brain-starter
+            foundational: true
+            why: >-
+              Claude Code skill for generating personalized Second Brain PRD;
+              SOUL.md/USER.md/MEMORY.md persistence pattern; proactive
+              monitoring; relevant to Phase 6 knowledge refinement and
+              potentially to persona analog memory architecture
+          - repo: claude-memory-compiler
+            url: https://github.com/coleam00/claude-memory-compiler
+            foundational: false
+            why: >-
+              transforms Claude conversations into searchable KB using session-end
+              hooks; structured index.md beats vector RAG at personal scale
+              (50-500 articles); relevant to Phase 6 knowledge distillation (P6.4)
     posts: []
 
   - source_id: influencer_allie_k_miller
