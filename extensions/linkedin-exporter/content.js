@@ -252,7 +252,7 @@ function sleep(ms) {
 }
 
 // ---------------------------------------------------------------------------
-// Scroll to load more posts
+// Scroll-only (no scraping) — used by the standalone Scroll button
 // ---------------------------------------------------------------------------
 
 async function scrollToLoadAll(maxScrolls = 20, delayMs = 1500) {
@@ -264,13 +264,67 @@ async function scrollToLoadAll(maxScrolls = 20, delayMs = 1500) {
     const newHeight = document.body.scrollHeight;
     if (newHeight === lastHeight) {
       unchanged++;
-      if (unchanged >= 2) break; // No new content loaded
+      if (unchanged >= 2) break;
     } else {
       unchanged = 0;
     }
     lastHeight = newHeight;
   }
   window.scrollTo(0, 0);
+}
+
+// Rolling scrape — scrape visible posts at each scroll step before LinkedIn
+// occludes them. LinkedIn's virtual DOM removes off-screen posts so scraping
+// only at the end misses everything above the current viewport.
+// ---------------------------------------------------------------------------
+
+async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
+                                      expandAll = true, maxPosts = 0) {
+  const accumulated = new Map(); // key → post object (dedup by post_url or text prefix)
+  const runLog = [];
+
+  async function scrapeAndAccumulate(label) {
+    const { posts } = await scrapePosts({ expandAll });
+    let added = 0;
+    for (const p of posts) {
+      const key = p.post_url || p.text.slice(0, 80);
+      if (key && !accumulated.has(key)) {
+        accumulated.set(key, p);
+        added++;
+      }
+    }
+    runLog.push(`${label}: +${added} new (total ${accumulated.size})`);
+    return added;
+  }
+
+  // Capture initial viewport
+  await scrapeAndAccumulate("initial");
+
+  let lastHeight = 0;
+  let unchanged = 0;
+
+  for (let i = 0; i < maxScrolls; i++) {
+    if (maxPosts > 0 && accumulated.size >= maxPosts) break;
+
+    window.scrollTo(0, document.body.scrollHeight);
+    await sleep(delayMs);
+
+    const newHeight = document.body.scrollHeight;
+    if (newHeight === lastHeight) {
+      unchanged++;
+      if (unchanged >= 2) { runLog.push("scroll: no new content, stopping"); break; }
+    } else {
+      unchanged = 0;
+    }
+    lastHeight = newHeight;
+
+    await scrapeAndAccumulate(`scroll ${i + 1}`);
+  }
+
+  window.scrollTo(0, 0);
+  const posts = [...accumulated.values()];
+  runLog.push(`result: ${posts.length} total posts collected`);
+  return { posts, log: runLog };
 }
 
 // ---------------------------------------------------------------------------
@@ -343,8 +397,11 @@ async function scrapePosts(options = {}) {
     runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}`);
     if (!kept) continue;
 
-    // Author name: try named selectors, then fall back to first short line
-    // of the header child (fork.children[0]) which contains actor info.
+    // Author name: try named selectors, then pick the first name-like line
+    // from the header child (fork.children[0]).
+    // Must skip the reaction attribution line ("Brandt Pileggi likes this").
+    const REACTION_VERBS = ["likes", "reacted", "commented", "reshared",
+                            "celebrated", "shared", "posted", "follows"];
     let author = firstText(el, AUTHOR_SELECTORS);
     if (!author) {
       const fork = findForkNode(el);
@@ -352,7 +409,10 @@ async function scrapePosts(options = {}) {
       const nameLine = headerText.split("\n")
         .map(l => l.trim())
         .find(l => l.length > 2 && l.length < 80 &&
-              !l.includes("•") && !l.match(/^\d/) && !l.toLowerCase().includes("follow"));
+              !l.includes("•") &&
+              !l.match(/^\d/) &&
+              !l.toLowerCase().includes("follow") &&
+              !REACTION_VERBS.some(v => l.toLowerCase().includes(v)));
       if (nameLine) author = nameLine;
     }
 
@@ -429,8 +489,12 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
   if (message.action === "scroll_then_scrape") {
     (async () => {
-      await scrollToLoadAll(message.maxScrolls || 15, message.delay || 1500);
-      const { posts, log } = await scrapePosts({ expandAll: true });
+      const { posts, log } = await scrollAndScrapeRolling(
+        message.maxScrolls || 15,
+        message.delay || 1500,
+        message.expandAll !== false,
+        message.maxPosts || 0,
+      );
       sendResponse({
         ok: true, posts, log,
         page_url: window.location.href,
@@ -444,5 +508,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "5";
+const AAA_CONTENT_VERSION = "6";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);

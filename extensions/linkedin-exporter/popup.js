@@ -1,6 +1,6 @@
 "use strict";
 
-const CONTENT_VERSION = "5";
+const CONTENT_VERSION = "6";
 
 let exportData = null;
 
@@ -142,9 +142,12 @@ $("btnScrollScrape").addEventListener("click", async () => {
   setStatus("Scrolling + scraping…", "info");
   setButtons(false);
 
+  const maxPosts = parseInt($("maxPosts").value) || 0;
   chrome.tabs.sendMessage(tab.id,
     { action: "scroll_then_scrape", maxScrolls, delay: 1500,
-      expandAll: $("expandReadMore").checked, requireVersion: CONTENT_VERSION },
+      expandAll: $("expandReadMore").checked,
+      maxPosts,
+      requireVersion: CONTENT_VERSION },
     res => handleScrapeResult(res, "Scroll+Scrape"));
 });
 
