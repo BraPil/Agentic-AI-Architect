@@ -25,38 +25,60 @@ const POST_CONTAINERS = [
 // direct <li> children that contain a [data-urn*="activity"] descendant.
 // This survives LinkedIn injecting "suggested posts" sections elsewhere in the DOM.
 function findPostContainers() {
-  // Walk every <ul> inside <main>, score by how many direct <li> children
-  // contain an activity element. Highest scorer = reactions list.
+  const diagLog = [];
+
+  // ── Step 1: probe all [data-urn*="activity"] on the page ──────────────────
+  const allActivity = [...document.querySelectorAll('[data-urn*="activity"]')];
+  diagLog.push(`probe: ${allActivity.length} [data-urn*=activity] on page`);
+  if (allActivity.length > 0) {
+    // Log parent tag chain for the first 3 so we know the structure
+    allActivity.slice(0, 3).forEach((el, i) => {
+      const chain = [];
+      let n = el;
+      for (let d = 0; d < 6 && n; d++) { chain.push(n.tagName); n = n.parentElement; }
+      diagLog.push(`  activity[${i}] chain: ${chain.join("←")} urn=${el.getAttribute("data-urn")?.slice(-12)}`);
+    });
+  }
+
+  // ── Step 2: score every <ul> in <main> ────────────────────────────────────
   const uls = [...document.querySelectorAll("main ul")];
-  const scores = [];
+  diagLog.push(`probe: ${uls.length} <ul> in <main>`);
   let bestUl = null, bestScore = 0;
   for (const ul of uls) {
     const liCount = [...ul.children].filter(
       li => li.tagName === "LI" && li.querySelector('[data-urn*="activity"]')
     ).length;
-    scores.push({ ul, liCount });
+    if (liCount > 0) diagLog.push(`  ul liCount=${liCount} cls=${ul.className.slice(0,40)}`);
     if (liCount > bestScore) { bestScore = liCount; bestUl = ul; }
   }
 
-  // Log all UL scores so we can verify which one wins
-  console.log("[AAA] findPostContainers: scored", scores.length, "ULs:",
-    scores.map(s => `${s.liCount}li`).join(", "),
-    "| winner:", bestScore, "li");
-
   if (bestUl && bestScore >= 1) {
     const items = [...bestUl.children].filter(li => li.tagName === "LI");
-    console.log("[AAA] reactions UL chosen:", items.length, "LI children");
-    return { containers: items, log: `ul-score: ${scores.map(s=>s.liCount).join(",")} → winner=${bestScore}li` };
+    diagLog.push(`winner: ul with ${bestScore} activity-li → ${items.length} LI items`);
+    return { containers: items, log: diagLog.join(" | ") };
   }
-  // Fallback for feed / profile pages
+
+  // ── Step 3: try <div> containers (LinkedIn sometimes skips <ul>) ───────────
+  const divActivity = [...document.querySelectorAll(
+    'main div[data-urn*="activity"], main > div [data-urn*="activity"]'
+  )];
+  diagLog.push(`probe: ${divActivity.length} div[data-urn*=activity] in main`);
+  if (divActivity.length > 0) {
+    diagLog.push(`fallback: using ${divActivity.length} div activity containers`);
+    return { containers: divActivity, log: diagLog.join(" | ") };
+  }
+
+  // ── Step 4: last-resort named class selectors ──────────────────────────────
   for (const sel of POST_CONTAINERS) {
     const found = [...document.querySelectorAll(sel)];
     if (found.length > 0) {
-      console.log("[AAA] fallback selector", sel, "→", found.length, "items");
-      return { containers: found, log: `fallback-sel:${sel} → ${found.length}` };
+      diagLog.push(`fallback-sel:${sel} → ${found.length}`);
+      return { containers: found, log: diagLog.join(" | ") };
     }
   }
-  return { containers: [], log: "no containers found" };
+
+  diagLog.push("FAILED: no containers found");
+  return { containers: [], log: diagLog.join(" | ") };
 }
 
 const TEXT_SELECTORS = [
@@ -541,5 +563,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "9";
+const AAA_CONTENT_VERSION = "10";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
