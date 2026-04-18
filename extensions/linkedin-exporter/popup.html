@@ -131,6 +131,37 @@
       margin-bottom: 8px;
       display: none;
     }
+
+    #logPanel {
+      display: none;
+      margin-top: 10px;
+    }
+    #logDetails summary {
+      font-size: 10px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 0;
+    }
+    #logDetails summary:hover { color: #999; }
+    #logBody {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 10px;
+      color: #888;
+      background: #0d0d0d;
+      border: 1px solid #1e1e1e;
+      border-radius: 4px;
+      padding: 7px 8px;
+      margin-top: 5px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 180px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -169,6 +200,13 @@
   <button class="btn btn-secondary" id="btnCopy" disabled>Copy JSON to clipboard</button>
 
   <div class="status" id="status">Ready.</div>
+
+  <div id="logPanel">
+    <details id="logDetails">
+      <summary>Run log</summary>
+      <pre id="logBody"></pre>
+    </details>
+  </div>
 
   <script src="popup.js"></script>
 </body>

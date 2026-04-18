@@ -310,14 +310,38 @@ async function scrapePosts(options = {}) {
     await sleep(300);
   }
 
-  console.log(`[AAA] scrapePosts: ${unique.length} containers`);
+  const runLog = [];
+  runLog.push(`containers: selector=[data-urn*="activity"] → ${unique.length} unique`);
 
   const posts = [];
-  for (const el of unique) {
-    const text = extractPostText(el);
+  for (let idx = 0; idx < unique.length; idx++) {
+    const el = unique[idx];
+    const urn = el.getAttribute("data-urn") || `idx-${idx}`;
+
+    // Text extraction — log which path succeeded
+    let text = "", textVia = "none";
+    const fromSel = firstText(el, TEXT_SELECTORS);
+    if (fromSel) {
+      text = fromSel; textVia = "selector";
+    } else {
+      const fork = findForkNode(el);
+      const forkDepth = (() => { let n = el, d = 0; while (n !== fork) { n = n.children[0]; d++; } return d; })();
+      runLog.push(`[${idx}] urn=${urn.slice(-12)} fork_depth=${forkDepth} fork_children=${fork.children.length}`);
+      if (fork.children.length >= 2) {
+        const t = (fork.children[1].innerText || fork.children[1].textContent || "").trim();
+        if (t.length > 20) { text = t; textVia = `fork.children[1]`; }
+      }
+      if (!text) {
+        const raw = (el.innerText || el.textContent || "");
+        const lines = raw.split("\n").map(l => l.trim()).filter(l => l.length > 30);
+        if (lines.length) { text = lines.join("\n").slice(0, 8000); textVia = `innerText(${lines.length}lines)`; }
+      }
+    }
+
     const images = extractImagesFromFork(el);
-    console.log(`[AAA] container text=${text.length}chars images=${images.length}`);
-    if (!text && !images.length) continue; // Skip empty containers
+    const kept = !!(text || images.length);
+    runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}`);
+    if (!kept) continue;
 
     const author = firstText(el, AUTHOR_SELECTORS);
     const authorUrl = firstAttr(el, AUTHOR_URL_SELECTORS, "href");
@@ -344,7 +368,8 @@ async function scrapePosts(options = {}) {
     });
   }
 
-  return posts;
+  runLog.push(`result: ${posts.length} posts kept of ${unique.length} containers`);
+  return { posts, log: runLog };
 }
 
 // ---------------------------------------------------------------------------
@@ -365,16 +390,15 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.action === "scrape") {
-    scrapePosts({ expandAll: message.expandAll !== false }).then(posts => {
+    scrapePosts({ expandAll: message.expandAll !== false }).then(({ posts, log }) => {
       sendResponse({
-        ok: true,
-        posts,
+        ok: true, posts, log,
         page_url: window.location.href,
         scraped_at: new Date().toISOString(),
         count: posts.length,
       });
     }).catch(err => {
-      sendResponse({ ok: false, error: err.message });
+      sendResponse({ ok: false, error: err.message, log: [`ERROR: ${err.message}`] });
     });
     return true;
   }
@@ -382,20 +406,19 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === "scroll_then_scrape") {
     (async () => {
       await scrollToLoadAll(message.maxScrolls || 15, message.delay || 1500);
-      const posts = await scrapePosts({ expandAll: true });
+      const { posts, log } = await scrapePosts({ expandAll: true });
       sendResponse({
-        ok: true,
-        posts,
+        ok: true, posts, log,
         page_url: window.location.href,
         scraped_at: new Date().toISOString(),
         count: posts.length,
       });
-    })().catch(err => sendResponse({ ok: false, error: err.message }));
+    })().catch(err => sendResponse({ ok: false, error: err.message, log: [`ERROR: ${err.message}`] }));
     return true;
   }
 
   return false;
 });
 
-const AAA_CONTENT_VERSION = "3";
+const AAA_CONTENT_VERSION = "4";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);

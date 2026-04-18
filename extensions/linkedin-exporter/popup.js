@@ -22,9 +22,18 @@ function storeExport(data) {
   $("countBadge").textContent = count;
   $("btnDownload").disabled = count === 0;
   $("btnCopy").disabled = count === 0;
-
-  // Persist in extension storage for background download
   chrome.storage.local.set({ lastExport: data });
+}
+
+function showLog(lines) {
+  const panel = $("logPanel");
+  const body = $("logBody");
+  if (!lines?.length) { panel.style.display = "none"; return; }
+  body.textContent = lines.join("\n");
+  panel.style.display = "block";
+  // Auto-open if scrape produced 0 posts (something went wrong)
+  const hasIssue = lines.some(l => l.includes("SKIPPED") || l.includes("0 posts"));
+  $("logDetails").open = hasIssue;
 }
 
 // ---------------------------------------------------------------------------
@@ -48,7 +57,7 @@ async function init() {
   }
 
   // Ping content script; reinject if missing or stale version
-  const EXPECTED_VERSION = "3";
+  const EXPECTED_VERSION = "4";
   let needsInject = false;
   try {
     const pong = await chrome.tabs.sendMessage(tab.id, { action: "ping" });
@@ -94,6 +103,7 @@ $("btnScrape").addEventListener("click", async () => {
 
   chrome.tabs.sendMessage(tab.id, { action: "scrape", expandAll: expandReadMore }, res => {
     setButtons(true);
+    showLog(res?.log);
     if (chrome.runtime.lastError || !res?.ok) {
       setStatus("Scrape failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
       return;
@@ -114,6 +124,7 @@ $("btnScrollScrape").addEventListener("click", async () => {
     { action: "scroll_then_scrape", maxScrolls, delay: 1500, expandAll: expandReadMore },
     res => {
       setButtons(true);
+      showLog(res?.log);
       if (chrome.runtime.lastError || !res?.ok) {
         setStatus("Failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
         return;
