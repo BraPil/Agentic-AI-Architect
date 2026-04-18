@@ -13,19 +13,30 @@
 // Post selectors — LinkedIn's classes change; try multiple in order
 // ---------------------------------------------------------------------------
 
+// Ordered by specificity — FIRST selector with ≥1 match wins (not most matches)
 const POST_CONTAINERS = [
-  '[data-urn*="activity"]',
-  '.feed-shared-update-v2',
-  '.occludable-update',
+  '[data-urn*="activity"]',    // most precise: actual activity posts
+  '.feed-shared-update-v2',    // classic feed posts
+  '.occludable-update',        // broader wrapper — fallback only
   '.feed-shared-article',
 ];
 
 const TEXT_SELECTORS = [
+  // Current LinkedIn markup (no dir attribute required)
+  '.update-components-text__text-view',
+  '.update-components-text',
+  '.feed-shared-update-v2__commentary',
+  '.update-components-update-v2__commentary',
+  // With dir attribute (older markup — kept for compatibility)
   '.update-components-text span[dir="ltr"]',
   '.feed-shared-update-v2__description span[dir="ltr"]',
   '.feed-shared-text span[dir="ltr"]',
-  '.update-components-text',
+  // Broader class-prefix matches
+  '[class*="commentary"]',
+  '[class*="update-components-text"]',
+  // Article/reshared content
   '.feed-shared-update-v2__description',
+  '.feed-shared-text',
 ];
 
 const AUTHOR_SELECTORS = [
@@ -76,6 +87,24 @@ function firstText(el, selectors) {
     }
   }
   return "";
+}
+
+// Fallback when all selectors fail: extract meaningful lines from container innerText.
+// Drops short UI strings (like/comment counts, navigation labels) and returns the
+// longest coherent block — typically the post body.
+function extractTextFallback(el) {
+  const raw = el.innerText || "";
+  const lines = raw.split("\n")
+    .map(l => l.trim())
+    .filter(l => l.length > 30);        // short lines are usually UI chrome
+  if (!lines.length) return "";
+  // Return longest contiguous block (most likely the post text)
+  let best = "", current = "";
+  for (const line of lines) {
+    current += (current ? "\n" : "") + line;
+    if (current.length > best.length) best = current;
+  }
+  return best.slice(0, 8000);           // cap at 8 KB
 }
 
 function firstAttr(el, selectors, attr) {
@@ -196,12 +225,13 @@ async function scrollToLoadAll(maxScrolls = 20, delayMs = 1500) {
 async function scrapePosts(options = {}) {
   const { expandAll = true } = options;
 
-  // Find all post container elements
+  // Find post container elements — use FIRST selector with ≥1 match (priority order)
   let containers = [];
   for (const sel of POST_CONTAINERS) {
     const found = [...document.querySelectorAll(sel)];
-    if (found.length > containers.length) {
+    if (found.length > 0) {
       containers = found;
+      break;
     }
   }
 
@@ -227,7 +257,7 @@ async function scrapePosts(options = {}) {
 
   const posts = [];
   for (const el of unique) {
-    const text = firstText(el, TEXT_SELECTORS);
+    const text = firstText(el, TEXT_SELECTORS) || extractTextFallback(el);
     if (!text && !extractImages(el).length) continue; // Skip empty containers
 
     const author = firstText(el, AUTHOR_SELECTORS);
