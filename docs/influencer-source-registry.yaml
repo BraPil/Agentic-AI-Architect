@@ -1,4 +1,4 @@
-version: 2
+version: 3
 updated_on: 2026-04-18
 purpose: >-
   Machine-ingestable registry of influencer profiles and influential post URLs
@@ -7,6 +7,33 @@ ingestion_notes:
   - Many LinkedIn URLs are likely auth-blocked during anonymous collection.
   - Review state must distinguish between captured links and actually reviewed content.
   - Topic labels should remain conservative unless content is directly accessible.
+  - YouTube transcript ingest requires yt-dlp or YouTube Data API; transcripts are the ingest target, not video files.
+  - GitHub ingest targets README, repo description, release notes, and top-level code structure — not full codebase clone.
+  - LinkedIn post ingest is auth-blocked by default; manual export or authenticated session required.
+
+# Default ingestion targets applied to all persona sources unless overridden.
+# The ingestion pipeline reads these at crawl time to scope collection per channel.
+ingestion_defaults:
+  youtube:
+    enabled: true
+    max_videos: 10
+    strategy: most_recent
+    ingest_transcripts: true
+    ingest_descriptions: true
+    ingest_titles: true
+  linkedin:
+    enabled: true
+    max_posts: 10
+    strategy: most_recent
+    access_note: auth-blocked — requires exported content or authenticated session
+  github:
+    enabled: true
+    max_repos: 3
+    strategy: most_popular_by_stars
+    ingest_readme: true
+    ingest_releases: true
+    ingest_top_level_structure: true
+
 sources:
   - source_id: influencer_andrej_karpathy
     name: Andrej Karpathy
@@ -29,6 +56,33 @@ sources:
       - education
       - research
       - vibe-coding
+    ingestion_overrides:
+      youtube:
+        max_videos: 10
+        strategy: most_recent
+      github:
+        max_repos: 5
+        strategy: most_popular_by_stars
+        # NOTE: user flagged "outresearch" and "llm wiki" as must-includes.
+        # Best candidates: arxiv-sanity-preserver (Karpathy's arxiv discovery/filtering tool)
+        # and llm.c (C-language GPT-2 implementation with extensive inline documentation).
+        # Confirm these are the intended repos before pipeline build.
+        pinned_repos:
+          - repo: nanoGPT
+            url: https://github.com/karpathy/nanoGPT
+            why: canonical GPT-2 reimplementation used as a teaching baseline across the field
+          - repo: llm.c
+            url: https://github.com/karpathy/llm.c
+            why: LLM training in pure C; likely "llm wiki" candidate given extensive README documentation
+          - repo: micrograd
+            url: https://github.com/karpathy/micrograd
+            why: minimal autograd engine; foundational teaching tool for backprop
+          - repo: makemore
+            url: https://github.com/karpathy/makemore
+            why: character-level language model series companion to the nn-zero-to-hero YouTube course
+          - repo: arxiv-sanity-preserver
+            url: https://github.com/karpathy/arxiv-sanity-preserver
+            why: likely "outresearch" candidate — Karpathy's arxiv paper discovery and filtering tool; confirm with user
     posts: []
 
   - source_id: influencer_cole_medin
@@ -51,6 +105,13 @@ sources:
       - ai-agents
       - practical-building
       - open-source
+    ingestion_overrides:
+      youtube:
+        max_videos: 10
+        strategy: most_recent
+      github:
+        max_repos: 3
+        strategy: most_popular_by_stars
     posts: []
 
   - source_id: influencer_allie_k_miller
@@ -143,6 +204,16 @@ sources:
     priority_rank: 4
     monitor: true
     profile_url: https://www.linkedin.com/in/paoloperrone/
+    ingestion_overrides:
+      youtube:
+        enabled: false
+        reason: no known personal YouTube channel
+      github:
+        max_repos: 3
+        strategy: most_popular_by_stars
+      linkedin:
+        max_posts: 10
+        strategy: most_recent
     areas:
       - context-engineering
       - staff-engineering
@@ -408,6 +479,16 @@ sources:
       - ai-policy
       - frontier-ai
       - rlhf
+    ingestion_overrides:
+      youtube:
+        enabled: false
+        reason: no known personal YouTube channel
+      github:
+        enabled: false
+        reason: no known personal GitHub; Scale AI company repos are not a personal voice source
+      linkedin:
+        max_posts: 10
+        strategy: most_recent
     posts: []
 
   - source_id: influencer_stanislav_beliaev
@@ -417,6 +498,16 @@ sources:
     priority_rank: 3
     monitor: true
     profile_url: https://www.linkedin.com/in/stasbel/
+    ingestion_overrides:
+      youtube:
+        enabled: false
+        reason: no known personal YouTube channel
+      github:
+        max_repos: 3
+        strategy: most_popular_by_stars
+      linkedin:
+        max_posts: 10
+        strategy: most_recent
     posts:
       - post_id: post_stas_mit_cs_courses
         url: https://www.linkedin.com/posts/stasbel_someone-compiled-every-cs-course-from-mit-activity-7435311141238546433-5GtS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U

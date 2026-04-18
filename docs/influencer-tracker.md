@@ -637,6 +637,26 @@ When adding future summaries, record:
 - why the source matters to architecture, education, frameworks, trends, or tools
 - whether the source should be promoted or retained during the current ingestion phase
 
+## Ingestion Targets Per Persona
+
+The machine-readable spec lives in `docs/influencer-source-registry.yaml`. The human summary is:
+
+| Persona | YouTube | LinkedIn | GitHub |
+|---------|---------|----------|--------|
+| Andrej Karpathy (#1) | 10 most recent videos (transcripts) | 10 most recent posts | 5 repos: nanoGPT, llm.c, micrograd, makemore, arxiv-sanity-preserver |
+| Cole Medin (#2) | 10 most recent videos (transcripts) | 10 most recent posts | 3 most popular repos |
+| Stanislav Beliaev (#3) | — no channel | 10 most recent posts | 3 most popular repos |
+| Paolo Perrone (#4) | — no channel | 10 most recent posts | 3 most popular repos |
+| Alex Wang (#5) | — no channel | 10 most recent posts | — no personal GitHub |
+
+**Note on Karpathy's pinned repos:** The user flagged "outresearch" and "llm wiki" as must-includes.
+Best current interpretation: `arxiv-sanity-preserver` (Karpathy's arXiv discovery/filtering tool → "outresearch")
+and `llm.c` (C-language GPT-2 with extensive inline documentation → "llm wiki"). Confirm before pipeline build.
+
+**LinkedIn access:** All LinkedIn posts are auth-blocked. Ingest requires authenticated session or user-exported content.
+**YouTube:** Transcript-only ingest via yt-dlp or YouTube Data API v3. No video file download.
+**GitHub:** README + release notes + top-level structure only. Not a full repo clone.
+
 ## Next Enrichment Pass
 
 When authenticated access or exported source content is available, add:
