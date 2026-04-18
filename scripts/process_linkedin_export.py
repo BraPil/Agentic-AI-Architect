@@ -41,6 +41,8 @@ from urllib.error import URLError
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.pipeline.linkedin_persona_store import LinkedInPersonaStore, PostRecord, persona_slug  # noqa: E402
+
 RAW_DIR = Path("data/wiki/raw")
 SCHEMA_DIR = Path("data/wiki/schema")
 SCHEMA_FILE = SCHEMA_DIR / "research_sources.json"
@@ -199,7 +201,8 @@ def sanitize(text: str) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Process LinkedIn Chrome extension export")
     parser.add_argument("--export", required=True, help="Path to the JSON export file")
-    parser.add_argument("--persona", required=True, help="Persona ID (e.g. brandtpileggi, karpathy)")
+    parser.add_argument("--persona", default="brandtpileggi",
+                        help="Reactor persona ID — who reacted to these posts (default: brandtpileggi)")
     parser.add_argument("--dry-run", action="store_true", help="Print extracted data, don't write")
     parser.add_argument("--no-vision", action="store_true", help="Skip image analysis")
     parser.add_argument("--limit", type=int, default=0, help="Process only first N posts (0 = all)")
@@ -238,7 +241,25 @@ def main() -> None:
     elif not args.no_vision:
         print("ANTHROPIC_API_KEY not set — running in text-only mode (no vision/extraction).\n")
 
-    existing_ids = load_existing_ids()
+    # Persona store (hybrid vector + keyword index organised by post author)
+    store = LinkedInPersonaStore()
+    if not args.dry_run:
+        try:
+            store.initialize()
+            store_ids = store.get_existing_ids()
+            print(f"Persona store: {store.count} posts already indexed.\n")
+        except ImportError as e:
+            print(f"WARNING: {e}")
+            print("Persona store disabled for this run.\n")
+            store = None
+            store_ids = set()
+    else:
+        store = None
+        store_ids = set()
+
+    # Legacy dedup from research_sources.json
+    existing_ids = load_existing_ids() | store_ids
+
     persona_dir = RAW_DIR / args.persona
     if not args.dry_run:
         persona_dir.mkdir(parents=True, exist_ok=True)
@@ -331,10 +352,10 @@ def main() -> None:
             save_source(entry)
             existing_ids.add(src_id)
 
-            # Seed into KnowledgeBase
+            # Seed into KnowledgeBase (SQLite, existing agents)
             try:
-                from src.knowledge.knowledge_base import KnowledgeBase, KnowledgeEntry
-                from src.utils.helpers import sanitize_text
+                from src.knowledge.knowledge_base import KnowledgeBase, KnowledgeEntry  # noqa: PLC0415
+                from src.utils.helpers import sanitize_text  # noqa: PLC0415
                 kb = KnowledgeBase()
                 kb.initialize()
                 combined = text
@@ -354,6 +375,36 @@ def main() -> None:
                 ))
             except Exception as e:  # noqa: BLE001
                 print(f"  KB seed warning: {e}")
+
+            # Index into persona vector store (organised by post author)
+            if store:
+                try:
+                    record = PostRecord(
+                        post_id=src_id,
+                        persona_id=persona_slug(author),
+                        author=author,
+                        author_url=post.get("author_url", ""),
+                        post_url=post_url,
+                        text=text,
+                        timestamp=timestamp,
+                        post_type=post.get("post_type", "text"),
+                        image_count=len(images),
+                        image_descriptions=image_descriptions,
+                        reactor_persona_id=args.persona,
+                        scraped_at=scraped_at,
+                        direct_claims=extracted.get("directClaims", []),
+                        inferred_beliefs=extracted.get("inferredBeliefs", []),
+                        mentioned_tools=extracted.get("mentionedTools", []),
+                        topics=extracted.get("topics", []),
+                        voice_signals=extracted.get("voiceSignals", []),
+                        summary=extracted.get("summary", ""),
+                        confidence=0.9 if text else 0.6,
+                    )
+                    added = store.ingest(record)
+                    if added:
+                        print(f"  Indexed → persona:{record.persona_id}")
+                except Exception as e:  # noqa: BLE001
+                    print(f"  Persona store warning: {e}")
         else:
             print(f"  DRY RUN — would write: {src_id}")
             if image_descriptions:
@@ -371,6 +422,8 @@ def main() -> None:
         count = len(json.loads(SCHEMA_FILE.read_text()).get("sources", [])) if SCHEMA_FILE.exists() else 0
         print(f"  research_sources.json now has {count} source(s).")
         print(f"  Raw artifacts in: {persona_dir}/")
+    if store:
+        store.print_index_summary()
 
 
 if __name__ == "__main__":

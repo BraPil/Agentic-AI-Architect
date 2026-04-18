@@ -66,6 +66,15 @@ uvicorn>=0.30.0
 
 # ── Optional: Content ingest sources ──────────────────────────────────────
 # YouTube transcript fetching (no API key required for public captions)
+# youtube-transcript-api>=0.6.0  (already below)
+
+# ── Persona vector store (LinkedIn + future sources) ───────────────────────
+# ChromaDB — local persistent hybrid vector + keyword store
+# Upgrade path to Postgres: swap PersistentClient for HttpClient + pgvector
+chromadb>=0.5.0
+sentence-transformers>=2.7.0
+numpy>=1.26.0
+# YouTube transcript fetching (no API key required for public captions)
 youtube-transcript-api>=0.6.0
 
 # ── Optional: MLflow experiment tracking ──────────────────────────────────
