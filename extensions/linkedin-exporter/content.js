@@ -407,13 +407,16 @@ async function scrapePosts(options = {}) {
 
   const { containers, log: containerLog } = findPostContainers();
 
-  // De-duplicate (nested selectors can match parent + child)
+  // De-duplicate. Containers are <li> elements — they don't carry data-urn
+  // themselves. Resolve the inner activity div to get a unique URN per post.
   const unique = [];
   const seenUrns = new Set();
   for (const el of containers) {
-    const urn = el.getAttribute("data-urn") || "";
-    const postUrl = extractPostUrl(el);
-    const key = urn || postUrl || el.innerHTML.substring(0, 100);
+    const activityEl = el.querySelector('[data-urn*="activity"]');
+    const urn = activityEl?.getAttribute("data-urn") || el.getAttribute("data-urn") || "";
+    const postUrl = urn ? "" : extractPostUrl(el);
+    // Use a long innerHTML slice as last resort (short slices collide on shared wrappers)
+    const key = urn || postUrl || el.innerHTML.substring(0, 500);
     if (!seenUrns.has(key)) {
       seenUrns.add(key);
       unique.push(el);
@@ -590,5 +593,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "11";
+const AAA_CONTENT_VERSION = "12";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
