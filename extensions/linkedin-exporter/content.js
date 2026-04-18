@@ -103,10 +103,19 @@ const TEXT_SELECTORS = [
 ];
 
 const AUTHOR_SELECTORS = [
+  // Current markup
   '.update-components-actor__name span[aria-hidden="true"]',
-  '.feed-shared-actor__name span[aria-hidden="true"]',
+  '.update-components-actor__name span',
   '.update-components-actor__name',
+  // Older markup
+  '.feed-shared-actor__name span[aria-hidden="true"]',
+  '.feed-shared-actor__name span',
   '.feed-shared-actor__name',
+  // Broader: any actor title/name text
+  '[class*="actor__name"] span[aria-hidden="true"]',
+  '[class*="actor__name"] span',
+  '[class*="actor__name"]',
+  '[class*="actor__title"] span[aria-hidden="true"]',
 ];
 
 const AUTHOR_URL_SELECTORS = [
@@ -215,8 +224,10 @@ function extractImagesFromFork(el) {
 function firstAttr(el, selectors, attr) {
   for (const sel of selectors) {
     const found = el.querySelector(sel);
-    if (found && found.getAttribute(attr)) {
-      return found.getAttribute(attr);
+    if (found) {
+      // Use .href for href attrs — gives absolute URL, no relative/absolute confusion
+      const val = attr === "href" ? (found.href || found.getAttribute(attr)) : found.getAttribute(attr);
+      if (val) return val;
     }
   }
   return "";
@@ -459,6 +470,22 @@ async function scrapePosts(options = {}) {
                             "celebrated", "shared", "posted", "follows"];
     let author = firstText(contentEl, AUTHOR_SELECTORS);
     if (!author) {
+      // Try author link title attribute or aria-label
+      const authorLink = contentEl.querySelector(
+        AUTHOR_URL_SELECTORS.join(", ") + ', a[href*="/in/"], a[href*="/company/"]'
+      );
+      if (authorLink) {
+        author = authorLink.title || authorLink.getAttribute("aria-label") || "";
+        if (!author) {
+          // Read the first short text node inside the link
+          const t = (authorLink.innerText || authorLink.textContent || "").trim().split("\n")[0].trim();
+          if (t.length > 1 && t.length < 80 && !REACTION_VERBS.some(v => t.toLowerCase().includes(v))) {
+            author = t;
+          }
+        }
+      }
+    }
+    if (!author) {
       const fork = findForkNode(contentEl);
       const headerText = (fork.children[0]?.innerText || "").trim();
       const nameLine = headerText.split("\n")
@@ -563,5 +590,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "10";
+const AAA_CONTENT_VERSION = "11";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
