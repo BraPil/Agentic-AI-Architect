@@ -1,5 +1,5 @@
-version: 1
-updated_on: 2026-03-07
+version: 2
+updated_on: 2026-04-18
 purpose: >-
   Machine-ingestable registry of influencer profiles and influential post URLs
   relevant to the AI Architect knowledge surface.
@@ -8,6 +8,51 @@ ingestion_notes:
   - Review state must distinguish between captured links and actually reviewed content.
   - Topic labels should remain conservative unless content is directly accessible.
 sources:
+  - source_id: influencer_andrej_karpathy
+    name: Andrej Karpathy
+    entity_type: person
+    tier: core
+    priority_rank: 1
+    monitor: true
+    profile_url: https://www.linkedin.com/in/andrej-karpathy-9a650716/
+    additional_channels:
+      - type: youtube
+        url: https://www.youtube.com/@AndrejKarpathy
+        access: public
+      - type: github
+        url: https://github.com/karpathy
+        access: public
+    areas:
+      - deep-learning
+      - llms
+      - neural-networks
+      - education
+      - research
+      - vibe-coding
+    posts: []
+
+  - source_id: influencer_cole_medin
+    name: Cole Medin
+    entity_type: person
+    tier: core
+    priority_rank: 2
+    monitor: true
+    profile_url: https://www.linkedin.com/in/cole-medin-727752184/
+    additional_channels:
+      - type: youtube
+        url: https://www.youtube.com/@ColeMedin
+        access: public
+      - type: github
+        url: https://github.com/coleam00
+        access: public
+    areas:
+      - agentic-ai
+      - mcp
+      - ai-agents
+      - practical-building
+      - open-source
+    posts: []
+
   - source_id: influencer_allie_k_miller
     name: Allie K. Miller
     entity_type: person
@@ -95,6 +140,7 @@ sources:
     name: Paolo Perrone
     entity_type: person
     tier: core
+    priority_rank: 4
     monitor: true
     profile_url: https://www.linkedin.com/in/paoloperrone/
     areas:
@@ -348,10 +394,27 @@ sources:
         namespace_candidates:
           - education
           - trends
+  - source_id: influencer_alex_wang
+    name: Alex Wang
+    entity_type: person
+    tier: core
+    priority_rank: 5
+    monitor: true
+    profile_url: https://www.linkedin.com/in/alexwang2911/
+    areas:
+      - enterprise-ai
+      - ai-data
+      - model-evaluation
+      - ai-policy
+      - frontier-ai
+      - rlhf
+    posts: []
+
   - source_id: influencer_stanislav_beliaev
     name: Stanislav Beliaev
     entity_type: person
-    tier: active
+    tier: core
+    priority_rank: 3
     monitor: true
     profile_url: https://www.linkedin.com/in/stasbel/
     posts:

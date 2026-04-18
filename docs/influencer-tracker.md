@@ -39,7 +39,41 @@ Current operating rule for this phase:
 - `monitor` — source should be revisited periodically
 - `auth-blocked` — content likely requires authenticated access to inspect directly
 
+## Priority Personas
+
+These five are the highest-priority analog targets for the persona registry. They should be ingested first, weighted highest in retrieval, and treated as the core voice set for any panel or chorus query.
+
+| Rank | Name | Why |
+|------|------|-----|
+| #1 | Andrej Karpathy | The single highest-signal voice for foundational model understanding and LLM education; former OpenAI founding member, former Tesla AI Director, YouTube/GitHub canon |
+| #2 | Cole Medin | Leading practitioner voice for agentic AI and MCP; prolific builder and content creator whose tutorials directly track tool adoption and agent design patterns |
+| #3 | Stanislav Beliaev | High-signal discovery source for repos, ecosystem signals, and learning resources; elevated from Tier 2 based on consistent multi-post relevance |
+| #4 | Paolo Perrone | Strong multi-topic source across context engineering, staff-level engineering judgment, and educational resources; already Tier 1 and consistently relevant |
+| #5 | Alex Wang | CEO of Scale AI; strategic-layer signal on AI data, model evaluation methodology, enterprise adoption, and frontier AI policy |
+
 ## Step 1: Reviewed Public Sources
+
+### Andrej Karpathy ⭐ #1 Priority Persona
+
+- Profile: https://www.linkedin.com/in/andrej-karpathy-9a650716/
+- YouTube: https://www.youtube.com/@AndrejKarpathy
+- GitHub: https://github.com/karpathy
+- Status: `captured`, `pending-review`, `monitor`, `auth-blocked` (LinkedIn); `public` (YouTube, GitHub)
+- Tags: `deep-learning`, `llms`, `neural-networks`, `education`, `research`, `vibe-coding`, `software-2.0`, `nanoGPT`
+- Public summary: Andrej Karpathy is a former OpenAI founding member and former Tesla AI Director, widely regarded as the most effective AI educator working publicly today. His YouTube channel covers "Let's build GPT from scratch," the micrograd series, and neural network internals with exceptional clarity. He coined the term "vibe coding" and authored the influential "Software 2.0" essay. His GitHub hosts nanoGPT, minGPT, and other canonical learning implementations. His content sets the conceptual vocabulary that the field uses to discuss and build on LLMs.
+- Why it matters: Karpathy operates at the intersection of frontier research and practical education. His public output is the single highest-signal source for foundational model understanding, research direction, and pedagogical framing on the AI Architect knowledge surface. He must be the first persona ingested and the most heavily weighted in any panel or chorus query.
+- Evidence: Public YouTube channel and GitHub repositories are directly accessible without authentication.
+
+### Cole Medin ⭐ #2 Priority Persona
+
+- Profile: https://www.linkedin.com/in/cole-medin-727752184/
+- YouTube: https://www.youtube.com/@ColeMedin
+- GitHub: https://github.com/coleam00
+- Status: `captured`, `pending-review`, `monitor`, `auth-blocked` (LinkedIn); `public` (YouTube, GitHub)
+- Tags: `agentic-ai`, `mcp`, `ai-agents`, `tutorials`, `practical-building`, `open-source`, `agent-frameworks`
+- Public summary: Cole Medin is a prolific AI developer and content creator known for building and documenting practical agentic AI systems. His YouTube channel covers MCP server development, multi-agent frameworks, and hands-on tutorials for building AI apps with Claude and open-source agent frameworks. His GitHub repositories accompany tutorials with working implementations. He is consistently among the fastest to publish working examples of new agent and MCP tooling as it becomes available.
+- Why it matters: Cole Medin is the primary practitioner voice bridging frontier capabilities and practical implementation for the current generation of agentic AI builders. His content is a leading indicator for tool adoption, MCP ecosystem evolution, and real-world agent design patterns — all core concerns for the AI Architect knowledge surface.
+- Evidence: Public YouTube channel and GitHub repository are directly accessible without authentication.
 
 ### Allie K. Miller
 
@@ -50,6 +84,15 @@ Current operating rule for this phase:
 - Public summary: The article presents Claude Code as a beginner-friendly path to building an AI-powered app, emphasizing fast setup, practical follow-along execution, and progression from simple setup to more advanced integrations without requiring deep coding skill.
 - Why it matters: This is relevant to the AI Architect knowledge surface because it captures a practical adoption pattern. It is not just about a tool release; it reflects how practitioners package AI coding tools for broad uptake, rapid prototyping, and lower-friction experimentation.
 - Evidence: Public page title and description metadata were successfully fetched from the source page.
+
+### Alex Wang ⭐ #5 Priority Persona
+
+- Profile: https://www.linkedin.com/in/alexwang2911/
+- Status: `captured`, `pending-review`, `monitor`, `auth-blocked`
+- Tags: `enterprise-ai`, `ai-data`, `model-evaluation`, `ai-policy`, `scale-ai`, `frontier-ai`, `rlhf`
+- Public summary: Alex Wang is the CEO of Scale AI, one of the most influential companies in AI data infrastructure and model evaluation. His public commentary covers enterprise AI adoption, data quality as a competitive moat, reinforcement learning from human feedback, frontier model evaluation methodology, and AI policy. Scale AI's evaluation infrastructure directly shapes how frontier models are trained and assessed across the industry.
+- Why it matters: Alex Wang provides a strategic-layer signal that complements the technical depth of Karpathy and the practitioner energy of Cole Medin. His perspective on evaluation methodology, data pipelines for AI, and enterprise deployment patterns is uniquely valuable for the AI Architect knowledge surface. As a CEO operating at the frontier of model training and assessment, he is a high-signal source for understanding where the industry is heading at scale.
+- Evidence: LinkedIn profile URL captured. Direct content requires authenticated access.
 
 ### Review Method Note
 
@@ -471,20 +514,23 @@ Current operating rule for this phase:
 
 ### Tier 1: Core Watchlist
 
-These sources are the strongest current candidates for repeated review because the available titles,
-slugs, and source patterns map directly to AI architecture concerns such as platform design, agents,
-governance, enterprise AI, RAG, tooling, and practical implementation.
+These sources are the strongest current candidates for repeated review. The top five are explicitly
+ranked as priority personas for the persona registry. Remaining Tier 1 entries follow.
 
-| Name / Entity | Profile / Source | Why Track Closely |
-|---------------|------------------|-------------------|
-| Allie K. Miller | https://www.linkedin.com/in/alliekmiller/ | Strong practical AI builder and tool-adoption signal; one public reviewed source already captured |
-| Nikki Siapno | https://www.linkedin.com/in/nikkisiapno/ | Seed post explicitly targets AI feature vs AI-native platform positioning |
-| Gabriel Ohaike | https://www.linkedin.com/in/gabriel-ohaike/ | Post slug indicates direct relevance to agentic AI, governance, and enterprise AI |
-| Paolo Perrone | https://www.linkedin.com/in/paoloperrone/ | Multiple posts in the seed set cover context engineering, staff-level engineering, and educational resources |
-| Priyanka Vergadia | https://www.linkedin.com/in/pvergadia/ | Direct RAG, agent, and agentic AI relevance |
-| Aishwarya Srinivasan | https://www.linkedin.com/in/aishwarya-srinivasan/ | Tool-selection and practical AI engineering judgment are architect-relevant |
-| GenAI Works | https://www.linkedin.com/company/genai-works/posts/?feedView=all | Organization-level feed likely to provide broad market and tool signals |
-| Mitko Vasilev / Own Your AI | https://www.linkedin.com/in/ownyourai/ | Multiple posts center on agents, interfaces, observability, model releases, and self-improving workflows |
+| Rank | Name / Entity | Profile / Source | Why Track Closely |
+|------|---------------|------------------|-------------------|
+| **#1** | **Andrej Karpathy** | https://www.linkedin.com/in/andrej-karpathy-9a650716/ | #1 priority persona; highest-signal source for LLM foundations, research direction, and AI education; YouTube + GitHub public canon |
+| **#2** | **Cole Medin** | https://www.linkedin.com/in/cole-medin-727752184/ | #2 priority persona; leading practitioner voice for agentic AI and MCP; YouTube + GitHub public tutorials |
+| **#3** | **Stanislav Beliaev** | https://www.linkedin.com/in/stasbel/ | #3 priority persona; elevated from Tier 2; high-signal multi-post source for repos, ecosystem discovery, and educational resources |
+| **#4** | **Paolo Perrone** | https://www.linkedin.com/in/paoloperrone/ | #4 priority persona; multiple posts cover context engineering, staff-level engineering, and learning resources |
+| **#5** | **Alex Wang** | https://www.linkedin.com/in/alexwang2911/ | #5 priority persona; CEO of Scale AI; strategic signal on AI data, evaluation methodology, enterprise AI, and frontier model assessment |
+| — | Allie K. Miller | https://www.linkedin.com/in/alliekmiller/ | Strong practical AI builder and tool-adoption signal; one public reviewed source already captured |
+| — | Nikki Siapno | https://www.linkedin.com/in/nikkisiapno/ | Seed post explicitly targets AI feature vs AI-native platform positioning |
+| — | Gabriel Ohaike | https://www.linkedin.com/in/gabriel-ohaike/ | Post slug indicates direct relevance to agentic AI, governance, and enterprise AI |
+| — | Priyanka Vergadia | https://www.linkedin.com/in/pvergadia/ | Direct RAG, agent, and agentic AI relevance |
+| — | Aishwarya Srinivasan | https://www.linkedin.com/in/aishwarya-srinivasan/ | Tool-selection and practical AI engineering judgment are architect-relevant |
+| — | GenAI Works | https://www.linkedin.com/company/genai-works/posts/?feedView=all | Organization-level feed likely to provide broad market and tool signals |
+| — | Mitko Vasilev / Own Your AI | https://www.linkedin.com/in/ownyourai/ | Multiple posts center on agents, interfaces, observability, model releases, and self-improving workflows |
 
 ### Tier 2: Active Watchlist
 
@@ -497,7 +543,6 @@ fit to the immediate AI Architect product scope than Tier 1.
 | Brenn Hill | https://www.linkedin.com/in/brennhill/ | Claude Code enthusiasm is relevant, but current evidence is still title-level only |
 | Dr. Arpit Yadav | https://www.linkedin.com/in/dr-arpit-yadav-78687936/ | Generative AI and productivity relevance; still needs deeper source review |
 | Lenny Rachitsky | https://www.linkedin.com/in/lennyrachitsky/ | High-value operator voice, but current seed evidence is one broad takeaways post |
-| Stanislav Beliaev | https://www.linkedin.com/in/stasbel/ | Useful discovery signal for repos and educational resources |
 | John Wernfeldt | https://www.linkedin.com/posts/john-wernfeldt-82894b58_ai-doesnt-fix-weak-governance-it-amplifies-activity-7431258339776458753-odWV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U | Governance framing is highly relevant, but there is only one captured post so far |
 | Victoria L. Slocum | https://www.linkedin.com/posts/victorialslocum_not-all-%F0%9D%97%BA%F0%9D%98%82%F0%9D%97%B9%F0%9D%98%81%F0%9D%97%B6-%F0%9D%97%AE%F0%9D%97%B4%F0%9D%97%B2%F0%9D%97%BB%F0%9D%98%81-%F0%9D%97%AE%F0%9D%97%BF%F0%9D%97%B0%F0%9D%97%B5%F0%9D%97%B6%F0%9D%98%81%F0%9D%97%B2%F0%9D%97%B0%F0%9D%98%81%F0%9D%98%82%F0%9D%97%BF%F0%9D%97%B2%F0%9D%98%80-activity-7435266853398040576--1hN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U | Architecture caution signals are useful, but source depth is still low |
 | Lucia Mendoza Zumaran | https://www.linkedin.com/posts/lucia-mendoza-zumaran-pro_claudeai-aicoding-promptengineering-activity-7434954851278770176-_yBM?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAFtA7EB_gUGRCG3PKa3q_a86dWhWySuu4U | Prompt engineering and AI coding are relevant but need summary before elevation |
@@ -529,22 +574,25 @@ This companion file is intended to support later pipeline work. It provides:
 
 ## Influencer Registry
 
-| Name / Entity | Profile / Source | Tier | Status | Notes |
-|---------------|------------------|------|--------|-------|
-| Nikki Siapno | https://www.linkedin.com/in/nikkisiapno/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Allie K. Miller | https://www.linkedin.com/in/alliekmiller/ | Tier 1 | `captured`, `monitor` | Public article reviewed; strong builder/tool-adoption signal |
-| Gabriel Ohaike | https://www.linkedin.com/in/gabriel-ohaike/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Utkarsh Bajaj | https://www.linkedin.com/in/utkarsh-bajaj/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Brenn Hill | https://www.linkedin.com/in/brennhill/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| GenAI Works | https://www.linkedin.com/company/genai-works/posts/?feedView=all | Tier 1 | `captured`, `monitor` | Added as a tracked company/source feed |
-| Dr. Arpit Yadav | https://www.linkedin.com/in/dr-arpit-yadav-78687936/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Paolo Perrone | https://www.linkedin.com/in/paoloperrone/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Lenny Rachitsky | https://www.linkedin.com/in/lennyrachitsky/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Steve Nouri | https://www.linkedin.com/in/stevenouri/ | Tier 3 | `captured`, `monitor` | Profile captured, pending evidence from posts or additional context |
-| Priyanka Vergadia | https://www.linkedin.com/in/pvergadia/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Aishwarya Srinivasan | https://www.linkedin.com/in/aishwarya-srinivasan/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Stanislav Beliaev | https://www.linkedin.com/in/stasbel/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
-| Mitko Vasilev / Own Your AI | https://www.linkedin.com/in/ownyourai/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| Rank | Name / Entity | Profile / Source | Tier | Status | Notes |
+|------|---------------|------------------|------|--------|-------|
+| **#1** | **Andrej Karpathy** | https://www.linkedin.com/in/andrej-karpathy-9a650716/ | Tier 1 | `captured`, `monitor` | Priority persona #1; YouTube + GitHub public; former OpenAI/Tesla AI Director |
+| **#2** | **Cole Medin** | https://www.linkedin.com/in/cole-medin-727752184/ | Tier 1 | `captured`, `monitor` | Priority persona #2; YouTube + GitHub public; leading agentic AI practitioner |
+| **#3** | **Stanislav Beliaev** | https://www.linkedin.com/in/stasbel/ | Tier 1 | `captured`, `monitor` | Priority persona #3; elevated from Tier 2; consistent multi-post discovery signal |
+| **#4** | **Paolo Perrone** | https://www.linkedin.com/in/paoloperrone/ | Tier 1 | `captured`, `monitor` | Priority persona #4; context engineering, staff-level engineering, education resources |
+| **#5** | **Alex Wang** | https://www.linkedin.com/in/alexwang2911/ | Tier 1 | `captured`, `monitor` | Priority persona #5; CEO Scale AI; evaluation methodology and enterprise AI signal |
+| — | Nikki Siapno | https://www.linkedin.com/in/nikkisiapno/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Allie K. Miller | https://www.linkedin.com/in/alliekmiller/ | Tier 1 | `captured`, `monitor` | Public article reviewed; strong builder/tool-adoption signal |
+| — | Gabriel Ohaike | https://www.linkedin.com/in/gabriel-ohaike/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Utkarsh Bajaj | https://www.linkedin.com/in/utkarsh-bajaj/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Brenn Hill | https://www.linkedin.com/in/brennhill/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | GenAI Works | https://www.linkedin.com/company/genai-works/posts/?feedView=all | Tier 1 | `captured`, `monitor` | Added as a tracked company/source feed |
+| — | Dr. Arpit Yadav | https://www.linkedin.com/in/dr-arpit-yadav-78687936/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Lenny Rachitsky | https://www.linkedin.com/in/lennyrachitsky/ | Tier 2 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Steve Nouri | https://www.linkedin.com/in/stevenouri/ | Tier 3 | `captured`, `monitor` | Profile captured, pending evidence from posts or additional context |
+| — | Priyanka Vergadia | https://www.linkedin.com/in/pvergadia/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Aishwarya Srinivasan | https://www.linkedin.com/in/aishwarya-srinivasan/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
+| — | Mitko Vasilev / Own Your AI | https://www.linkedin.com/in/ownyourai/ | Tier 1 | `captured`, `monitor` | Added as a tracked LinkedIn practitioner source |
 
 ## Influential Posts Registry
 
