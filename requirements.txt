@@ -64,6 +64,10 @@ uvicorn>=0.30.0
 # PyMuPDF for PDF text extraction
 # pymupdf>=1.24.0
 
+# ── Optional: Content ingest sources ──────────────────────────────────────
+# YouTube transcript fetching (no API key required for public captions)
+youtube-transcript-api>=0.6.0
+
 # ── Optional: MLflow experiment tracking ──────────────────────────────────
 # mlflow>=2.13.0
 

@@ -547,3 +547,170 @@ class TestRateLimit:
     def test_different_keys_are_independent(self):
         rate_limit(key="bucket_a", calls_per_second=1000.0)
         rate_limit(key="bucket_b", calls_per_second=1000.0)
+
+
+# ---------------------------------------------------------------------------
+# GitHubIngestPipeline tests
+# ---------------------------------------------------------------------------
+
+from unittest.mock import MagicMock, patch
+from src.pipeline.github_ingest import (
+    GitHubIngestPipeline,
+    GitHubReadmeFetcher,
+    RepoTarget,
+    RepoIngestResult,
+)
+
+
+class TestRepoTarget:
+    def test_from_registry_entry(self):
+        entry = {"url": "https://github.com/karpathy/nanoGPT", "foundational": True, "why": "test"}
+        target = RepoTarget.from_registry_entry(entry, "karpathy")
+        assert target.owner == "karpathy"
+        assert target.repo == "nanoGPT"
+        assert target.persona_id == "karpathy"
+        assert target.foundational is True
+
+    def test_from_registry_entry_defaults(self):
+        entry = {"url": "https://github.com/coleam00/Archon"}
+        target = RepoTarget.from_registry_entry(entry, "cole_medin")
+        assert target.owner == "coleam00"
+        assert target.repo == "Archon"
+        assert target.foundational is False
+
+
+class TestGitHubIngestPipeline:
+    def test_ingest_writes_raw_file(self, tmp_path):
+        target = RepoTarget(owner="karpathy", repo="nanoGPT", persona_id="karpathy")
+        pipeline = GitHubIngestPipeline(raw_dir=str(tmp_path), request_delay=0)
+        with patch.object(pipeline._fetcher, "fetch", return_value="# nanoGPT\nSmall GPT."):
+            results = pipeline.run([target])
+        assert len(results) == 1
+        assert results[0].success is True
+        assert results[0].readme_chars > 0
+        raw_file = tmp_path / "karpathy" / "github_karpathy_nanoGPT_readme.md"
+        assert raw_file.exists()
+        assert "nanoGPT" in raw_file.read_text()
+
+    def test_ingest_handles_missing_readme(self, tmp_path):
+        target = RepoTarget(owner="ghost", repo="nowhere", persona_id="test")
+        pipeline = GitHubIngestPipeline(raw_dir=str(tmp_path), request_delay=0)
+        with patch.object(pipeline._fetcher, "fetch", return_value=None):
+            results = pipeline.run([target])
+        assert results[0].success is False
+        assert "README not found" in results[0].error
+
+    def test_ingest_seeds_knowledge_base(self, tmp_path):
+        target = RepoTarget(
+            owner="karpathy", repo="micrograd", persona_id="karpathy", foundational=False
+        )
+        mock_kb = MagicMock()
+        pipeline = GitHubIngestPipeline(raw_dir=str(tmp_path), kb=mock_kb, request_delay=0)
+        with patch.object(pipeline._fetcher, "fetch", return_value="# micrograd\nTiny autograd."):
+            pipeline.run([target])
+        mock_kb.store.assert_called_once()
+        entry_arg = mock_kb.store.call_args[0][0]
+        assert "micrograd" in entry_arg.title
+        assert entry_arg.content_type == "github_readme"
+
+    def test_ingest_result_to_dict(self):
+        r = RepoIngestResult(owner="a", repo="b", persona_id="p", success=True, readme_chars=100)
+        d = r.to_dict()
+        assert d["owner"] == "a"
+        assert d["success"] is True
+        assert "ingested_at" in d
+
+
+# ---------------------------------------------------------------------------
+# YouTubeIngestPipeline tests
+# ---------------------------------------------------------------------------
+
+from src.pipeline.youtube_ingest import (
+    YouTubeIngestPipeline,
+    VideoTarget,
+    TranscriptIngestResult,
+    _extract_video_id,
+    _clean_transcript,
+    _segments_to_text,
+)
+
+
+class TestVideoTarget:
+    def test_from_url_youtube_watch(self):
+        t = VideoTarget.from_url("https://www.youtube.com/watch?v=kCc8FmEb1nY", "karpathy")
+        assert t.video_id == "kCc8FmEb1nY"
+
+    def test_from_url_youtu_be(self):
+        t = VideoTarget.from_url("https://youtu.be/kCc8FmEb1nY", "karpathy")
+        assert t.video_id == "kCc8FmEb1nY"
+
+    def test_url_auto_populated(self):
+        t = VideoTarget(video_id="kCc8FmEb1nY", persona_id="karpathy")
+        assert "kCc8FmEb1nY" in t.url
+
+
+class TestTranscriptHelpers:
+    def test_extract_video_id_watch(self):
+        assert _extract_video_id("https://www.youtube.com/watch?v=ABC1234DEFg") == "ABC1234DEFg"
+
+    def test_extract_video_id_bare(self):
+        assert _extract_video_id("kCc8FmEb1nY") == "kCc8FmEb1nY"
+
+    def test_clean_transcript_removes_noise(self):
+        raw = "Hello [Music] world [Applause] today"
+        assert "[Music]" not in _clean_transcript(raw)
+        assert "Hello" in _clean_transcript(raw)
+
+    def test_segments_to_text(self):
+        segs = [{"text": "Hello"}, {"text": "world"}]
+        assert _segments_to_text(segs) == "Hello world"
+
+
+class TestYouTubeIngestPipeline:
+    def _fake_segments(self) -> list[dict]:
+        return [{"text": "Welcome to this lecture."}, {"text": "Today we build a neural network."}]
+
+    def test_ingest_writes_raw_file(self, tmp_path):
+        target = VideoTarget(video_id="kCc8FmEb1nY", persona_id="karpathy", title_hint="Neural Net Zero to Hero")
+        pipeline = YouTubeIngestPipeline(raw_dir=str(tmp_path), request_delay=0)
+        with patch.object(pipeline._fetcher, "fetch", return_value=(self._fake_segments(), "en")):
+            results = pipeline.run([target])
+        assert results[0].success is True
+        assert results[0].segment_count == 2
+        raw_files = list((tmp_path / "karpathy").iterdir())
+        assert len(raw_files) == 1
+        assert "kCc8FmEb1nY" in raw_files[0].name
+
+    def test_ingest_handles_no_transcript(self, tmp_path):
+        target = VideoTarget(video_id="XXXXXXXXXXX", persona_id="karpathy")
+        pipeline = YouTubeIngestPipeline(raw_dir=str(tmp_path), request_delay=0)
+        with patch.object(pipeline._fetcher, "fetch", return_value=(None, "TranscriptsDisabled")):
+            results = pipeline.run([target])
+        assert results[0].success is False
+        assert "TranscriptsDisabled" in results[0].error
+
+    def test_ingest_seeds_knowledge_base(self, tmp_path):
+        target = VideoTarget(video_id="kCc8FmEb1nY", persona_id="karpathy", title_hint="Test Video")
+        mock_kb = MagicMock()
+        pipeline = YouTubeIngestPipeline(raw_dir=str(tmp_path), kb=mock_kb, request_delay=0)
+        with patch.object(pipeline._fetcher, "fetch", return_value=(self._fake_segments(), "en")):
+            pipeline.run([target])
+        mock_kb.store.assert_called_once()
+        entry_arg = mock_kb.store.call_args[0][0]
+        assert entry_arg.content_type == "youtube_transcript"
+        assert entry_arg.namespace == "education"
+
+    def test_transcript_ingest_result_to_dict(self):
+        r = TranscriptIngestResult(video_id="abc", persona_id="p", success=True, segment_count=5)
+        d = r.to_dict()
+        assert d["video_id"] == "abc"
+        assert d["segment_count"] == 5
+        assert "ingested_at" in d
+
+    def test_unavailable_fetcher_returns_error_results(self, tmp_path):
+        target = VideoTarget(video_id="kCc8FmEb1nY", persona_id="karpathy")
+        pipeline = YouTubeIngestPipeline(raw_dir=str(tmp_path), request_delay=0)
+        pipeline._fetcher._available = False
+        results = pipeline.run([target])
+        assert results[0].success is False
+        assert "not installed" in results[0].error

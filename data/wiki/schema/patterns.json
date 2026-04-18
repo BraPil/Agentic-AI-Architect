@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-04-18",
+  "description": "Typed structured extract of architectural patterns from wiki pages",
+  "patterns": [
+    {
+      "pattern_id": "llm_wiki",
+      "name": "LLM Wiki",
+      "source_persona": "karpathy",
+      "foundational": true,
+      "layers": ["raw_sources", "wiki_pages", "schema"],
+      "operations": ["Ingest", "Query", "Lint"],
+      "key_files": ["index.md", "log.md"],
+      "key_insight": "Structured index outperforms vector RAG at <500 sources",
+      "aaa_implementation": "data/wiki/",
+      "aaa_phases": ["P2.4", "P6.4"],
+      "wiki_page": "data/wiki/pages/pattern_llm_wiki.md"
+    },
+    {
+      "pattern_id": "dark_factory",
+      "name": "Dark Factory",
+      "source_persona": "cole_medin",
+      "foundational": true,
+      "layers": ["workflow_engine", "coding_agent", "model"],
+      "state_mechanism": "github_labels",
+      "non_negotiable_rules": [
+        "holdout_validation",
+        "binary_triage",
+        "immutable_governance_files",
+        "one_workflow_at_a_time",
+        "flood_protection",
+        "per_node_budget_caps"
+      ],
+      "key_insight": "Evaluator never reads the implementation plan — checks outcome against original requirement only",
+      "aaa_phases": ["P6", "P3.3"],
+      "wiki_page": "data/wiki/pages/pattern_dark_factory.md"
+    },
+    {
+      "pattern_id": "adversarial_triad",
+      "name": "Adversarial Planner-Generator-Evaluator",
+      "source_persona": "cole_medin",
+      "foundational": true,
+      "agents": ["planner", "generator", "evaluator"],
+      "key_insight": "Separate context windows eliminate self-evaluation bias; evaluator's job is to break, not review",
+      "aaa_phases": ["P3.3", "P6"],
+      "wiki_page": "data/wiki/pages/repo_adversarial_dev.md"
+    },
+    {
+      "pattern_id": "autoresearch_loop",
+      "name": "Autonomous Overnight Research Loop",
+      "source_persona": "karpathy",
+      "foundational": true,
+      "fixed_elements": ["eval_metric", "time_budget"],
+      "human_edits": "program.md (instructions, not code)",
+      "agent_edits": "train.py (code, not instructions)",
+      "key_insight": "Human programs the research organization; agent programs the model. Fixed metric + fixed budget prevent gaming.",
+      "aaa_phases": ["P6.1", "P1.3"],
+      "wiki_page": "data/wiki/pages/repo_autoresearch.md"
+    }
+  ]
+}

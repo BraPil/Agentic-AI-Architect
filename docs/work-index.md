@@ -50,6 +50,10 @@ Current strategy:
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_operator_runbook_v1.md`
 - `docs/orchestration-strategy-spike-v1.md`
+- `data/wiki/index.md` — AAA knowledge wiki master catalog
+- `data/wiki/log.md` — append-only ingest/update log
+- `data/wiki/pages/` — synthesized wiki pages (personas, repos, patterns)
+- `data/wiki/schema/` — typed structured extracts (personas.json, patterns.json)
 
 Repository memory system:
 

@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-04-18",
+  "description": "Typed structured extract of persona profiles from wiki pages",
+  "personas": [
+    {
+      "persona_id": "karpathy",
+      "name": "Andrej Karpathy",
+      "priority_rank": 1,
+      "tier": "core",
+      "channels": {
+        "youtube": "https://www.youtube.com/@AndrejKarpathy",
+        "github": "https://github.com/karpathy",
+        "linkedin": "https://www.linkedin.com/in/andrej-karpathy-9a650716/"
+      },
+      "key_patterns": ["llm_wiki", "autoresearch_loop", "teaching_ladder"],
+      "aaa_phases": ["P2.4", "P6.1", "P6.4"],
+      "foundational_repos": ["autoresearch"],
+      "foundational_gists": ["llm_wiki"],
+      "ingestion_status": {
+        "github_readmes": "complete",
+        "youtube_transcripts": "deferred_cloud_ip",
+        "linkedin_posts": "deferred_auth_blocked"
+      },
+      "wiki_page": "data/wiki/pages/persona_andrej_karpathy.md"
+    },
+    {
+      "persona_id": "cole_medin",
+      "name": "Cole Medin",
+      "priority_rank": 2,
+      "tier": "core",
+      "channels": {
+        "youtube": "https://www.youtube.com/@ColeMedin",
+        "github": "https://github.com/coleam00",
+        "linkedin": "https://www.linkedin.com/in/cole-medin-727752184/"
+      },
+      "key_patterns": ["dark_factory", "archon_harness", "adversarial_dev", "second_brain"],
+      "aaa_phases": ["P4", "P6", "P3.3"],
+      "foundational_repos": ["dark-factory-experiment", "Archon", "adversarial-dev", "second-brain-starter"],
+      "ingestion_status": {
+        "github_readmes": "complete",
+        "youtube_transcripts": "deferred_cloud_ip",
+        "linkedin_posts": "deferred_auth_blocked"
+      },
+      "wiki_page": "data/wiki/pages/persona_cole_medin.md"
+    }
+  ]
+}

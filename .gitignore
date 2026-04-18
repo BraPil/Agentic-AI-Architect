@@ -26,6 +26,9 @@ data/
 # Seed documents are tracked source — they are the curated starting content for the KB
 !data/seeds/
 !data/seeds/**
+# Wiki is curated knowledge — tracked as source, not generated artifacts
+!data/wiki/
+!data/wiki/**
 *.db
 *.sqlite
 *.sqlite3
