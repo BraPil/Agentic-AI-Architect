@@ -1,5 +1,7 @@
 "use strict";
 
+const CONTENT_VERSION = "4";
+
 let exportData = null;
 
 const $ = id => document.getElementById(id);
@@ -25,15 +27,41 @@ function storeExport(data) {
   chrome.storage.local.set({ lastExport: data });
 }
 
+// Auto-download log as a .txt file on every scrape run.
+// This way the log is never lost when the popup closes.
+function downloadLog(lines, label = "scrape") {
+  if (!lines?.length) return;
+  const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  const text = `AAA LinkedIn Exporter — ${label} log\n${ts}\n\n` + lines.join("\n");
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  chrome.downloads.download({
+    url,
+    filename: `aaa_scrape_log_${ts}.txt`,
+    saveAs: false,
+  });
+}
+
 function showLog(lines) {
   const panel = $("logPanel");
   const body = $("logBody");
   if (!lines?.length) { panel.style.display = "none"; return; }
   body.textContent = lines.join("\n");
   panel.style.display = "block";
-  // Auto-open if scrape produced 0 posts (something went wrong)
-  const hasIssue = lines.some(l => l.includes("SKIPPED") || l.includes("0 posts"));
-  $("logDetails").open = hasIssue;
+  $("logDetails").open = true;  // always open so user sees it
+}
+
+function handleScrapeResult(res, label) {
+  setButtons(true);
+  const log = res?.log || [];
+  showLog(log);
+  downloadLog(log, label);   // auto-save every run
+  if (chrome.runtime.lastError || !res?.ok) {
+    setStatus((label + " failed: ") + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
+    return;
+  }
+  storeExport(res);
+  setStatus(`${label}: ${res.count} post(s) scraped.`, res.count > 0 ? "ok" : "err");
 }
 
 // ---------------------------------------------------------------------------
@@ -56,12 +84,13 @@ async function init() {
     return;
   }
 
-  // Ping content script; reinject if missing or stale version
-  const EXPECTED_VERSION = "4";
+  // Ping content script; reinject if missing or wrong version.
+  // Note: injecting doesn't evict old scripts — we use requireVersion in
+  // messages so only the matching version responds.
   let needsInject = false;
   try {
     const pong = await chrome.tabs.sendMessage(tab.id, { action: "ping" });
-    if (pong?.version !== EXPECTED_VERSION) needsInject = true;
+    if (pong?.version !== CONTENT_VERSION) needsInject = true;
   } catch (_) {
     needsInject = true;
   }
@@ -76,7 +105,7 @@ async function init() {
 }
 
 // ---------------------------------------------------------------------------
-// Actions
+// Actions — every message includes requireVersion so stale scripts are silent
 // ---------------------------------------------------------------------------
 
 $("btnScroll").addEventListener("click", async () => {
@@ -85,58 +114,42 @@ $("btnScroll").addEventListener("click", async () => {
   setStatus("Scrolling to load posts…", "info");
   setButtons(false);
 
-  chrome.tabs.sendMessage(tab.id, { action: "scroll", maxScrolls, delay: 1500 }, res => {
-    setButtons(true);
-    if (chrome.runtime.lastError || !res?.ok) {
-      setStatus("Scroll failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
-    } else {
-      setStatus("Scroll complete. Now click Scrape.", "ok");
-    }
-  });
+  chrome.tabs.sendMessage(tab.id,
+    { action: "scroll", maxScrolls, delay: 1500, requireVersion: CONTENT_VERSION },
+    res => {
+      setButtons(true);
+      if (chrome.runtime.lastError || !res?.ok) {
+        setStatus("Scroll failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
+      } else {
+        setStatus("Scroll complete. Now click Scrape.", "ok");
+      }
+    });
 });
 
 $("btnScrape").addEventListener("click", async () => {
   const tab = await getLinkedInTab();
-  const expandReadMore = $("expandReadMore").checked;
   setStatus("Scraping posts…", "info");
   setButtons(false);
 
-  chrome.tabs.sendMessage(tab.id, { action: "scrape", expandAll: expandReadMore }, res => {
-    setButtons(true);
-    showLog(res?.log);
-    if (chrome.runtime.lastError || !res?.ok) {
-      setStatus("Scrape failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
-      return;
-    }
-    storeExport(res);
-    setStatus(`Scraped ${res.count} post(s).`, "ok");
-  });
+  chrome.tabs.sendMessage(tab.id,
+    { action: "scrape", expandAll: $("expandReadMore").checked, requireVersion: CONTENT_VERSION },
+    res => handleScrapeResult(res, "Scrape"));
 });
 
 $("btnScrollScrape").addEventListener("click", async () => {
   const tab = await getLinkedInTab();
   const maxScrolls = parseInt($("scrollCount").value) || 15;
-  const expandReadMore = $("expandReadMore").checked;
-  setStatus("Scrolling to load all posts…", "info");
+  setStatus("Scrolling + scraping…", "info");
   setButtons(false);
 
   chrome.tabs.sendMessage(tab.id,
-    { action: "scroll_then_scrape", maxScrolls, delay: 1500, expandAll: expandReadMore },
-    res => {
-      setButtons(true);
-      showLog(res?.log);
-      if (chrome.runtime.lastError || !res?.ok) {
-        setStatus("Failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
-        return;
-      }
-      storeExport(res);
-      setStatus(`Done! ${res.count} post(s) scraped.`, "ok");
-    }
-  );
+    { action: "scroll_then_scrape", maxScrolls, delay: 1500,
+      expandAll: $("expandReadMore").checked, requireVersion: CONTENT_VERSION },
+    res => handleScrapeResult(res, "Scroll+Scrape"));
 });
 
 // ---------------------------------------------------------------------------
-// Download / Copy
+// Download / Copy export
 // ---------------------------------------------------------------------------
 
 $("btnDownload").addEventListener("click", async () => {

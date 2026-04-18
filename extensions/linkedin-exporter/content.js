@@ -382,6 +382,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  // Version gate: if the popup sends a required version, ignore mismatches.
+  // This prevents stale injected scripts from responding when a newer script
+  // has been injected on top of them (both run; only the right one responds).
+  if (message.requireVersion && message.requireVersion !== AAA_CONTENT_VERSION) {
+    return false;
+  }
+
   if (message.action === "scroll") {
     scrollToLoadAll(message.maxScrolls || 15, message.delay || 1500).then(() => {
       sendResponse({ ok: true, message: "Scrolling complete" });
