@@ -49,6 +49,7 @@ Current strategy:
 - `docs/research-training-cycle-v1.md`
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_operator_runbook_v1.md`
+- `docs/orchestration-strategy-spike-v1.md`
 
 Repository memory system:
 
@@ -74,6 +75,7 @@ Repository memory system:
 - Shared substrate candidate spec — see `docs/shared-substrate-candidate-spec-v0.md`
 - Cross-model review round decisions — see `docs/multi-model-review-log.md`
 - Consolidated decision ledger — see `docs/decision-log.md`
+- Orchestration strategy spike (Archon vs. LangGraph vs. BaseAgent) — see `docs/orchestration-strategy-spike-v1.md`
 - First answer contract and machine-readable output direction — see `docs/first-answer-contract-v0.md`
 - Enterprise segment-overlay contract — see `docs/enterprise-overlay-fields-v0.md`
 - Initial scored evaluation backbone — see `docs/initial-eval-question-set-v0.md`
