@@ -523,50 +523,36 @@ async function scrapePosts(options = {}) {
     runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}${kept ? ` | "${preview}"` : ""}`);
     if (!kept) continue;
 
-    // Author — must skip reaction attribution line ("Brandt Pileggi likes this")
     const REACTION_VERBS = ["likes", "reacted", "commented", "reshared",
                             "celebrated", "shared", "posted", "follows"];
-    let author = firstText(contentEl, AUTHOR_SELECTORS);
-    if (!author) {
-      // Try author link title attribute or aria-label
-      const authorLink = contentEl.querySelector(
-        AUTHOR_URL_SELECTORS.join(", ") + ', a[href*="/in/"], a[href*="/company/"]'
-      );
-      if (authorLink) {
-        author = authorLink.title || authorLink.getAttribute("aria-label") || "";
-        if (!author) {
-          // Read the first short non-boilerplate line inside the link.
-          // The actor container link wraps the H2.visually-hidden "Feed post number X"
-          // heading, so we must skip lines matching that pattern.
-          const lines = (authorLink.innerText || authorLink.textContent || "")
-            .trim().split("\n").map(l => l.trim());
-          const t = lines.find(l =>
-            l.length > 1 && l.length < 80 &&
-            !l.match(/^feed post/i) &&
-            !REACTION_VERBS.some(v => l.toLowerCase().includes(v))
-          ) || "";
-          if (t) author = t;
+
+    // Author — scope search to contentEl (activity div) so we skip the reactor
+    // notification header ("Brandt Pileggi likes this") above the activity div.
+    const profileAnchor =
+      contentEl.querySelector('[class*="actor"] a[href*="/in/"], [class*="actor"] a[href*="/company/"]') ||
+      contentEl.querySelector('a[href*="/in/"], a[href*="/company/"]');
+
+    // Use .href (absolute URL) — getAttribute("href") can produce relative paths.
+    const authorUrl = profileAnchor?.href || "";
+
+    let author = "";
+    if (profileAnchor) {
+      // Name spans are CSS-hidden → innerText="". Use textContent on leaf spans
+      // (spans with no span children) to find the first name-like string.
+      // XPath for first post confirmed: a/span[1]/span[1]/span/span[1] = "Cole Medin"
+      for (const span of profileAnchor.querySelectorAll("span")) {
+        if (span.querySelector("span")) continue; // skip non-leaf spans
+        const t = (span.textContent || "").trim();
+        if (t.length > 1 && t.length < 80 &&
+            !t.match(/^feed post/i) &&
+            !t.match(/^•/) &&
+            !t.match(/^\d/) &&
+            !REACTION_VERBS.some(v => t.toLowerCase().includes(v))) {
+          author = t;
+          break;
         }
       }
     }
-    if (!author) {
-      const fork = findForkNode(contentEl);
-      const headerText = (fork.children[0]?.innerText || "").trim();
-      const nameLine = headerText.split("\n")
-        .map(l => l.trim())
-        .find(l => l.length > 2 && l.length < 80 &&
-              !l.includes("•") &&
-              !l.match(/^\d/) &&
-              !l.toLowerCase().includes("follow") &&
-              !l.toLowerCase().includes("feed post") &&
-              !REACTION_VERBS.some(v => l.toLowerCase().includes(v)));
-      if (nameLine) author = nameLine;
-    }
-
-    const authorHref = firstAttr(contentEl, AUTHOR_URL_SELECTORS, "href");
-    const authorUrl = authorHref
-      ? (authorHref.startsWith("http") ? authorHref : `https://www.linkedin.com${authorHref}`)
-      : "";
 
     const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
     const ageMonths = parseAgeMonths(timestamp);
@@ -661,5 +647,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "17";
+const AAA_CONTENT_VERSION = "18";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
