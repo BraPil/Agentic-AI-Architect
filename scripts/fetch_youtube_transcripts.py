@@ -134,7 +134,6 @@ def main() -> None:
 
     ok = [r for r in results if r.success]
     fail = [r for r in results if not r.success]
-    skip = [r for r in results if r.success and not r.transcript_chars]
 
     print(f"\n── Summary {'─' * 40}")
     for r in ok:
@@ -144,8 +143,17 @@ def main() -> None:
         print(f"  ✗  [{r.persona_id}] {r.video_id} — {r.error[:100]}")
     print(f"\n  OK: {len(ok)}  Failed: {len(fail)}")
 
-    if ok:
-        print("\nNext step: python3 scripts/extract_transcript_sources.py")
+    new_transcripts = [r for r in ok if r.transcript_chars]
+    if new_transcripts:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        mode = "--no-extract" if not api_key else ""
+        print(f"\nAuto-embedding {len(new_transcripts)} transcript(s) into ChromaDB "
+              f"({'text-only' if not api_key else 'with Claude extraction'})…")
+        import subprocess  # noqa: PLC0415
+        cmd = [sys.executable, "scripts/extract_transcript_sources.py"]
+        if mode:
+            cmd.append(mode)
+        subprocess.run(cmd, check=False)
 
 
 if __name__ == "__main__":
