@@ -53,7 +53,11 @@ Current strategy:
 - `data/wiki/index.md` — AAA knowledge wiki master catalog
 - `data/wiki/log.md` — append-only ingest/update log
 - `data/wiki/pages/` — synthesized wiki pages (personas, repos, patterns)
-- `data/wiki/schema/` — typed structured extracts (personas.json, patterns.json)
+- `data/wiki/schema/` — typed structured extracts (personas.json, patterns.json, research_sources.json)
+- `data/linkedin_store/` — ChromaDB persona intelligence store (120 items: LinkedIn + YouTube + GitHub)
+- `src/api/mcp_server.py` — Sprint 1 MCP server (search_knowledge, get_architecture_recommendation, get_trending_tools)
+- `claude_desktop_config.json` — Claude Desktop registration snippet for the MCP server
+- `extensions/linkedin-exporter/` — Chrome MV3 extension v22 for LinkedIn scraping
 
 Repository memory system:
 
@@ -110,6 +114,12 @@ Repository memory system:
 ### Lessons Learned
 
 - Operational and planning lessons — see `docs/lessons-learned-log.md`
+
+### Decisions
+
+- ChromaDB as primary persona intelligence index (over SQLite) — see `docs/decision-log.md`
+- Single collection with `persona_id` + `post_type` metadata for all content types — see `docs/decision-log.md`
+- Sprint 1 MCP scope: 3 tools, Claude Haiku synthesis with graceful fallback — see `docs/decision-log.md`
 
 ### Work History
 
