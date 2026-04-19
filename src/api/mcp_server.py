@@ -161,6 +161,11 @@ def _synthesize(problem: str, hits: list[dict]) -> dict:
             messages=[{"role": "user", "content": prompt}],
         )
         raw = msg.content[0].text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
         return json.loads(raw)
     except Exception as exc:  # noqa: BLE001
         logger.warning("Synthesis failed: %s — using fallback", exc)

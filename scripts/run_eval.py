@@ -280,7 +280,9 @@ def main() -> None:
     passed = failed = 0
 
     for q in search_questions:
-        raw = json.loads(search_knowledge(q["question"], n_results=N_RESULTS))
+        # Pass persona filter when the question is explicitly about a specific author
+        persona_arg = q.get("expected_persona") or ""
+        raw = json.loads(search_knowledge(q["question"], persona=persona_arg, n_results=N_RESULTS))
         result = score_search_question(q, raw)
         eval_results.append(result)
 
