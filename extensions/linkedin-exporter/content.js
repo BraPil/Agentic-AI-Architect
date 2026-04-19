@@ -468,35 +468,43 @@ async function scrapePosts(options = {}) {
     runLog.push(`[${idx}] text=${text.length}ch(${textVia}) images=${images.length} → ${kept ? "KEPT" : "SKIPPED"}${kept ? ` | "${preview}"` : ""}`);
     if (!kept) continue;
 
-    // Author and author_url — search the full LI (el) not just contentEl,
-    // because the actor/header component may be a sibling of the activity div.
+    // Author — must skip reaction attribution line ("Brandt Pileggi likes this")
     const REACTION_VERBS = ["likes", "reacted", "commented", "reshared",
                             "celebrated", "shared", "posted", "follows"];
-
-    // Find the profile anchor — scoped to actor component first, then broader
-    const profileAnchor =
-      el.querySelector('[class*="actor"] a[href*="/in/"], [class*="actor"] a[href*="/company/"]') ||
-      el.querySelector('a[href*="/in/"], a[href*="/company/"]');
-
-    // .href property on <a> always returns absolute URL — no string manipulation needed
-    const authorUrl = profileAnchor instanceof Element && profileAnchor.tagName === "A"
-      ? profileAnchor.href : "";
-
-    let author = "";
-    if (profileAnchor) {
-      // LinkedIn puts the display name in a span[aria-hidden="true"] inside the link
-      const nameSpan = profileAnchor.querySelector('span[aria-hidden="true"]');
-      author = (nameSpan?.innerText || nameSpan?.textContent || "").trim();
-      if (!author) author = (profileAnchor.title || profileAnchor.getAttribute("aria-label") || "").trim();
-      if (!author) {
-        // First non-empty, non-verb line of the link's visible text
-        const linkLines = (profileAnchor.innerText || profileAnchor.textContent || "")
-          .split("\n").map(l => l.trim())
-          .filter(l => l.length > 1 && l.length < 80 &&
-                  !REACTION_VERBS.some(v => l.toLowerCase().includes(v)));
-        if (linkLines.length) author = linkLines[0];
+    let author = firstText(contentEl, AUTHOR_SELECTORS);
+    if (!author) {
+      // Try author link title attribute or aria-label
+      const authorLink = contentEl.querySelector(
+        AUTHOR_URL_SELECTORS.join(", ") + ', a[href*="/in/"], a[href*="/company/"]'
+      );
+      if (authorLink) {
+        author = authorLink.title || authorLink.getAttribute("aria-label") || "";
+        if (!author) {
+          // Read the first short text node inside the link
+          const t = (authorLink.innerText || authorLink.textContent || "").trim().split("\n")[0].trim();
+          if (t.length > 1 && t.length < 80 && !REACTION_VERBS.some(v => t.toLowerCase().includes(v))) {
+            author = t;
+          }
+        }
       }
     }
+    if (!author) {
+      const fork = findForkNode(contentEl);
+      const headerText = (fork.children[0]?.innerText || "").trim();
+      const nameLine = headerText.split("\n")
+        .map(l => l.trim())
+        .find(l => l.length > 2 && l.length < 80 &&
+              !l.includes("•") &&
+              !l.match(/^\d/) &&
+              !l.toLowerCase().includes("follow") &&
+              !REACTION_VERBS.some(v => l.toLowerCase().includes(v)));
+      if (nameLine) author = nameLine;
+    }
+
+    const authorHref = firstAttr(contentEl, AUTHOR_URL_SELECTORS, "href");
+    const authorUrl = authorHref
+      ? (authorHref.startsWith("http") ? authorHref : `https://www.linkedin.com${authorHref}`)
+      : "";
 
     const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
     runLog.push(`[${idx}] author="${author}" ts="${timestamp}"`);
@@ -585,5 +593,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "13";
+const AAA_CONTENT_VERSION = "12";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
