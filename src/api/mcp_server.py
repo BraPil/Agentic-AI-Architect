@@ -49,6 +49,7 @@ _DEFAULT_TOP_TOOLS = 20
 _MAX_N = 25
 _SYNTHESIS_MODEL = "claude-haiku-4-5-20251001"
 _SYNTHESIS_MAX_TOKENS = 1024
+_SCHEMA_VERSION = "1.0"
 
 # ---------------------------------------------------------------------------
 # Lazy store singleton (initialized on first use, cached for < 200 ms latency)
@@ -315,6 +316,7 @@ def search_knowledge(
         })
 
     payload = json.dumps({
+        "schema_version": _SCHEMA_VERSION,
         "query": query,
         "persona_filter": persona or None,
         "min_date_filter": min_date or None,
@@ -381,6 +383,7 @@ def get_architecture_recommendation(
     ]
 
     payload = json.dumps({
+        "schema_version": _SCHEMA_VERSION,
         **synthesis,
         "problem_statement": problem_statement,
         "evidence_count": len(hits),
@@ -451,6 +454,7 @@ def get_trending_tools(
     ]
 
     payload = json.dumps({
+        "schema_version": _SCHEMA_VERSION,
         "total_items_analyzed": len(items),
         "unique_tools_found": len(tool_counter),
         "persona_filter": persona or None,

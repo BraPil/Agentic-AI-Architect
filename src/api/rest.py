@@ -1263,3 +1263,11 @@ def create_app(
 
 
 app = create_app()
+
+# Mount the v1 REST API (wraps ChromaDB persona store)
+try:
+    from src.api.rest_v1 import router as v1_router  # noqa: PLC0415
+    app.include_router(v1_router)
+except Exception as _v1_exc:  # noqa: BLE001
+    import logging as _logging  # noqa: PLC0415
+    _logging.getLogger(__name__).warning("v1 router not loaded: %s", _v1_exc)
