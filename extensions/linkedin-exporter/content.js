@@ -448,7 +448,17 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
   }
 
   window.scrollTo(0, 0);
-  const posts = [...accumulated.values()];
+  // Final age filter — catches posts that slipped through mid-scroll due to
+  // empty timestamps in partially-rendered DOM during rolling capture.
+  let posts = [...accumulated.values()];
+  if (maxAgeMonths > 0) {
+    const before = posts.length;
+    posts = posts.filter(p => {
+      const age = parseAgeMonths(p.timestamp);
+      return age === 0 || age <= maxAgeMonths;
+    });
+    if (posts.length < before) runLog.push(`final age filter: removed ${before - posts.length} posts > ${maxAgeMonths}mo`);
+  }
   runLog.push(`result: ${posts.length} total posts collected`);
   return { posts, log: runLog };
 }
@@ -526,22 +536,27 @@ async function scrapePosts(options = {}) {
     const REACTION_VERBS = ["likes", "reacted", "commented", "reshared",
                             "celebrated", "shared", "posted", "follows"];
 
-    // Author — scope search to contentEl (activity div) so we skip the reactor
-    // notification header ("Brandt Pileggi likes this") above the activity div.
+    // Author — collect all profile links from the full LI (el), then use
+    // contentEl.contains() to prefer links inside the activity div (post author)
+    // over reactor links in the notification header above it.
+    // Reactor links also carry class "ember-view"; author links do not.
+    const allProfileLinks = [
+      ...el.querySelectorAll('a[href*="/in/"], a[href*="/company/"]'),
+    ];
     const profileAnchor =
-      contentEl.querySelector('[class*="actor"] a[href*="/in/"], [class*="actor"] a[href*="/company/"]') ||
-      contentEl.querySelector('a[href*="/in/"], a[href*="/company/"]');
+      allProfileLinks.find(a => contentEl.contains(a) && !a.classList.contains("ember-view")) ||
+      allProfileLinks.find(a => !a.classList.contains("ember-view")) ||
+      allProfileLinks[0] ||
+      null;
 
-    // Use .href (absolute URL) — getAttribute("href") can produce relative paths.
     const authorUrl = profileAnchor?.href || "";
 
     let author = "";
     if (profileAnchor) {
-      // Name spans are CSS-hidden → innerText="". Use textContent on leaf spans
-      // (spans with no span children) to find the first name-like string.
-      // XPath for first post confirmed: a/span[1]/span[1]/span/span[1] = "Cole Medin"
+      // Name spans are CSS-hidden → innerText="". Use textContent on leaf spans.
+      // XPath confirmed: a/span[1]/span[1]/span/span[1] = "Cole Medin"
       for (const span of profileAnchor.querySelectorAll("span")) {
-        if (span.querySelector("span")) continue; // skip non-leaf spans
+        if (span.querySelector("span")) continue; // skip non-leaf
         const t = (span.textContent || "").trim();
         if (t.length > 1 && t.length < 80 &&
             !t.match(/^feed post/i) &&
@@ -647,5 +662,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "18";
+const AAA_CONTENT_VERSION = "19";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
