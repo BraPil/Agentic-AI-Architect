@@ -1,0 +1,630 @@
+{
+  "ok": true,
+  "posts": [
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7451378233394139136/",
+      "author": "Cole Medin",
+      "author_url": "https://www.linkedin.com/in/cole-medin-727752184?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACuJeo8BiEnV9E4KblIThp_xcpa3zQYwMyI",
+      "timestamp": "3d • \n \n3 days ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "I'm starting a public experiment where I'm handing my entire codebase over to AI. No humans allowed to write or review a single line of code!\n\nIt's called a Dark Factory. And no, I wouldn't recommend it for reliable production code - yet. That's exactly why I'm calling it an experiment.\n\nDan Shapiro laid out five levels of AI coding autonomy earlier this year, using a self-driving car analogy. Level 3 is where reliable production AI coding lives right now: AI generates most of the code, but you're still reviewing every plan and every PR before it ships. That's what I teach in my Agentic Coding Course. You're in a self-driving car but still watching the road and ready to course correct if needed.\n\nLevel 5 is the Dark Factory - no steering wheel. Nothing gets reviewed. Even I'm a little uncomfortable with it! But this is where AI coding is heading, and nobody has run it as an open experiment before.\n\nStrongDM did a version of this internally (32K lines shipped, zero human review, went viral in February), but you can't watch it work or participate. That's the gap I'm filling!\n\nHere's how I'm building it, and this is where Archon (my open source harness builder) becomes the backbone.\n\nGovernance layer:\n\nThree files loaded at the start of every workflow: MISSION.md (what the factory can build, what it must never touch), FACTORY_RULES.md (triage, PR size limits, quality gates, mandatory browser testing), CLAUDE.md (stack, layout, conventions). This is the only meaningful way I can stay aligned with a system that ships without asking me.\n\nArchon workflows:\n \nArchon is my open source harness builder - it turns your coding process into packaged up YAML workflows that can include both AI and deterministic steps. Three of them run the factory:\n\n- Triage: classifies GitHub issues against MISSION.md + FACTORY_RULES.md\n- Implement: runs in parallel for every accepted issue\n- Validate: completely separate workflow to fully review PRs + merge\n\nThe validate workflow uses the \"holdout\" pattern from StrongDM. The validator only sees the user journey and the diff, zero context from development. No sycophancy, no rewriting tests to fake green.\n\nIf validation passes, it merges to main. No human approval at all.\n\nThe coding model is Minimax M2.7 routed into Claude Code via env vars. Purely an economics call, my Anthropic subscription would hit rate limits in hours at this throughput!\n\nThe app the factory is building is an AI Tutor, a RAG agent over my YouTube content. That part I'm genuinely excited about on its own.\n\nWithin a week or two it'll be deployed! You'll be able to file real GitHub issues and watch the factory accept, implement, validate, and ship them without me touching a line. Full architecture breakdown is on my YouTube channel!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQHRhiEn5ELTMQ/feedshare-shrink_800/B56Z2S2i0yIQAc-/0/1776285265537?e=1778112000&v=beta&t=YjEUJ0MquBFiiPh7gKuA0iMG2rXyBp7igvRrESPRi5M",
+          "alt": "graphical user interface",
+          "width": 800,
+          "height": 1164
+        }
+      ],
+      "external_links": [
+        "http://mission.md/",
+        "http://factory_rules.md/",
+        "http://claude.md/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7451338801894821888/",
+      "author": "Eric Vyacheslav",
+      "author_url": "https://www.linkedin.com/in/eric-vyacheslav-156273169?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACgVdBIBnVU5t_1PfWzjEm4SjOgQ1yY3Tsc",
+      "timestamp": "18h • \n \n18 hours ago • Visible to anyone on or off LinkedIn",
+      "post_type": "video",
+      "text": "Paste any GitHub URL and get a full interactive architecture map in seconds.\n\nCodeFlow is a single HTML file that maps any GitHub repo's architecture.\n\nPaste a URL or upload a project, get a full interactive dependency graph. \n\nNo install, no account, no build step. \n\nEverything runs in your browser. Your code never touches a server.\n\nPick any file and see its blast radius. \n\nThat means every other file that would break if you changed it.\n\nIt also scans for security issues automatically. \n\nHardcoded API keys, SQL injection patterns, eval() calls, debug statements in production.\n\nHere's what else it detects:\n\n> Singleton, factory, and observer patterns\n> Code ownership per file from git history\n> Circular dependencies and dead code\n> Commit frequency heatmaps across files\n\nThe whole thing ships as one HTML file. Clone and open index.html. \n\nWorks with private repos too.\n\nFully open source. \n\nLink in comments.\n↓\nCheck out AlphaSignal.ai to get a daily summary of top models, repos, and papers in AI. Read by 280,000+ devs.",
+      "images": [],
+      "external_links": [
+        "http://alphasignal.ai/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7451333542766260224/",
+      "author": "Paolo Perrone",
+      "author_url": "https://www.linkedin.com/in/paoloperrone?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAWy1ToBOCCi0ildR12MNTXMvqvygTADf6c",
+      "timestamp": "11h • \n \n11 hours ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "CoT, ReAct, ToT, RAG, MCP, DAG.\n\nMost engineers building agents can't explain what these mean. \n\nThey copy-paste from tutorials and wonder why their agent loops forever.\n\nHere's the AI Agent stack, decoded:\n\n🔹 CoT (Chain of Thought)\nMake the model think step by step before answering.\nWithout CoT, LLMs jump to conclusions. With it, they reason through problems.\nThe difference between \"guess\" and \"derive.\"\n\n🔹 ReAct (Reason + Act)\nCoT plus tool use. The model reasons, then acts, then observes, then reasons again.\nThis is how agents actually work. Think → Do → See → Repeat.\nMost \"agents\" skip the reasoning. That's why they fail.\n\n🔹 ToT (Tree of Thoughts)\nCoT explores one path. ToT explores many.\nThe model branches, evaluates, backtracks. Slower, but catches mistakes CoT misses.\nUse it when the first answer is usually wrong.\n\n🔹 RAG (Retrieval-Augmented Generation)\nDon't make the model memorize everything. Fetch what it needs at runtime.\nVector search → relevant context → grounded answer.\nWithout RAG, your agent hallucinates. With it, your agent cites sources.\n\n🔹 MCP (Model Context Protocol)\nAnthropic's standard for connecting LLMs to external tools.\nOne protocol. Any tool. No custom integrations per service.\nThe USB-C of AI agents.\n\n🔹 DAG (Directed Acyclic Graph)\nHow you orchestrate multi-step workflows without infinite loops.\nTask A → Task B → Task C. No cycles. Clear dependencies.\nLangGraph, Prefect, Airflow — all DAGs under the hood.\n\nThe engineers who understand these don't just USE agent frameworks.\n\nThey understand WHY agents work.\n\nWant to go deeper? \n\nFull Single-Agent Patterns deep-dive  in comments 👇\n\n💾 Bookmark this before your next agent breaks and you don't know why.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQGnobDQ9JEnQA/feedshare-shrink_800/B4EZ2g8_mHJcAc-/0/1776521837237?e=1778112000&v=beta&t=milucM65Q6wu1t0P9JQM4_u-ZujwM11mZus-xxR4h1c",
+          "alt": "diagram",
+          "width": 800,
+          "height": 274
+        }
+      ],
+      "external_links": [
+        "https://theaiengineer.substack.com/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7451331601113858048/",
+      "author": "Sandipan Bhaumik",
+      "author_url": "https://www.linkedin.com/in/sandipanbhaumik?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAASFSfgBvs8z6304VU0bKtIIWJHdDqqIil4",
+      "timestamp": "18h • \n \n18 hours ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "𝐂𝐥𝐚𝐮𝐝𝐞 𝐂𝐨𝐝𝐞 𝐏𝐫𝐨𝐣𝐞𝐜𝐭 𝐒𝐭𝐫𝐮𝐜𝐭𝐮𝐫𝐞: 𝐄𝐯𝐞𝐫𝐲 𝐅𝐢𝐥𝐞 𝐚𝐧𝐝 𝐅𝐨𝐥𝐝𝐞𝐫 𝐄𝐱𝐩𝐥𝐚𝐢𝐧𝐞𝐝\n\nMost Claude Code projects start with a CLAUDE.md and nothing else.\nHere is the full project structure that turns Claude from a coding assistant into an engineering partner.\n\n𝐓𝐇𝐄 𝐂𝐎𝐌𝐏𝐋𝐄𝐓𝐄 𝐃𝐈𝐑𝐄𝐂𝐓𝐎𝐑𝐘\n\nyour-project/\n\n1. CLAUDE.md\nLoaded at session start. \nDefines project overview, tech stack, and commands. \nContains coding conventions and architecture. \nSupports CLAUDE.local.md overrides for personal preferences without affecting the team.\n\n2. CLAUDE.local.md\nYour personal overrides. \nKeeps individual preferences separate from shared project context.\n\n3. mcp.json\nStores MCP integration configs. \nConnects to GitHub, JIRA, Slack, databases. \nShared across the team via git. This single file controls every external tool your agent can reach.\n\n4. claude/settings.json\nControls permissions and tool access. \nDefines model selection and hooks. \nSupports settings.local.json overrides for individual developers.\n\n5. claude/rules/\nModular .md files organized by topic. \nCovers style, testing, and API design. Can target specific files or paths.\n\n• code-style.md: How code should look\n• testing.md: Testing standards and patterns\n• api-conventions.md: API design rules\n\nRules load contextually. Claude follows code-style.md when writing code, testing.md when generating tests.\n\n6. claude/commands/\nCustom slash commands (/project:name). \nUsed for repeatable workflows. Supports shell execution.\n\n• review.md: Code review workflow\n• fix-issue.md: Issue resolution steps\n\nType /project:review and Claude runs your entire review process.\n\n7. claude/skills/\nAuto-triggered based on task context. \nLoads only when needed. \nKeeps context lightweight.\n\n• deploy/SKILL.md: Deployment procedures\n• deploy/deploy-config.md: Configuration details\n\nSkills activate automatically when Claude detects a relevant task.\n\n8. claude/agents/\nSpecialized sub-agents with roles. \nIsolated context windows. \nCustom tools and model preferences.\n\n• code-reviewer.md: Dedicated code review agent\n• security-auditor.md: Security-focused analysis agent\n\nEach agent operates in its own context without polluting the main conversation.\n\n9. claude/hooks/\nEvent-driven scripts (pre/post tool use). \nAutomates validation, linting, and formatting. \nBlocks unsafe operations.\n\n• validate-bash.sh: Validates bash commands before execution\n\nHooks are your guardrails. They run automatically before or after Claude takes action.\n\nThe quality of Claude Code's output is directly proportional to the quality of your project structure. \n\nInvest in the structure once and every session benefits.\n\n𝐖𝐡𝐚𝐭 𝐝𝐨𝐞𝐬 𝐲𝐨𝐮𝐫 𝐂𝐥𝐚𝐮𝐝𝐞 𝐂𝐨𝐝𝐞 𝐩𝐫𝐨𝐣𝐞𝐜𝐭 𝐬𝐭𝐫𝐮𝐜𝐭𝐮𝐫𝐞 𝐥𝐨𝐨𝐤 𝐥𝐢𝐤𝐞 𝐭𝐨𝐝𝐚𝐲?\n\n♻️ Repost this to help your network get started\n➕ Follow Sandipan Bhaumik for more\n\n\nhashtag\n#ClaudeCode \nhashtag\n#Anthropic \nhashtag\n#AIAgents",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQFB7CW7MyDH_A/feedshare-shrink_800/B4EZ2fEJfCKcAg-/0/1776490158741?e=1778112000&v=beta&t=_dovSUoHVwDIElmDgeBmqOT6D2zyFLiFQ4uhzNgxVhU",
+          "alt": "timeline",
+          "width": 507,
+          "height": 634
+        }
+      ],
+      "external_links": [
+        "http://claude.md/",
+        "http://claude.local.md/",
+        "http://code-style.md/",
+        "http://testing.md/",
+        "http://api-conventions.md/",
+        "http://review.md/",
+        "http://fix-issue.md/",
+        "http://skill.md/",
+        "http://deploy-config.md/",
+        "http://code-reviewer.md/",
+        "http://security-auditor.md/",
+        "http://validate-bash.sh/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7450530828104880128/",
+      "author": "Rahul Agarwal",
+      "author_url": "https://www.linkedin.com/in/thescholarbaniya?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACkoaGEBgEZdnbXH5sVLUl4exY6tB_HDzHg",
+      "timestamp": "2d • \n \n2 days ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "AI agents fail without strong memory layers.\n\n5 key AI memory systems, explained simply.\n\n1. 𝗦𝗵𝗼𝗿𝘁-𝗧𝗲𝗿𝗺 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗥𝗲𝗮𝗹-𝗧𝗶𝗺𝗲 𝗖𝗼𝗻𝘁𝗲𝘅𝘁)\n𝗚𝗼𝗮𝗹: Handle 𝗹𝗶𝘃𝗲 𝗰𝗼𝗻𝘃𝗲𝗿𝘀𝗮𝘁𝗶𝗼𝗻 𝗮𝗻𝗱 𝗶𝗺𝗺𝗲𝗱𝗶𝗮𝘁𝗲 𝗰𝗼𝗻𝘁𝗲𝘅𝘁.\n\n𝗜𝗻𝗽𝘂𝘁 𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴\n• Receive user input\n• Break into tokens\n• Understand intent\n\n𝗖𝗼𝗻𝘁𝗲𝘅𝘁 𝗠𝗮𝗻𝗮𝗴𝗲𝗺𝗲𝗻𝘁\n• Store recent messages\n• Maintain session context\n• Keep latest interactions\n\n𝗕𝘂𝗳𝗳𝗲𝗿 𝗛𝗮𝗻𝗱𝗹𝗶𝗻𝗴\n• Build temporary memory buffer\n• Remove old context\n• No long-term carryover\n\n𝗢𝘂𝘁𝗽𝘂𝘁 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗶𝗼𝗻\n• Send context to model\n• Generate response\n• Return reply\n________________\n2. 𝗟𝗼𝗻𝗴-𝗧𝗲𝗿𝗺 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗣𝗲𝗿𝘀𝗶𝘀𝘁𝗲𝗻𝘁 𝗞𝗻𝗼𝘄𝗹𝗲𝗱𝗴𝗲)\n𝗚𝗼𝗮𝗹: Remember and reuse knowledge across sessions.\n\n𝗗𝗮𝘁𝗮 𝗦𝘁𝗼𝗿𝗮𝗴𝗲\n• Save important inputs\n• Attach metadata\n• Organize information\n\n𝗘𝗺𝗯𝗲𝗱𝗱𝗶𝗻𝗴 𝗖𝗿𝗲𝗮𝘁𝗶𝗼𝗻\n• Convert data into vectors\n• Enable similarity search\n• Optimize retrieval\n\n𝗥𝗲𝘁𝗿𝗶𝗲𝘃𝗮𝗹 𝗦𝘆𝘀𝘁𝗲𝗺\n• Search past memories\n• Find relevant matches\n• Rank useful results\n\n𝗜𝗻𝘁𝗲𝗴𝗿𝗮𝘁𝗶𝗼𝗻\n• Combine with current input\n• Enhance responses\n• Update memory\n________________\n3. 𝗘𝗽𝗶𝘀𝗼𝗱𝗶𝗰 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗘𝘃𝗲𝗻𝘁-𝗕𝗮𝘀𝗲𝗱 𝗟𝗲𝗮𝗿𝗻𝗶𝗻𝗴)\n𝗚𝗼𝗮𝗹: Designed to 𝗰𝗮𝗽𝘁𝘂𝗿𝗲 𝗮𝗻𝗱 𝗹𝗲𝗮𝗿𝗻 𝗳𝗿𝗼𝗺 𝗽𝗮𝘀𝘁 𝗶𝗻𝘁𝗲𝗿𝗮𝗰𝘁𝗶𝗼𝗻𝘀.\n\n𝗘𝘃𝗲𝗻𝘁 𝗖𝗮𝗽𝘁𝘂𝗿𝗲\n• Identify important interactions\n• Store detailed logs\n• Track outcomes\n\n𝗘𝗽𝗶𝘀𝗼𝗱𝗲 𝗖𝗿𝗲𝗮𝘁𝗶𝗼𝗻\n• Group related events\n• Structure data\n• Save as episodes\n\n𝗣𝗮𝘁𝘁𝗲𝗿𝗻 𝗟𝗲𝗮𝗿𝗻𝗶𝗻𝗴\n• Analyze past behavior\n• Detect patterns\n• Improve decisions\n\n𝗥𝗲𝘁𝗿𝗶𝗲𝘃𝗮𝗹\n• Match similar past events\n• Guide current actions\n• Enhance outputs\n________________\n4. 𝗦𝗲𝗺𝗮𝗻𝘁𝗶𝗰 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗙𝗮𝗰𝘁𝘂𝗮𝗹 𝗞𝗻𝗼𝘄𝗹𝗲𝗱𝗴𝗲)\n𝗚𝗼𝗮𝗹: To 𝘀𝘁𝗼𝗿𝗲 𝗳𝗮𝗰𝘁𝘀, 𝗰𝗼𝗻𝗰𝗲𝗽𝘁𝘀, 𝗮𝗻𝗱 𝗿𝗲𝗹𝗮𝘁𝗶𝗼𝗻𝘀𝗵𝗶𝗽𝘀.\n\n𝗤𝘂𝗲𝗿𝘆 𝗨𝗻𝗱𝗲𝗿𝘀𝘁𝗮𝗻𝗱𝗶𝗻𝗴\n• Detect user intent\n• Convert into query\n• Prepare search\n\n𝗞𝗻𝗼𝘄𝗹𝗲𝗱𝗴𝗲 𝗥𝗲𝘁𝗿𝗶𝗲𝘃𝗮𝗹\n• Look up knowledge base\n• Match relevant concepts\n• Pull accurate facts\n\n𝗥𝗲𝗮𝘀𝗼𝗻𝗶𝗻𝗴\n• Connect ideas\n• Validate information\n• Add references\n\n𝗢𝘂𝘁𝗽𝘂𝘁\n• Format response\n• Deliver structured answer\n• Ensure clarity\n________________\n5. 𝗣𝗿𝗼𝗰𝗲𝗱𝘂𝗿𝗮𝗹 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗧𝗮𝘀𝗸 𝗘𝘅𝗲𝗰𝘂𝘁𝗶𝗼𝗻)\n𝗚𝗼𝗮𝗹: To 𝗲𝘅𝗲𝗰𝘂𝘁𝗲 𝘄𝗼𝗿𝗸𝗳𝗹𝗼𝘄𝘀 𝗮𝗻𝗱 𝗮𝗰𝘁𝗶𝗼𝗻𝘀 efficiently.\n\n𝗧𝗮𝘀𝗸 𝗨𝗻𝗱𝗲𝗿𝘀𝘁𝗮𝗻𝗱𝗶𝗻𝗴\n• Identify task type\n• Define objective\n• Map requirements\n\n𝗣𝗿𝗼𝗰𝗲𝘀𝘀 𝗠𝗮𝗽𝗽𝗶𝗻𝗴\n• Break into steps\n• Load workflows\n• Assign actions\n\n𝗘𝘅𝗲𝗰𝘂𝘁𝗶𝗼𝗻\n• Perform step-by-step tasks\n• Use tools & APIs\n• Track progress\n\n𝗟𝗲𝗮𝗿𝗻𝗶𝗻𝗴\n• Record results\n• Improve performance\n• Optimize workflows\n\nThe future of AI systems depends on combining all these memory layers together.\n\n✅ Repost for people in your network building AI systems & applications.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQHpsIoncPGy6Q/feedshare-shrink_800/B56Z2TQk8NKkAc-/0/1776292091608?e=1778112000&v=beta&t=tmCIP0CdMd9I5T-Re8xkUd6HUp8RqaEY4nLvpH-WF_U",
+          "alt": "No alternative text description for this image",
+          "width": 507,
+          "height": 634
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7444432593271324672/",
+      "author": "Cole Medin",
+      "author_url": "https://www.linkedin.com/in/cole-medin-727752184?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACuJeo8BiEnV9E4KblIThp_xcpa3zQYwMyI",
+      "timestamp": "2w • \n \n2 weeks ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "The biggest problem in AI coding right now is sycophancy.\n\nNot in the broad \"AI agrees with everything you say\" sense, though that's real. Specifically this: when you have a coding agent evaluate its own work, it's a student grading its own homework. It'll flag a couple of minor issues to make the review look credible, but the deeper problems get stuffed under the rug.\n\nThe model was trained to agree. That bias doesn't disappear just because you asked it to be critical!\n\nSo the fix is architecture, not \"prompting harder\".\n\nI built what I call an adversarial dev harness, inspired by how Anthropic is thinking about long-running coding agents. The core idea comes from GANs (generative adversarial networks), where a generator and a discriminator are trained against each other. Here, the generator writes code. The evaluator's sole job is to find flaws, not approve.\n\nThe architecture looks like this:\n\nUser prompt goes to a Planner, which expands it into a full spec. Then you enter a sprint cycle. Before a single line of code is written, the Generator and Evaluator negotiate the evaluation criteria together. They agree up front on what each sprint looks like and how it gets scored on a 1-10 scale. Only then does the Generator implement, and the Evaluator rips it apart against those pre-negotiated criteria.\n\nTwo core principles at work here:\n\n1. Separate evaluation from coding entirely (different agents, isolated contexts, no shared bias)\n2. Scope and contract before implementation (criteria set before code is written, not after)\n\nThe results are legitimately incredible. I used this harness to one-shot a full-stack RAG app with a polished chat UI, token streaming, source citations, the whole thing. Ran for about four hours. And I used Claude Sonnet 4.6 for it, not Opus (huge difference in capability)!\n\nThat's the real leverage: a better harness lets you use a cheaper, faster model and still get better output than a stronger model running alone.\n\nI posted a full breakdown on YouTube (link to my channel in my bio) with code walkthroughs for both the Claude Code and Codex versions of the harness, plus a live demo of the RAG app it built.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQGFqD9iW5uXgQ/feedshare-shrink_1280/B56Z0_ZCy3KsAQ-/0/1774885023141?e=1778112000&v=beta&t=SgKMVrRBiPM_DQddv-CwSLcn4FXDsZcvKgTRM2IjBgY",
+          "alt": "graphical user interface, diagram",
+          "width": 561,
+          "height": 964
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7443800860272267265/",
+      "author": "Shubham Saboo",
+      "author_url": "https://www.linkedin.com/in/shubhamsaboo?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAABzPLp4BT8-7xERTxR17vS8edCgAiBTIkTM",
+      "timestamp": "3w • \n \n3 weeks ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Someone just open-sourced the \"Docker for AI agents\" 🤯\n\nDefine your agent once. Run it in Claude Code, OpenAI, CrewAI, LangChain, Google Gemini CLI, and OpenClaw.\n\nMeet GitAgent. Your repo is the agent.\n\nRight now every framework defines agents differently. Your CrewAI agent can't run in Claude Code. Your LangChain agent can't port to OpenAI. \n\nYou want to switch frameworks? You rewrite everything. Prompts, tools, memory, config. All of it. Again.\n\nThat's not a feature of the ecosystem. That's vendor lock-in wearing an open-source badge.\n\nGitAgent replaces all of it with a standard folder structure.\n\nagent.yaml for config. SOUL.md for personality. RULES.md for hard constraints. skills/ for capabilities. tools/ for integrations. memory/ for persistence.\n\nTwo files are required. Everything else is optional.\n\nThen one command exports to any runtime.\n\nSame repo runs in Claude Code, OpenAI Agents SDK, CrewAI, LangGraph, Google Gemini CLI, OpenClaw, and Cursor. \n\nNo rewrite. No adapter code. No framework-specific config.\n\nGit becomes the supervision layer. Every prompt change is a commit. Every rollback is a checkout. Every agent review is a PR. Agent quality gets treated like code quality.\n\nWhat makes this more than a packaging spec:\n• Built-in segregation of duties for regulated industries. Define maker, checker, and auditor roles. \n• Sub-agents compose like submodules. Fork a public agent, swap its SOUL.md, plug in your own tools.\n• CI/CD runs gitagent validate on every push. Bad agent configs don't ship.\n\nDockerfiles didn't replace container runtimes. They gave developers one format that every runtime could read.\n\nGitAgent is that moment for agents.\n\nLink to the GitHub repo in the comments.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5610AQHliIIWnPC-VA/image-shrink_800/B56Z0n93qrK0Ag-/0/1774492024211?e=1777168800&v=beta&t=YoUFTuKbOoXsvM7w7dWrb7jmmwZ37e2eftsZac2_b3A",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 1021
+        }
+      ],
+      "external_links": [
+        "https://www.theunwindai.com/",
+        "http://soul.md/",
+        "http://rules.md/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7441110675088855040/",
+      "author": "Michael Ulin",
+      "author_url": "https://www.linkedin.com/in/michaelulin?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAILadwB89GlyHCx5M6obVR-Y9A0KalqaIo",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "NASA figured out how to write bulletproof code in 2006 and almost nobody used it.\n\nGerard Holzmann at JPL published the \"Power of Ten,\" ten rules for safety-critical software. Simple stuff: every function fits on one printed page, every loop has a fixed upper bound, no dynamic memory after initialization, minimum two assertions per function. He kept it to ten rules because he'd watched organizations write 100+ page coding standards that developers just ignored.\n\nThe problem was always enforcement. You could put these rules on a wiki and tell people to follow them, but verifying compliance across hundreds of thousands of lines of code required either expensive tooling or a very patient human reviewer. Neither scaled well outside of JPL.\n\nI think about this a lot, actually. Not just the Power of Ten specifically, but this whole category of things: ideas that were clearly right but too expensive to enforce. Checklists that worked in theory but fell apart in practice. The gap between knowing what good looks like and actually doing it consistently.\n\nThat gap is what AI agents collapse. You encode the rules, the agent applies them on every commit, every PR, every deployment. It doesn't have an opinion about whether the rules are worth following. It doesn't skip the check because it's been a long week.\n\nI'm building agent workflows at Whimsey Labs right now, and honestly the hardest part isn't getting agents to follow rules. It's figuring out which rules are actually worth encoding. That's where the Power of Ten is helpful as a reference. Holzmann spent years figuring out which ten rules would give you the most coverage with the least friction. That kind of thinking transfers directly.\n\nStill figuring out the velocity tradeoff. But the distance between \"best practices exist\" and \"best practices get enforced\" just shrank by a lot.\n\nhttps://lnkd.in/gQ8txDXj",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQGBguUusrcsyQ/feedshare-shrink_800/B56Zz73vUpI0Ag-/0/1773752219422?e=1778112000&v=beta&t=OJ3VlPVc9Y1M2IEpasp5kgKF43fGbrPmkv1JMhdxu3s",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 1067
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/gQ8txDXj"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7439634225940627456/",
+      "author": "Yurii Rebryk",
+      "author_url": "https://www.linkedin.com/in/yrebryk?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAABd_378Bk6OnwD-Jsf7G9wUifNdpaWsqbXs",
+      "timestamp": "1mo • Edited • \n \n1 month ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "CEO of Y Combinator shared his Claude Code skill setup 🔥\n\nImagine CEO + designer + developer + QA tester in one loop. It's called gstack - and you can install it with a single paste.\n\n☑️ 8 opinionated workflow skills for Claude Code \n☑️ A /browse command powered by Bun + Playwright \n☑️ Around 20× faster than Chrome MCP \n☑️ No context bloat while testing apps\n\nHere's what each skill does:\n\n- /𝗽𝗹𝗮𝗻-𝗰𝗲𝗼-𝗿𝗲𝘃𝗶𝗲𝘄 - validates the idea and scope \n- /𝗽𝗹𝗮𝗻-𝗲𝗻𝗴-𝗿𝗲𝘃𝗶𝗲𝘄 - stress-tests the technical plan \n- /𝗿𝗲𝘃𝗶𝗲𝘄 - finds bugs and production risks \n- /𝘀𝗵𝗶𝗽 - tests, pushes, and opens the PR \n- /𝗯𝗿𝗼𝘄𝘀𝗲 - full QA pass on your live app in ~60 seconds\n- /𝗾𝗮 - structured QA reports with health scores and regression tracking\n- /𝘀𝗲𝘁𝘂𝗽-𝗯𝗿𝗼𝘄𝘀𝗲𝗿-𝗰𝗼𝗼𝗸𝗶𝗲𝘀 - test auth pages without manual login\n- /𝗿𝗲𝘁𝗿𝗼 - team retro with per-person feedback\n\nInstead of treating Claude as a generic assistant, Garry designed a structured loop - planner, engineer, reviewer, QA - all running in sequence before anything ships.\n\nFor small teams, this changes everything. You don't need a 10-person eng team to ship like one anymore. You just need the right setup.\n\nIf you’re building with Claude, it’s worth studying! Link to the repo:\nhttps://lnkd.in/dvRRxmfQ\n\n--\nAt Fluently (AI English speaking tutor, GetFluently.app) we've been running Claude Code daily with a lean dev team - adding structured loops like this made a real difference in speed and quality without adding headcount.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQG1JB66BGPl8Q/feedshare-shrink_800/B4DZznV0ORI4Ac-/0/1773407782183?e=1778112000&v=beta&t=r1uYuTpCX-5Rl-43JXay08stOyuclH_eMLF3Iz7Beks",
+          "alt": "text",
+          "width": 800,
+          "height": 963
+        }
+      ],
+      "external_links": [
+        "https://getfluently.app/?utm_source=linkedin",
+        "https://lnkd.in/dvRRxmfQ",
+        "http://getfluently.app/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7439634080813617152/",
+      "author": "Cole Medin",
+      "author_url": "https://www.linkedin.com/in/cole-medin-727752184?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACuJeo8BiEnV9E4KblIThp_xcpa3zQYwMyI",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "After 2,000+ hours using Claude Code across real production codebases, I can tell you the thing that separates reliable from unreliable isn't the model, the prompt, or even the task complexity.\n\nIt's context management.\n\nAbout 80% of the coding agent failures I see trace back to poor context - either too much noise, the wrong information loaded at the wrong time, or context that's drifted from the actual state of the codebase. Even with a 1M token window, Chroma's research shows that performance degrades as context grows. More tokens is not always better.\n\nI built the WISC framework (inspired by Anthropic's research) to handle this systematically. \n\nFour strategy areas:\n\nW - Write (externalize your agent's memory)\n- Git log as long-term memory with standardized commit messages\n- Plan in one session, implement in a fresh one\n- Progress files and handoffs for cross-session state\n\nI - Isolate (keep your main context clean)\n- Subagents for research (90.2% improvement per Anthropic's data)\n- Scout pattern to preview docs before committing them to main context\n\nS - Select (just in time, not just in case)\n- Global rules (always loaded)\n- On-demand context for specific code areas\n- Skills with progressive disclosure\n- Prime commands for live codebase exploration\n\nC - Compress (only when you have to)\n- Handoffs for custom session summaries\n- /compact with targeted summarization instructions\n\nThese work on any codebase. Not just greenfield side projects! I've applied this on enterprise codebases spanning multiple repositories, and the reliability improvement is consistent.\n\nI also just published a YouTube video going over the WISC framework in a lot more detail. Very value packed! Check it out here:\n\nhttps://lnkd.in/ggxxepik",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQFIw8EwKv3SxQ/feedshare-shrink_800/B56Zz3kQNUHIAc-/0/1773680002245?e=1778112000&v=beta&t=uCDIT4OCD5f7te7LB6wblidiz7bYQHILYrPP_JlhQy0",
+          "alt": "graphical user interface, website",
+          "width": 507,
+          "height": 634
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/ggxxepik"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7439389558024183808/",
+      "author": "Charly Wargnier",
+      "author_url": "https://www.linkedin.com/in/charlywargnier?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAACujVIBELJUczPlLYfAh_gqHCQQreVjgc4",
+      "timestamp": "1mo • Edited • \n \n1 month ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "THIS is the wildest open-source project I’ve seen this month.\n\nWe were all hyped about Andrej Karpathy's autoresearch project automating the experiment loop a few weeks ago.\n(ICYMI → https://lnkd.in/eDQBJQEz)\n\nBut a bunch of folks just took it ten steps further and automated the entire scientific method end-to-end.\n\nIt's called AutoResearchClaw, and it's fully open-source.\n\nYou pass it a single CLI command with a raw idea, and it completely takes over 🤯 \n\nThe 23-stage loop they designed is insane:\n\n✦ First, it handles the literature review.\n- It searches arXiv and Semantic Scholar for real papers \n- Cross-references them against DataCite and CrossRef. \n- No fake papers make it through.\n\n✦ Second, it runs the sandbox.\n- It generates the code from scratch.\n- If the code breaks, it self-heals. \n- You don't have to step in.\n\n✦ Finally, it writes the paper.\n- It structures 5,000+ words into Introduction, Related Work, Method, and Experiments. \n- It formats the math, generates the comparison charts,\n- Then wraps the whole thing in official ICML or ICLR LaTeX templates.\n\nYou can set it to pause for human approval, or you can just pass the --auto-approve flag and walk away.\n\nWhat it spits out at the end:\n→ Full academic paper draft\n→ Conference-grade .tex files\n→ Verified, hallucination-free citations\n→ All experiment scripts and sandbox results\n\nThis is what autonomous AI agents actually look like in 2026.\n\nHere is the repo:\n→ https://lnkd.in/eX_VXkDZ\n\nMassive kudos to the team for making this open-source 🤗 \n\n_____\nBuilt by → https://lnkd.in/eY5u8jsf\n\nIf you enjoyed this, feel free to repost to support their work ♻️\n\nDon't forget to ⭐ the repo to boost visibility.\n\nFor more on AI agents and LLM workflows, follow me here or on 𝕏 → @datachaz",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E10AQHgsfyoKJB9vw/image-shrink_800/B4EZz3h8uHI8Ag-/0/1773679398064?e=1777168800&v=beta&t=0OQPmg5mpXjErZALo5hgqkN86nlPIxsIdryou6CwTdU",
+          "alt": "No alternative text description for this image",
+          "width": 507,
+          "height": 634
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/eDQBJQEz",
+        "https://lnkd.in/eX_VXkDZ",
+        "https://lnkd.in/eY5u8jsf"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437954376914268161/",
+      "author": "Paolo Perrone",
+      "author_url": "https://www.linkedin.com/in/paoloperrone?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAWy1ToBOCCi0ildR12MNTXMvqvygTADf6c",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Google just gave every AI coding assistant NATIVE knowledge of how to build agents.\n\n15,600 GitHub stars. One command. FREE.\n\nYour coding assistant doesn't know ADK. It hallucinates APIs and invents methods that don't exist.\n\nHere's why this changes everything:\n\nnpx skills add google/adk-docs/skills -y\n\nOne command. Your coding agent now knows:\n\n1️⃣ ADK Cheatsheet\nFull Python API reference. Every method, every parameter. No more hallucinated imports.\n\n2️⃣ ADK Dev Guide\nDevelopment lifecycle and coding guidelines. The patterns Google's own team uses.\n\n3️⃣ ADK Deploy Guide\nAgent Engine and Cloud Run deployment. Prototype to production in the same workflow.\n\n4️⃣ ADK Eval Guide\nEvaluation methodology and scoring. Test your agents before they hit production.\n\n5️⃣ ADK Observability Guide\nTracing, logging, and integrations. See what your agents are ACTUALLY doing.\n\n6️⃣ ADK Scaffold\nNew agent project in seconds. Right structure from the start.\n\nWorks with everything:\n\n⚡ Claude Code: one command install\n⚡ Cursor: MCP server config\n⚡ Gemini CLI: extension install\n⚡ Any MCP-compatible tool\n\nPlus a docs MCP server that connects your editor directly to ADK documentation. Always up to date. Machine-readable.\n\nWhat this replaces:\n\nHours of Googling API docs → $0\nDebugging hallucinated methods → $0\nManually reading changelogs → $0\n\nADK has 15,600 stars, 2,800+ dependent projects, and now ships in Python, TypeScript, Go, and Java.\n\nGoogle isn't just building an agent framework.\n\nThey're teaching YOUR coding assistant how to use it.\n\n🔗 Install skills: npx skills add google/adk-docs/skills -y\n🔗 Full docs: google.github.io/adk-docs\n\nAre you still letting your coding assistant hallucinate ADK APIs? 👇\n\n♻️ Repost for someone building with Google ADK who doesn't know about this",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQEggaHAFm1f5Q/feedshare-shrink_800/B4EZzf09sCJcAc-/0/1773281729655?e=1778112000&v=beta&t=RrN_WFo8O-THcrLm3RFGc4_KfIaB7QwA8n_yZh-rYcI",
+          "alt": "graphical user interface, application",
+          "width": 800,
+          "height": 411
+        }
+      ],
+      "external_links": [
+        "https://theaiengineer.substack.com/",
+        "http://google.github.io/adk-docs"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437638729739055105/",
+      "author": "Stanislav Beliaev",
+      "author_url": "https://www.linkedin.com/in/stasbel?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACPwVh4B9nRz6TBuOrJzp8I7gScS9bvv968",
+      "timestamp": "1mo • Edited • \n \n1 month ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "This tool analyzes your hardware with one command and shows which LLMs are actually worth running on your machine 👇\n\nIt's called llmfit - and it solves the most annoying part of running local AI.\n\nInstead of downloading a model and hitting an OOM error, it scans your RAM, CPU, GPU, and VRAM first - then scores every model across 4 dimensions:\n\n1. Quality - param count, model family, quantization penalty\n2. Speed - estimated tok/s for your exact backend (CUDA, Metal, ROCm)\n3. Fit - memory utilization vs. your available hardware\n4. Context - context window vs. your use case\n\nEach model gets a label: Perfect / Good / Marginal / Too Tight.\n\nIt also picks the best quantization automatically - starting at Q8_0, stepping down to Q2_K until something fits.\n\nThe detail I like most: it handles MoE architectures correctly. Mixtral 8x7B has 46.7B total params, but only ~12.9B are active per token. llmfit accounts for this, while many tools still miscalculate it.\n\nCovers hundreds of models across major providers including Meta, Mistral, Qwen, DeepSeek, and more. Ollama integration built in.\n\n14k+ stars. 100% open source. \nLink to the repo: https://lnkd.in/gpWPVS7g\n\n-- \nP.S. We’re building the best AI English tutor in the world. Try it to improve your speaking, it’s 15x cheaper the human one → GetFluently.app",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQH7F8xLPRcenA/feedshare-shrink_800/B56ZzchRjGJkAc-/0/1773226236424?e=1778112000&v=beta&t=morPHOam7TXGmDcQHrQR51rTqBHd5PCGqrtwRXSWGXo",
+          "alt": "graphical user interface",
+          "width": 800,
+          "height": 897
+        }
+      ],
+      "external_links": [
+        "http://getfluently.app/?utm_source=Linkedin_Stas",
+        "https://lnkd.in/gpWPVS7g",
+        "http://getfluently.app/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437638623342145536/",
+      "author": "Mitko Vasilev",
+      "author_url": "https://www.linkedin.com/in/ownyourai?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAD5gS4BmEBp6BdV2A8EU2VtWuDDwW_ofys",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "I just deleted all my MCPs.\nSkills + CLI is all you need.\n\nMCPs were a solution for humans pretending to build for agents. But agents aren't humans. They're processes. And processes talk to the world through CLIs and APIs. Always have. Always will.\n\nGitHub's official MCP server: 54,000 tokens to load the spec. Fifty-four thousand. Before I even ask it to do anything. \nMeanwhile, `gh --help` costs 562 tokens. And the model already knows it from training data.\n\nMCP is a JSON bureaucracy pretending to be infrastructure. It's the enterprise middleware of AI, lots of ceremony, zero value add. \n\nSkills are 30-50 tokens until triggered. Progressive disclosure. They teach the agent how to think. CLIs are the what- battle-tested, version-controlled, debuggable without a spec document.\n\nMake sure you own your AI. AI in the cloud is not aligned with you; it’s aligned with the company that owns it.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQEbAZadUSKDuw/feedshare-shrink_800/B4DZzeiWbCIQAg-/0/1773260074534?e=1778112000&v=beta&t=n9MH36VqwHubRpoPgTPSJ9Qy6txVMtCsSrRoeEzcdSQ",
+          "alt": "text",
+          "width": 800,
+          "height": 520
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437153715171790848/",
+      "author": "Kelly Moncrief",
+      "author_url": "https://www.linkedin.com/in/kelly-moncrief?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAABm9Y4B5eIqUBHGVwMokRWKYzzqJo5Mag0",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "AI only scales when the data pipelines behind it deliver trusted data and real business value.\n\nBrilliantly simple visual below.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQF5PLNQ9ONDkw/feedshare-shrink_1280/B4EZzMQw4LJAAM-/0/1772953475862?e=1778112000&v=beta&t=lhVJLae0z1dGzfMQawvX3LYtLLMEucmNbmdafZpHBO4",
+          "alt": "No alternative text description for this image",
+          "width": 749,
+          "height": 472
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/dbf74Y9E"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437153306948481025/",
+      "author": "Mitko Vasilev",
+      "author_url": "https://www.linkedin.com/in/ownyourai?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAD5gS4BmEBp6BdV2A8EU2VtWuDDwW_ofys",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "All legacy codebase modernization efforts in 2026 begin with: “let’s give an agent the repos”\nWhich is a great way to let Claude Code, opencode, Copilot, and friends misunderstand 40 repositories at machine speed.\n\nIn real enterprise code estates, the architecture usually lives in:\none staff engineer’s head… who retired in 2024,\nthree geological eras of DI,\n`HttpClient` chains crossing repo boundaries,\nand EF Core mappings to tables named by ancient forces.\n\nMy agents use local AI with dede, an engineering R&D context system, short for `DogEatDog.DependencyExplorer`\n\nIt scans a workspace full of sibling repos and extracts a deterministic Roslyn-backed AST/semantic graph across controllers, services, methods, internal HTTP calls, EF Core lineage, and cross-repo dependencies.\n\nHere is a live scan over 13 repos, 1,962 projects, and 52,800 methods.\nNot regex theater. \nNot architecture fan fiction. \nNot LLM vibes.\nJust 100% local AI and tooling.\n\nThe useful part is giving that graph thingy to AI coding agents as a skill.\nNow agents can query compiler-backed structure instead of improvising:\n“What breaks if I change this endpoint?” \n“Which tables are in the blast radius?” \n“Where does this service cross repo boundaries?” \n“Which edges are ambiguous and need a human?”\n\nMake sure you own your AI. AI in the cloud is not aligned with you; it’s aligned with the company that owns it.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQFykF5OiJ1h2g/feedshare-shrink_800/B4DZzWkwpgGsAc-/0/1773126489591?e=1778112000&v=beta&t=MrL-dUWRPkY6iJOrC5VNBSD3dsThQcvZ5GksfwRbbQk",
+          "alt": "graphical user interface",
+          "width": 507,
+          "height": 285
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437153006959321088/",
+      "author": "Paolo Perrone",
+      "author_url": "https://www.linkedin.com/in/paoloperrone?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAWy1ToBOCCi0ildR12MNTXMvqvygTADf6c",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "LangChain just open-sourced their answer to Claude Code.\n\n9.9K GitHub stars. 5 hours old.\n\nDeep Agents: the batteries-included agent harness. MIT licensed. FREE.\n\nHere's why this is a big deal:\n\nClaude Code is amazing but closed-source and locked to Anthropic.\n\nDeep Agents gives you the same architecture. Any model. Any provider.\n\nWhat's included out of the box:\n\n1️⃣ Planning\nwrite_todos for task breakdown and progress tracking. The agent plans before it codes.\n\n2️⃣ Filesystem access\nread_file, write_file, edit_file, ls, glob, grep. Full codebase navigation.\n\n3️⃣ Shell execution\nRun commands with sandboxing. Build, test, deploy from the agent.\n\n4️⃣ Sub-agents\nSpawn isolated workers with their own context windows. Parallel work without context pollution.\n\n5️⃣ Context management\nAuto-summarization when conversations get long. Large outputs saved to files. The problem Claude Code solved, now OPEN SOURCE.\n\nTwo lines to start:\n\npip install deepagents\n\nagent = create_deep_agent()\n\nWorks with Claude, OpenAI, Google, or any LangChain-compatible model. Swap providers without rebuilding.\n\nBuilt on LangGraph. Streaming, persistence, checkpointing: all production-ready.\n\nThe CLI adds web search, remote sandboxes, persistent memory, custom skills, and human-in-the-loop approval.\n\nFrom their README: \"This project was primarily inspired by Claude Code.\"\n\nThey're not hiding it. They're DEMOCRATIZING it.\n\nAre you still locked into a single AI coding provider? 👇\n\n♻️ Repost for someone who wants Claude Code capabilities without the lock-in",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQHV7TPxZPeZHg/feedshare-shrink_800/B4EZzVjjw4JAAc-/0/1773109394839?e=1778112000&v=beta&t=jYqBTOJYCkbEtXD5qx7WEJBVq-XVMCCNS3UdFuGak9c",
+          "alt": "graphical user interface",
+          "width": 507,
+          "height": 477
+        }
+      ],
+      "external_links": [
+        "https://theaiengineer.substack.com/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7435829865385361408/",
+      "author": "Ved Vekhande",
+      "author_url": "https://www.linkedin.com/in/ved-vekhande?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAADf2XccBxYP9nMqdSoUcfl0J47XifLUQlvQ",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Anthropic hackathon winner dropped the Claude Code bible.\n\nEverything you need. Nothing you don't.\n\nWhat's inside:\n\nAgents (13 total)\n→ Plan features\n→ Review code\n→ Fix build errors\n→ Security audits\n\nSkills (56 total)\n→ TDD workflows\n→ Token optimization\n→ Memory persistence\n→ Continuous learning\n\nCommands (32 total)\n→ /plan your feature\n→ /tdd enforce tests\n→ /security-scan everything\n→ /refactor-clean dead code\n\nWorks on every tool\n→ Claude Code (native)\n→ Cursor IDE\n→ OpenCode\n→ Codex CLI\n\nBattle tested facts\n→ 10 months daily use\n→ Real products shipped\n→ 992 internal tests\n→ 60% cost reduction\n\nNew in latest drop\n→ PM2 orchestration\n→ 6 multi-agent commands\n→ AgentShield security scanner\n→ Cross platform support\n\nRepo: https://lnkd.in/dS5BcKpB\n\nSave this for later.\nRepost ♻️ for developers building with AI.\n\nCheck my profile for more AI resources 👋",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQGPaV1cPAHLeA/feedshare-shrink_800/B4DZy9zqX_IgAg-/0/1772710963230?e=1778112000&v=beta&t=yVOfZwF72m4OSd2q9d3AXvIvjBoikiw7oQKrdf7cmwY",
+          "alt": "graphical user interface, text",
+          "width": 800,
+          "height": 1070
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/dS5BcKpB"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7434938725140283393/",
+      "author": "Charly Wargnier",
+      "author_url": "https://www.linkedin.com/in/charlywargnier?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAACujVIBELJUczPlLYfAh_gqHCQQreVjgc4",
+      "timestamp": "1mo • \n \n1 month ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Just stumbled upon the absolute BEST repo for Claude Code 🤯 \n\nIf you're building with AI agents, this is pure gold.\n\nIt is a continuously updated hub of best practices:\n\n→ Clear subagent architectures and skills \n→ The only MCP servers you actually need (DeepWiki, Context7, Playwright)\n→ Proven workflows from AI legends (Karpathy, Cherny)\n→ Secret slash commands not found in the official docs! \n\nYou can literally set up a tailored AI team built for your exact workflow by tonight. Insane value.\n\nBest part?\n\nIt's FREE and open-source! \n\nA massive thank you to Shayan Rais for building this and sharing it open-source with our dev community 🙌 \n\nLet's help it gain the visibility it deserves, be sure to give the repo a ⭐!\n→ https://lnkd.in/eGJk63X2",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E10AQGYde9HqwtTkw/image-shrink_800/B4EZy00.ikHoAg-/0/1772560312904?e=1777168800&v=beta&t=s-_UcO5wsNNLlUME7xi9leWcDRpqqHSGAcACvR2e0dA",
+          "alt": "No alternative text description for this image",
+          "width": 717,
+          "height": 1119
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/eGJk63X2"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7434739507654148096/",
+      "author": "ANS",
+      "author_url": "https://www.linkedin.com/company/ans-team/posts",
+      "timestamp": "2mo • \n \n2 months ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "North Carolina, come on and raise up!!\n\nWe’re excited to share that ANS has officially opened a new office in Raleigh, North Carolina. This marks an important step in our intentional growth across key markets and strengthens how we support our clients.\n\nRaleigh is a natural fit for us. It’s already home to several ANS team members, sits in the heart of the Research Triangle near NC State, Duke, and UNC-Chapel Hill, and brings us closer to clients we work with today and those we’re excited to build with next.\n\nOur Raleigh office is a shared coworking space at The Loading Dock, designed to support flexible, scalable growth for our Civil and Structural Engineering teams. This model allows us to grow thoughtfully while staying nimble and responsive to the needs of our people and clients.\n\nA huge thank-you to Aries Zamora and her team for guiding the process, and to The Loading Dock for the incredible space. We’re already feeling at home, and the aesthetic vibes are unmistakably ANS 😉\n\nHere’s to new roots, new opportunities, and GOOOOO TEAM ANS RALEIGH!! \nKyle Faust, Vice President Civil Engineering \nNicholas Young, PE, Director of Structural Engineering \nJohn Bigham, PE, Principal Structural Engineer \nMatt Byrum, PE, Project Engineer \nManny Gonzalez, Civil Engineer II \nKris Bernard, Designer II \nAvery Bartlett-Golden, Designer I",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQFc9vAfbh2QSA/feedshare-shrink_800/B56ZwzTlm9GUAg-/0/1770387298994?e=1778112000&v=beta&t=CVQf-9oAhyLiZn-sF4SlumFESp4WKoigZa7keG3iSDY",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 800
+        },
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQHFwZBEYQYDCQ/feedshare-shrink_800/B56ZwzTlp3KQAg-/0/1770387299215?e=1778112000&v=beta&t=k-uoDli704OC6KLSDE5YSQ0ExKeVx0eTODvHKobFVmo",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 800
+        },
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQHSrDncl7poGQ/feedshare-shrink_800/B56ZwzTlrhH0Ag-/0/1770387299287?e=1778112000&v=beta&t=B7BzbVSFuSpBSJOgzWLiYzfQJuNzZgAvUhxLn8I-MrU",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 800
+        },
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQEksod-t4fZlg/feedshare-shrink_800/B56ZwzTllJKMAg-/0/1770387298873?e=1778112000&v=beta&t=UhB2MUdpL7RKxOhYDx9bj2h8ZHOBa3TXCYu1QGK_DYw",
+          "alt": "No alternative text description for this image",
+          "width": 167,
+          "height": 111
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7434626622009446400/",
+      "author": "Stanislav Beliaev",
+      "author_url": "https://www.linkedin.com/in/stasbel?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACPwVh4B9nRz6TBuOrJzp8I7gScS9bvv968",
+      "timestamp": "1mo • Edited • \n \n1 month ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Just found the most useful repo for Claude Code 🔥\n\nIt’s a constantly updated collection of the best practices:\n\n• Skills & subagents (with clear agent architecture breakdown) \n• MCP servers actually worth using (Context7, Playwright, DeepWiki, etc.) \n• Proven workflows (Boris Cherny, Karpathy, RPI) \n• Hidden slash commands & settings not obvious in docs \n• Real usage tips, including insights from the creator of Claude Code\n\nPlus real experience notes like:\n- Keep CLAUDE. md under 150 lines\n- Use manual /compact at ~50%\n- Use iTerm instead of IDE terminal to avoid crashes\n\nThe best part: \nYou can set up a small team of custom AI agents in one evening - properly structured, connected to the right MCP servers, and tailored to your workflow (refactoring, testing, docs, research, etc.).\n\nLink to the GitHub repo: https://lnkd.in/dxzZb956\n\n\n--\nBonus: GetFluently.app - AI English coach for non-native professionals\n--\n\n♻️ Save this and share with others to help them level up!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQFNZA_jf4Sr7Q/feedshare-shrink_800/B4DZyzySPgKwAg-/0/1772542830073?e=1778112000&v=beta&t=Wq2S_Utm6zXmNcxAPaTdNhtGfcrcoswMAWVMA625bqw",
+          "alt": "No alternative text description for this image",
+          "width": 507,
+          "height": 615
+        }
+      ],
+      "external_links": [
+        "http://getfluently.app/?utm_source=Linkedin_Stas",
+        "https://lnkd.in/dxzZb956",
+        "http://getfluently.app/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7433994353133461504/",
+      "author": "Hamel Husain",
+      "author_url": "https://www.linkedin.com/in/hamelhusain?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAJaFxIBXIUp56dl-c_AfZA02MImPE0dApQ",
+      "timestamp": "1mo • Edited • \n \n1 month ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Claude renovated my GitHub homepage for me by automatically setting up a CRON that pulls in my latest blog post, and found images and other details to make things a bit nicer :) \n\nhttps://lnkd.in/g_jAUequ",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQGIisSoBjXISA/feedshare-shrink_800/B56Zymj_j3IYAg-/0/1772320979722?e=1778112000&v=beta&t=neygCXD5Z-DnjLnXriEHi2zyaRvXRc15sS6akNJIliY",
+          "alt": "graphical user interface, text",
+          "width": 507,
+          "height": 363
+        }
+      ],
+      "external_links": [
+        "https://maven.com/parlance-labs/evals",
+        "https://lnkd.in/g_jAUequ"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7429498344361734146/",
+      "author": "Mitko Vasilev",
+      "author_url": "https://www.linkedin.com/in/ownyourai?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAD5gS4BmEBp6BdV2A8EU2VtWuDDwW_ofys",
+      "timestamp": "2mo • \n \n2 months ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "I just carved out time to dig into the latest SWE-rebench. For the uninitiated: this isn't your static \"solve LeetCode #47\" benchmark. Every month they drop fresh GitHub issues + PRs into a live coding-agent arena. Models read, patch, test, fail, iterate. Token counts here aren't single-shot completions, they're full trajectories.\n\nThe ~1M Token Wall is real.\nThere's a clear top cluster on the leaderboard, and they're all burning 1-2M tokens per problem. Frontier accuracy isn't just about being smart, it's about being persistent. Long execution traces aren't a bug; they're the feature.\nMarginal gains crater past 1M.\nThrow more tokens at it and you hit diminishing returns fast. The real battleground is trace efficiency. How much bang you get per buck once you're already in the million-token club. If your deployment can't stomach 1M+ tokens per task, you're not competing for the podium. Full stop.\n\nPlot twist: Qwen3 Coder Next (80B A3B) just snatched 14th place.\n\nEighty billion parameters. Not 400B. Not 1T. Fourteen. That's not just \"good for the size\"- that's a efficiency flex. Raw volume isn't destiny; utilization is.\n\nMake sure you own your AI. AI in the cloud is not aligned with you; it’s aligned with the company that owns it.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQHzRJheSFrBPQ/feedshare-shrink_800/B4DZxcyAZ4J8Ag-/0/1771083138982?e=1778112000&v=beta&t=ksd4u8upzBQspcK4PMHlAnFaA1zRT3I3j19MfExvIsk",
+          "alt": "chart",
+          "width": 800,
+          "height": 368
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7429497393252982784/",
+      "author": "Stanislav Beliaev",
+      "author_url": "https://www.linkedin.com/in/stasbel?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACPwVh4B9nRz6TBuOrJzp8I7gScS9bvv968",
+      "timestamp": "2mo • Edited • \n \n2 months ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Save this repo if you’re building with AI agents 👇\n\n860+ agentic skills for Claude Code, Gemini CLI, Cursor, Copilot & more:\n\nIt’s a curated library of battle-tested SKILL modules that upgrade your AI coding assistant.\n\nYou can use it for:\n→ RAG pipelines & LLM systems\n→ Docker, AWS serverless, Vercel deployment\n→ Security audits & vulnerability testing\n→ Full-stack development patterns\n→ TDD & QA automation\n→ Growth, SEO, pricing strategy\n…and much more!\n\nSkills are grouped into role-based bundles (Web Dev, Security Engineer, DevOps, etc.) to help you get started quickly without manually exploring hundreds of skills.\n\nWorks across Claude Code, Cursor, Gemini CLI, Codex CLI, Antigravity IDE, GitHub Copilot, OpenCode, and AdaL CLI.\n\nInstall with one command:\nnpx antigravity-awesome-skills\n\nLink to the GitHub repo: https://lnkd.in/d2Kr3aHp\n\n--\n⭐ Bonus: GetFluently.app - AI English tutor for non-native professionals\n--\n\n♻️ Save this and share with others to help them level up!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQGMteHyVhf5eA/feedshare-shrink_800/B4DZxrRKMDG0Ag-/0/1771326186667?e=1778112000&v=beta&t=bnnhyn640v7zdYJWJlw_KAIRWoUYtO3vBGoqmeFtEZQ",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 622
+        }
+      ],
+      "external_links": [
+        "http://getfluently.app/?utm_source=Linkedin_Stas",
+        "https://lnkd.in/d2Kr3aHp",
+        "http://getfluently.app/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7427525571502460928/",
+      "author": "Alex Dobrenko",
+      "author_url": "https://www.linkedin.com/in/alex-dobrenko?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAWoEJcBUJnz6VbROB-M81dB9taDR_h76aY",
+      "timestamp": "2mo • \n \n2 months ago • Visible to anyone on or off LinkedIn",
+      "post_type": "text",
+      "text": "the funniest part of teaching people Claude Code is that i still don't totally know what i'm doing either.\n\nlike i'll be mid-demo showing someone how to build a tool and Claude will just... break something. and i'll go \"ok well that's not supposed to happen\" and we figure it out together.\n\nturns out that's actually the best way to learn it. not from someone who has it all figured out. from someone who's comfortable saying \"i don't know, let's try this.\"\n\ni think that's why creatives are so good at this. we're used to making stuff without knowing if it'll work.",
+      "images": [],
+      "external_links": [
+        "http://www.codeforcreatives.com/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7427524282777247744/",
+      "author": "Mitko Vasilev",
+      "author_url": "https://www.linkedin.com/in/ownyourai?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAD5gS4BmEBp6BdV2A8EU2VtWuDDwW_ofys",
+      "timestamp": "2mo • \n \n2 months ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "I just woke up to Qwen3 Coder Next 💜 80B @ FP8, top speed ~291 tokens/sec on my lunchbox-sized nano PC. Yes, this is the best on device LLM for coding agents. \n\nThe wild part isn’t the speed... it’s the efficiency.\n\nOn SWE-Bench Pro, it’s trading blows with 10x bigger models like DeepSeek-V3, GLM-4.7, MiniMax... Sonnet/Opus\n\nQwen3 Coder Next\n• 80B total, ~3B active\n• 800K+ verified agent trajectories\n• Built for terminals, browsers, tools, and agent loops\n• Zero “chat vibes”, all execution\n• Efficiency per watt/euro/desk-space = comically unfair\n\nThis was marketed as a “light AI prototyping” PC. It’s actually a VW Golf GTI driven by a grandma on Sundays.\n\nMake sure you own your AI. AI in the cloud is not aligned with you; it’s aligned with the company that owns it.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQHae5XSebqhoQ/feedshare-shrink_800/B4DZwnY064J0Ak-/0/1770187347750?e=1778112000&v=beta&t=FRUyPSx9vUsIolhtPmlfgtV5Zr3Qp1aNsqaIweJiXUQ",
+          "alt": "graphical user interface, text",
+          "width": 800,
+          "height": 520
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7426766488252092416/",
+      "author": "Ali Ghodsi",
+      "author_url": "https://www.linkedin.com/in/alighodsi?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAByOoABnzll_F-x1zE38wZMOUAaQzImNkY",
+      "timestamp": "2mo • Edited • \n \n2 months ago • Edited • Visible to anyone on or off LinkedIn",
+      "post_type": "article",
+      "text": "I now constantly get questions about the SAAS meltdown, role of AI, system of records etc. I don't have an answer to all these. \n\nBut I do know that we saw an acceleration in our business in Q2, Q3, and now finished the year with accelerating Q4. \n\nThe question is, why?\n\nShort answer: AI. But the underlying reason is subtle. We are growing fast because we are finally removing the biggest bottleneck in data: the technical barrier to entry. \n\nFor years, if you didn’t know SQL, Python, you were locked out of the value chain. That has changed fundamentally with the 𝐆𝐞𝐧𝐢𝐞 𝐟𝐚𝐦𝐢𝐥𝐲, and it is the \"secret sauce\" behind our recent momentum:\n• 𝐆𝐞𝐧𝐢𝐞: Analysts can query data without any SQL. I use this every day myself.\n• 𝐃𝐚𝐭𝐚 𝐒𝐜𝐢𝐞𝐧𝐜𝐞 𝐆𝐞𝐧𝐢𝐞: Builds end-to-end AI models for you, similar to Cursor.\n• 𝐃𝐚𝐭𝐚 𝐄𝐧𝐠𝐢𝐧𝐞𝐞𝐫 𝐆𝐞𝐧𝐢𝐞: Write Spark pipelines, does plumbing, troubleshooting. \n\nWe've been talking about DATA + AI democratization, but generative AI finally enabled it in a way that wasn't possible before. That's why we're seeing a market response. \n\nTake 𝐋𝐚𝐤𝐞𝐛𝐚𝐬𝐞 𝐏𝐨𝐬𝐭𝐠𝐫𝐞𝐬. We launched this serverless engine for agents and apps recently. At 8 months into its journey, its revenue is already 2x what our Data Warehouse product was at the same stage.\n\nAll this taken together, we ended up with the following stats for Q4: \n🚀 $5.4B Revenue Run-Rate, growing >65% YoY \n🚀 $1.4B AI Revenue Run-Rate\n🚀 FCF Positive for the year \n🚀 NRR >>140%\n\nhttps://lnkd.in/giHdhGii",
+      "images": [],
+      "external_links": [
+        "https://lnkd.in/giHdhGii",
+        "https://www.databricks.com/company/newsroom/press-releases/databricks-grows-65-yoy-surpasses-5-4-billion-revenue-run-rate"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7426365883482222594/",
+      "author": "Alex Dobrenko",
+      "author_url": "https://www.linkedin.com/in/alex-dobrenko?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAWoEJcBUJnz6VbROB-M81dB9taDR_h76aY",
+      "timestamp": "2mo • \n \n2 months ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "prompt: make a social dashboard and make the UI for it actually fun and weird so i don't hate looking at it \n\nclaude code:\n\n(i hated all these - see comment for my next prompt lol)",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQHAd6ZBTh5N9Q/feedshare-shrink_800/B4EZw9vbLoJsAk-/0/1770562368687?e=1778112000&v=beta&t=9biJkctFcsreUmdQYGeNHIcQtpM7IfYdP4D5vMgKZgY",
+          "alt": "No alternative text description for this image",
+          "width": 505,
+          "height": 368
+        },
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQGZdGt6JVSApw/feedshare-shrink_800/B4EZw9vbKFHgAg-/0/1770562368611?e=1778112000&v=beta&t=5KHK4oQeFudurXi7zaPb6l4e84aAAFv8Fl6eCTORIEk",
+          "alt": "No alternative text description for this image",
+          "width": 167,
+          "height": 111
+        },
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQHTMicAPQZfFw/feedshare-shrink_800/B4EZw9vbMtH8Ag-/0/1770562368785?e=1778112000&v=beta&t=vb9Nyb60JzIoub8b-6CZJlBx1noWXamRbhxAul10pA0",
+          "alt": "No alternative text description for this image",
+          "width": 167,
+          "height": 111
+        },
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQHXM-Ipv20NZQ/feedshare-shrink_800/B4EZw9vbLfHcAg-/0/1770562368630?e=1778112000&v=beta&t=diwUg1cX8SWNUtg7JWmiitoOaHiPK2GTgOQlIA5Q0yI",
+          "alt": "No alternative text description for this image",
+          "width": 167,
+          "height": 111
+        }
+      ],
+      "external_links": [
+        "http://www.codeforcreatives.com/"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7419529740015005697/",
+      "author": "Ed Melendez",
+      "author_url": "https://www.linkedin.com/in/edwardmelendez?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAB4Q3IBmpx3c6t46NN8XDA5Nq6aZ46tUJo",
+      "timestamp": "2mo • \n \n2 months ago • Visible to anyone on or off LinkedIn",
+      "post_type": "image",
+      "text": "Thawing out in LA soon! I’d love to connect if you’re going. I’ll be meeting up with friends new and old at booth #524 in the AI Zone!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E10AQE4itiDQQrZhw/image-shrink_800/B4EZvc6DyRGoAg-/0/1768937767200?e=1777168800&v=beta&t=i2KP8M-5wb4QUUmLrIQluz1CI5QBafII3L38vg0vRD4",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 800
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    }
+  ],
+  "log": [
+    "initial: +5 new (total 5)",
+    "scroll 1: last_ts=\"1mo • Edited • \n \n1 \" age=1.0mo",
+    "scroll 1: +6 new (total 11)",
+    "scroll 2: last_ts=\"1mo • \n \n1 month ago\" age=1.0mo",
+    "scroll 2: +6 new (total 17)",
+    "scroll 3: last_ts=\"1mo • Edited • \n \n1 \" age=1.0mo",
+    "scroll 3: +5 new (total 22)",
+    "scroll 4: last_ts=\"2mo • \n \n2 months ag\" age=2.0mo",
+    "scroll 4: +6 new (total 28)",
+    "scroll 5: last_ts=\"3mo • \n \n3 months ag\" age=3.0mo",
+    "age cutoff hit (3.0 > 2mo) — stopping",
+    "scroll 5: +1 new (total 29)",
+    "result: 29 total posts collected"
+  ],
+  "page_url": "https://www.linkedin.com/in/brandtpileggi/recent-activity/reactions/",
+  "scraped_at": "2026-04-19T01:44:23.828Z",
+  "count": 29
+}

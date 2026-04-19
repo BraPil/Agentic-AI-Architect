@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "posts": [
+    {
+      "post_url": "",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/alexwang2911?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAACby0LMBoQ6kiXlC2BvmLzXW6dcQWnvLGVI",
+      "timestamp": "3d • Edited •",
+      "post_type": "image",
+      "text": "4 habits that make Claude Code more reliable in practice:\n\n\n1---- Don’t turn CLAUDE. md into a giant instruction dump\n\nUse it for stable things: project context, architecture notes, conventions, important commands.\n\nIf something is really a repeatable procedure, checklist, or playbook, it usually belongs somewhere else.\n\n\n2---- Use Plan Mode before bigger changes\n\nFor multi-file edits, refactors, or anything slightly messy, it is usually safer to let Claude inspect and plan first before touching code.\n\n\n3---- Turn repeated prompts into skills\n\nIf you keep typing the same “review this,” “debug this,” or “prepare this for deploy” instructions, that is usually a sign the workflow should become reusable instead of rewritten every time.\n\n\n4---- Use hooks for things that should happen every time\n\nFormatting, validation, guardrails, notifications - anything deterministic is better handled by the system than by hoping the model remembers.\n\n\nThe more useful shift, to me, is moving the right things out of the prompt and into the environment.\n\nThat’s where repeated prompting starts turning into structure.\n\nIf you want to learn Claude Code more deeply, we’re also running a live course and hands-on workshop on it:\n\n𝐂𝐥𝐚𝐮𝐝𝐞 𝐂𝐨𝐝𝐞 𝐌𝐚𝐬𝐭𝐞𝐫𝐲\n🔗https://lnkd.in/gu5C-vKq\n\n*There’s also a 10-day satisfaction guarantee if you want to take a closer look!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQE37UDwuSrecg/feedshare-shrink_800/B56Z2QapUaKwAc-/0/1776244397607?e=1778112000&v=beta&t=EjT7H-FiXXzk8h3JRJ-QH_oMbUHf1wxPmSgt1ca8hBk",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/gu5C-vKq"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7437529273848041472/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/jihwankim55?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAADVoTcoBB1HFPLNKIfbm-8_beG6g5636sPk",
+      "timestamp": "1mo •",
+      "post_type": "image",
+      "text": "Nice NVIDIA!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQGzQuh6yBdZTA/feedshare-shrink_800/B4EZzdpde0JUAc-/0/1773245160445?e=1778112000&v=beta&t=BJhm9b-ARNP43p0crxqMrr83ghjjJ4GUlCA3r28bHl0",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 751
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7436305863646179328/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/kelly-moncrief?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAABm9Y4B5eIqUBHGVwMokRWKYzzqJo5Mag0",
+      "timestamp": "1mo •",
+      "post_type": "image",
+      "text": "AI only scales when the data pipelines behind it deliver trusted data and real business value.\n\nBrilliantly simple visual below.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQF5PLNQ9ONDkw/feedshare-shrink_1280/B4EZzMQw4LJAAM-/0/1772953475862?e=1778112000&v=beta&t=lhVJLae0z1dGzfMQawvX3LYtLLMEucmNbmdafZpHBO4",
+          "alt": "No alternative text description for this image",
+          "width": 749,
+          "height": 472
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/dbf74Y9E"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7424472881067175936/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/areganti?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAABihshABDFVFq1kZ0vYGaHic4b9X5Sq80DE",
+      "timestamp": "2mo •",
+      "post_type": "article",
+      "text": "🤩 Omg wow. This is such an incredibly thorough yet approachable piece. Wouldn’t expect anything less from Aman and Tal. \nWe’re going to make this article part of our course reader. \n\nReally good stuff, waiting for the next one!",
+      "images": [],
+      "external_links": [
+        "https://linktr.ee/areganti",
+        "https://lnkd.in/e-RybxGs",
+        "https://www.lennysnewsletter.com/p/how-to-build-ai-product-sense"
+      ],
+      "article_url": ""
+    }
+  ],
+  "page_url": "https://www.linkedin.com/in/brandtpileggi/recent-activity/reactions/",
+  "scraped_at": "2026-04-18T23:52:19.955Z",
+  "count": 4
+}

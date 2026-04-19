@@ -1,0 +1,26 @@
+AAA LinkedIn Exporter — Scroll+Scrape log
+2026-04-19T01-44-23
+
+initial: +5 new (total 5)
+scroll 1: last_ts="1mo • Edited • 
+ 
+1 " age=1.0mo
+scroll 1: +6 new (total 11)
+scroll 2: last_ts="1mo • 
+ 
+1 month ago" age=1.0mo
+scroll 2: +6 new (total 17)
+scroll 3: last_ts="1mo • Edited • 
+ 
+1 " age=1.0mo
+scroll 3: +5 new (total 22)
+scroll 4: last_ts="2mo • 
+ 
+2 months ag" age=2.0mo
+scroll 4: +6 new (total 28)
+scroll 5: last_ts="3mo • 
+ 
+3 months ag" age=3.0mo
+age cutoff hit (3.0 > 2mo) — stopping
+scroll 5: +1 new (total 29)
+result: 29 total posts collected

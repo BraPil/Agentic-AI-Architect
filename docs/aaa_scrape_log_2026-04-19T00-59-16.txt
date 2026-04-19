@@ -1,0 +1,753 @@
+AAA LinkedIn Exporter — Scrape log
+2026-04-19T00-59-16
+
+containers: probe: 75 [data-urn*=activity] on page |   activity[0] chain: DIV←DIV←DIV←DIV←DIV←LI urn=233394139136 |   activity[1] chain: DIV←DIV←DIV←DIV←DIV←LI urn=801894821888 |   activity[2] chain: DIV←DIV←DIV←DIV←DIV←LI urn=542766260224 | probe: 153 <ul> in <main> |   ul liCount=75 cls=display-flex flex-wrap list-style-none j | winner: ul with 75 activity-li → 298 LI items
+dedup: 298 found → 298 unique
+[0] text=2769ch(selector) images=1 → KEPT | "I'm starting a public experiment where I'm handing my entire"
+[0] author="Feed post number 1" ts="3d • 
+ 
+3 days ago • Visible to anyone on or off LinkedIn" age=0.1mo
+[1] text=1034ch(selector) images=0 → KEPT | "Paste any GitHub URL and get a full interactive architecture"
+[1] author="Feed post number 2" ts="17h • 
+ 
+17 hours ago • Visible to anyone on or off LinkedIn" age=0.0mo
+[2] text=1711ch(selector) images=1 → KEPT | "CoT, ReAct, ToT, RAG, MCP, DAG.  Most engineers building age"
+[2] author="Feed post number 3" ts="10h • 
+ 
+10 hours ago • Visible to anyone on or off LinkedIn" age=0.0mo
+[3] text=2946ch(selector) images=1 → KEPT | "𝐂𝐥𝐚𝐮𝐝𝐞 𝐂𝐨𝐝𝐞 𝐏𝐫𝐨𝐣𝐞𝐜𝐭 𝐒𝐭𝐫𝐮𝐜𝐭𝐮𝐫𝐞: 𝐄�"
+[3] author="Feed post number 4" ts="17h • 
+ 
+17 hours ago • Visible to anyone on or off LinkedIn" age=0.0mo
+[4] text=2976ch(selector) images=1 → KEPT | "AI agents fail without strong memory layers.  5 key AI memor"
+[4] author="Feed post number 5" ts="2d • 
+ 
+2 days ago • Visible to anyone on or off LinkedIn" age=0.1mo
+[5] urn=idx-5 fork_depth=2 fork_children=2
+[5] text=0ch(none) images=0 → SKIPPED
+[6] urn=idx-6 fork_depth=2 fork_children=2
+[6] text=0ch(none) images=0 → SKIPPED
+[7] urn=idx-7 fork_depth=2 fork_children=2
+[7] text=0ch(none) images=0 → SKIPPED
+[8] urn=idx-8 fork_depth=2 fork_children=2
+[8] text=0ch(none) images=0 → SKIPPED
+[9] urn=idx-9 fork_depth=2 fork_children=2
+[9] text=0ch(none) images=0 → SKIPPED
+[10] urn=idx-10 fork_depth=2 fork_children=2
+[10] text=0ch(none) images=0 → SKIPPED
+[11] urn=idx-11 fork_depth=2 fork_children=2
+[11] text=0ch(none) images=0 → SKIPPED
+[12] urn=idx-12 fork_depth=2 fork_children=2
+[12] text=0ch(none) images=0 → SKIPPED
+[13] urn=idx-13 fork_depth=2 fork_children=2
+[13] text=0ch(none) images=0 → SKIPPED
+[14] urn=idx-14 fork_depth=2 fork_children=2
+[14] text=0ch(none) images=0 → SKIPPED
+[15] text=1718ch(selector) images=1 → KEPT | "Someone just open-sourced the "Docker for AI agents" 🤯  Def"
+[15] author="Feed post number 16" ts="3w • 
+ 
+3 weeks ago • Visible to anyone on or off LinkedIn" age=0.0mo
+[16] text=1880ch(selector) images=1 → KEPT | "NASA figured out how to write bulletproof code in 2006 and a"
+[16] author="Feed post number 17" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[17] text=1520ch(selector) images=1 → KEPT | "CEO of Y Combinator shared his Claude Code skill setup 🔥  I"
+[17] author="Feed post number 18" ts="1mo • Edited • 
+ 
+1 month ago • Edited • Visible to anyone on or off LinkedIn" age=1.0mo
+[18] text=1744ch(selector) images=1 → KEPT | "After 2,000+ hours using Claude Code across real production "
+[18] author="Feed post number 19" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[19] text=1765ch(selector) images=1 → KEPT | "THIS is the wildest open-source project I’ve seen this month"
+[19] author="Feed post number 20" ts="1mo • Edited • 
+ 
+1 month ago • Edited • Visible to anyone on or off LinkedIn" age=1.0mo
+[20] urn=idx-20 fork_depth=2 fork_children=2
+[20] text=0ch(none) images=0 → SKIPPED
+[21] urn=idx-21 fork_depth=2 fork_children=2
+[21] text=0ch(none) images=0 → SKIPPED
+[22] urn=idx-22 fork_depth=2 fork_children=2
+[22] text=0ch(none) images=0 → SKIPPED
+[23] urn=idx-23 fork_depth=2 fork_children=2
+[23] text=0ch(none) images=0 → SKIPPED
+[24] urn=idx-24 fork_depth=2 fork_children=2
+[24] text=0ch(none) images=0 → SKIPPED
+[25] urn=idx-25 fork_depth=2 fork_children=2
+[25] text=0ch(none) images=0 → SKIPPED
+[26] urn=idx-26 fork_depth=2 fork_children=2
+[26] text=0ch(none) images=0 → SKIPPED
+[27] urn=idx-27 fork_depth=2 fork_children=2
+[27] text=0ch(none) images=0 → SKIPPED
+[28] urn=idx-28 fork_depth=2 fork_children=2
+[28] text=0ch(none) images=0 → SKIPPED
+[29] urn=idx-29 fork_depth=2 fork_children=2
+[29] text=0ch(none) images=0 → SKIPPED
+[30] urn=idx-30 fork_depth=2 fork_children=2
+[30] text=0ch(none) images=0 → SKIPPED
+[31] urn=idx-31 fork_depth=2 fork_children=2
+[31] text=0ch(none) images=0 → SKIPPED
+[32] urn=idx-32 fork_depth=2 fork_children=2
+[32] text=0ch(none) images=0 → SKIPPED
+[33] urn=idx-33 fork_depth=2 fork_children=2
+[33] text=0ch(none) images=0 → SKIPPED
+[34] urn=idx-34 fork_depth=2 fork_children=2
+[34] text=0ch(none) images=0 → SKIPPED
+[35] text=1317ch(selector) images=1 → KEPT | "This tool analyzes your hardware with one command and shows "
+[35] author="Feed post number 36" ts="1mo • Edited • 
+ 
+1 month ago • Edited • Visible to anyone on or off LinkedIn" age=1.0mo
+[36] text=899ch(selector) images=1 → KEPT | "I just deleted all my MCPs. Skills + CLI is all you need.  M"
+[36] author="Feed post number 37" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[37] text=128ch(selector) images=1 → KEPT | "AI only scales when the data pipelines behind it deliver tru"
+[37] author="Feed post number 38" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[38] text=1394ch(selector) images=1 → KEPT | "All legacy codebase modernization efforts in 2026 begin with"
+[38] author="Feed post number 39" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[39] text=1547ch(selector) images=1 → KEPT | "LangChain just open-sourced their answer to Claude Code.  9."
+[39] author="Feed post number 40" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[40] urn=idx-40 fork_depth=2 fork_children=2
+[40] text=0ch(none) images=0 → SKIPPED
+[41] urn=idx-41 fork_depth=2 fork_children=2
+[41] text=0ch(none) images=0 → SKIPPED
+[42] urn=idx-42 fork_depth=2 fork_children=2
+[42] text=0ch(none) images=0 → SKIPPED
+[43] urn=idx-43 fork_depth=2 fork_children=2
+[43] text=0ch(none) images=0 → SKIPPED
+[44] urn=idx-44 fork_depth=2 fork_children=2
+[44] text=0ch(none) images=0 → SKIPPED
+[45] urn=idx-45 fork_depth=2 fork_children=2
+[45] text=0ch(none) images=0 → SKIPPED
+[46] urn=idx-46 fork_depth=2 fork_children=2
+[46] text=0ch(none) images=0 → SKIPPED
+[47] urn=idx-47 fork_depth=2 fork_children=2
+[47] text=0ch(none) images=0 → SKIPPED
+[48] urn=idx-48 fork_depth=2 fork_children=2
+[48] text=0ch(none) images=0 → SKIPPED
+[49] urn=idx-49 fork_depth=2 fork_children=2
+[49] text=0ch(none) images=0 → SKIPPED
+[50] urn=idx-50 fork_depth=2 fork_children=2
+[50] text=0ch(none) images=0 → SKIPPED
+[51] urn=idx-51 fork_depth=2 fork_children=2
+[51] text=0ch(none) images=0 → SKIPPED
+[52] urn=idx-52 fork_depth=2 fork_children=2
+[52] text=0ch(none) images=0 → SKIPPED
+[53] urn=idx-53 fork_depth=2 fork_children=2
+[53] text=0ch(none) images=0 → SKIPPED
+[54] urn=idx-54 fork_depth=2 fork_children=2
+[54] text=0ch(none) images=0 → SKIPPED
+[55] text=868ch(selector) images=1 → KEPT | "Anthropic hackathon winner dropped the Claude Code bible.  E"
+[55] author="Feed post number 56" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[56] text=753ch(selector) images=1 → KEPT | "Just stumbled upon the absolute BEST repo for Claude Code 🤯"
+[56] author="Feed post number 57" ts="1mo • 
+ 
+1 month ago • Visible to anyone on or off LinkedIn" age=1.0mo
+[57] text=1347ch(selector) images=4 → KEPT | "North Carolina, come on and raise up!!  We’re excited to sha"
+[57] author="Feed post number 58" ts="2mo • 
+ 
+2 months ago • Visible to anyone on or off LinkedIn" age=2.0mo
+[58] text=982ch(selector) images=1 → KEPT | "Just found the most useful repo for Claude Code 🔥  It’s a c"
+[58] author="Feed post number 59" ts="1mo • Edited • 
+ 
+1 month ago • Edited • Visible to anyone on or off LinkedIn" age=1.0mo
+[59] text=204ch(selector) images=1 → KEPT | "Claude renovated my GitHub homepage for me by automatically "
+[59] author="Feed post number 60" ts="1mo • Edited • 
+ 
+1 month ago • Edited • Visible to anyone on or off LinkedIn" age=1.0mo
+[60] urn=idx-60 fork_depth=2 fork_children=2
+[60] text=0ch(none) images=0 → SKIPPED
+[61] urn=idx-61 fork_depth=2 fork_children=2
+[61] text=0ch(none) images=0 → SKIPPED
+[62] urn=idx-62 fork_depth=2 fork_children=2
+[62] text=0ch(none) images=0 → SKIPPED
+[63] urn=idx-63 fork_depth=2 fork_children=2
+[63] text=0ch(none) images=0 → SKIPPED
+[64] urn=idx-64 fork_depth=2 fork_children=2
+[64] text=0ch(none) images=0 → SKIPPED
+[65] urn=idx-65 fork_depth=2 fork_children=2
+[65] text=0ch(none) images=0 → SKIPPED
+[66] urn=idx-66 fork_depth=2 fork_children=2
+[66] text=0ch(none) images=0 → SKIPPED
+[67] urn=idx-67 fork_depth=2 fork_children=2
+[67] text=0ch(none) images=0 → SKIPPED
+[68] urn=idx-68 fork_depth=2 fork_children=2
+[68] text=0ch(none) images=0 → SKIPPED
+[69] urn=idx-69 fork_depth=2 fork_children=2
+[69] text=0ch(none) images=0 → SKIPPED
+[70] urn=idx-70 fork_depth=2 fork_children=2
+[70] text=0ch(none) images=0 → SKIPPED
+[71] urn=idx-71 fork_depth=2 fork_children=2
+[71] text=0ch(none) images=0 → SKIPPED
+[72] urn=idx-72 fork_depth=2 fork_children=2
+[72] text=0ch(none) images=0 → SKIPPED
+[73] urn=idx-73 fork_depth=2 fork_children=2
+[73] text=0ch(none) images=0 → SKIPPED
+[74] text=989ch(selector) images=1 → KEPT | "Save this repo if you’re building with AI agents 👇  860+ ag"
+[74] author="Feed post number 75" ts="2mo • Edited • 
+ 
+2 months ago • Edited • Visible to anyone on or off LinkedIn" age=2.0mo
+[75] text=566ch(selector) images=0 → KEPT | "the funniest part of teaching people Claude Code is that i s"
+[75] author="Feed post number 76" ts="2mo • 
+ 
+2 months ago • Visible to anyone on or off LinkedIn" age=2.0mo
+[76] text=776ch(selector) images=1 → KEPT | "I just woke up to Qwen3 Coder Next 💜 80B @ FP8, top speed ~"
+[76] author="Feed post number 77" ts="2mo • 
+ 
+2 months ago • Visible to anyone on or off LinkedIn" age=2.0mo
+[77] text=1528ch(selector) images=0 → KEPT | "I now constantly get questions about the SAAS meltdown, role"
+[77] author="Feed post number 78" ts="2mo • Edited • 
+ 
+2 months ago • Edited • Visible to anyone on or off LinkedIn" age=2.0mo
+[78] text=180ch(selector) images=4 → KEPT | "prompt: make a social dashboard and make the UI for it actua"
+[78] author="Feed post number 79" ts="2mo • 
+ 
+2 months ago • Visible to anyone on or off LinkedIn" age=2.0mo
+[79] urn=idx-79 fork_depth=2 fork_children=2
+[79] text=0ch(none) images=0 → SKIPPED
+[80] urn=idx-80 fork_depth=2 fork_children=2
+[80] text=0ch(none) images=0 → SKIPPED
+[81] urn=idx-81 fork_depth=2 fork_children=2
+[81] text=0ch(none) images=0 → SKIPPED
+[82] urn=idx-82 fork_depth=2 fork_children=2
+[82] text=0ch(none) images=0 → SKIPPED
+[83] urn=idx-83 fork_depth=2 fork_children=2
+[83] text=0ch(none) images=0 → SKIPPED
+[84] urn=idx-84 fork_depth=2 fork_children=2
+[84] text=0ch(none) images=0 → SKIPPED
+[85] urn=idx-85 fork_depth=2 fork_children=2
+[85] text=0ch(none) images=0 → SKIPPED
+[86] urn=idx-86 fork_depth=2 fork_children=2
+[86] text=0ch(none) images=0 → SKIPPED
+[87] urn=idx-87 fork_depth=2 fork_children=2
+[87] text=0ch(none) images=0 → SKIPPED
+[88] urn=idx-88 fork_depth=2 fork_children=2
+[88] text=0ch(none) images=0 → SKIPPED
+[89] urn=idx-89 fork_depth=2 fork_children=2
+[89] text=0ch(none) images=0 → SKIPPED
+[90] urn=idx-90 fork_depth=2 fork_children=2
+[90] text=0ch(none) images=0 → SKIPPED
+[91] urn=idx-91 fork_depth=2 fork_children=2
+[91] text=0ch(none) images=0 → SKIPPED
+[92] urn=idx-92 fork_depth=2 fork_children=2
+[92] text=0ch(none) images=0 → SKIPPED
+[93] urn=idx-93 fork_depth=2 fork_children=2
+[93] text=0ch(none) images=0 → SKIPPED
+[94] text=134ch(selector) images=1 → KEPT | "Thawing out in LA soon! I’d love to connect if you’re going."
+[94] author="Feed post number 95" ts="2mo • 
+ 
+2 months ago • Visible to anyone on or off LinkedIn" age=2.0mo
+[95] text=503ch(selector) images=1 → KEPT | "Quick Opus 4.5 vibecoding tip.  Ask Claude to create state m"
+[95] SKIPPED age=3.0mo > 2mo cutoff ts="3mo • 
+ 
+3 months ago • Visible to anyone on or off LinkedIn"
+[96] text=653ch(selector) images=1 → KEPT | "How do you actually train a model on 24,000 GPUs?  Stanford "
+[96] SKIPPED age=3.0mo > 2mo cutoff ts="3mo • Edited • 
+ 
+3 months ago • Edited • Visible to anyone on or off LinkedIn"
+[97] text=368ch(selector) images=0 → KEPT | "The most interesting thing in tech: A new study on kids, AI,"
+[97] SKIPPED age=3.0mo > 2mo cutoff ts="3mo • 
+ 
+3 months ago • Visible to anyone on or off LinkedIn"
+[98] text=568ch(selector) images=0 → KEPT | "I’m thrilled to share that I’m starting a new position as Di"
+[98] SKIPPED age=3.0mo > 2mo cutoff ts="3mo • 
+ 
+3 months ago • Visible to anyone on or off LinkedIn"
+[99] urn=idx-99 fork_depth=2 fork_children=2
+[99] text=0ch(none) images=0 → SKIPPED
+[100] urn=idx-100 fork_depth=2 fork_children=2
+[100] text=0ch(none) images=0 → SKIPPED
+[101] urn=idx-101 fork_depth=2 fork_children=2
+[101] text=0ch(none) images=0 → SKIPPED
+[102] urn=idx-102 fork_depth=2 fork_children=2
+[102] text=0ch(none) images=0 → SKIPPED
+[103] urn=idx-103 fork_depth=2 fork_children=2
+[103] text=0ch(none) images=0 → SKIPPED
+[104] urn=idx-104 fork_depth=2 fork_children=2
+[104] text=0ch(none) images=0 → SKIPPED
+[105] urn=idx-105 fork_depth=2 fork_children=2
+[105] text=0ch(none) images=0 → SKIPPED
+[106] urn=idx-106 fork_depth=2 fork_children=2
+[106] text=0ch(none) images=0 → SKIPPED
+[107] urn=idx-107 fork_depth=2 fork_children=2
+[107] text=0ch(none) images=0 → SKIPPED
+[108] urn=idx-108 fork_depth=2 fork_children=2
+[108] text=0ch(none) images=0 → SKIPPED
+[109] urn=idx-109 fork_depth=2 fork_children=2
+[109] text=0ch(none) images=0 → SKIPPED
+[110] urn=idx-110 fork_depth=2 fork_children=2
+[110] text=0ch(none) images=0 → SKIPPED
+[111] urn=idx-111 fork_depth=2 fork_children=2
+[111] text=0ch(none) images=0 → SKIPPED
+[112] urn=idx-112 fork_depth=2 fork_children=2
+[112] text=0ch(none) images=0 → SKIPPED
+[113] urn=idx-113 fork_depth=2 fork_children=2
+[113] text=0ch(none) images=0 → SKIPPED
+[114] text=956ch(selector) images=1 → KEPT | "99% of my agent projects follow this structure Not because I"
+[114] SKIPPED age=5.0mo > 2mo cutoff ts="5mo • 
+ 
+5 months ago • Visible to anyone on or off LinkedIn"
+[115] text=346ch(selector) images=0 → KEPT | "“How we get prepared is in rooms like this – investing in on"
+[115] SKIPPED age=5.0mo > 2mo cutoff ts="5mo • 
+ 
+5 months ago • Visible to anyone on or off LinkedIn"
+[116] text=870ch(selector) images=1 → KEPT | "😲 🚀 Super stoked to see my GitHub repo "awesome-generative"
+[116] SKIPPED age=5.0mo > 2mo cutoff ts="5mo • 
+ 
+5 months ago • Visible to anyone on or off LinkedIn"
+[117] text=48ch(selector) images=4 → KEPT | "Blog: Santa Fe - Part 1 https://lnkd.in/emiPm-Be"
+[117] SKIPPED age=5.0mo > 2mo cutoff ts="5mo • 
+ 
+5 months ago • Visible to anyone on or off LinkedIn"
+[118] text=947ch(selector) images=0 → KEPT | "The Southern Company AI Center of Excellence is on a mission"
+[118] SKIPPED age=5.0mo > 2mo cutoff ts="5mo • Edited • 
+ 
+5 months ago • Edited • Visible to anyone on or off LinkedIn"
+[119] urn=idx-119 fork_depth=2 fork_children=2
+[119] text=0ch(none) images=0 → SKIPPED
+[120] urn=idx-120 fork_depth=2 fork_children=2
+[120] text=0ch(none) images=0 → SKIPPED
+[121] urn=idx-121 fork_depth=2 fork_children=2
+[121] text=0ch(none) images=0 → SKIPPED
+[122] urn=idx-122 fork_depth=2 fork_children=2
+[122] text=0ch(none) images=0 → SKIPPED
+[123] urn=idx-123 fork_depth=2 fork_children=2
+[123] text=0ch(none) images=0 → SKIPPED
+[124] urn=idx-124 fork_depth=2 fork_children=2
+[124] text=0ch(none) images=0 → SKIPPED
+[125] urn=idx-125 fork_depth=2 fork_children=2
+[125] text=0ch(none) images=0 → SKIPPED
+[126] urn=idx-126 fork_depth=2 fork_children=2
+[126] text=0ch(none) images=0 → SKIPPED
+[127] urn=idx-127 fork_depth=2 fork_children=2
+[127] text=0ch(none) images=0 → SKIPPED
+[128] urn=idx-128 fork_depth=2 fork_children=2
+[128] text=0ch(none) images=0 → SKIPPED
+[129] urn=idx-129 fork_depth=2 fork_children=2
+[129] text=0ch(none) images=0 → SKIPPED
+[130] urn=idx-130 fork_depth=2 fork_children=2
+[130] text=0ch(none) images=0 → SKIPPED
+[131] urn=idx-131 fork_depth=2 fork_children=2
+[131] text=0ch(none) images=0 → SKIPPED
+[132] urn=idx-132 fork_depth=2 fork_children=2
+[132] text=0ch(none) images=0 → SKIPPED
+[133] urn=idx-133 fork_depth=2 fork_children=2
+[133] text=0ch(none) images=0 → SKIPPED
+[134] text=1490ch(selector) images=0 → KEPT | "On the 1st Monday of October, I think it makes sense to chat"
+[134] SKIPPED age=6.0mo > 2mo cutoff ts="6mo • 
+ 
+6 months ago • Visible to anyone on or off LinkedIn"
+[135] text=832ch(selector) images=4 → KEPT | "✨I had the privilege of attending the 7th Global Women in ST"
+[135] SKIPPED age=6.0mo > 2mo cutoff ts="6mo • 
+ 
+6 months ago • Visible to anyone on or off LinkedIn"
+[136] text=1066ch(selector) images=0 → KEPT | "Thank you to the Irish Examiner for publishing my article on"
+[136] SKIPPED age=6.0mo > 2mo cutoff ts="6mo • 
+ 
+6 months ago • Visible to anyone on or off LinkedIn"
+[137] text=127ch(selector) images=1 → KEPT | "The future of AI hinges on how well we can scale RAG—this is"
+[137] SKIPPED age=6.0mo > 2mo cutoff ts="6mo • 
+ 
+6 months ago • Visible to anyone on or off LinkedIn"
+[138] text=404ch(selector) images=1 → KEPT | "It's becoming increasingly clear that gpt5 can solve MINOR o"
+[138] SKIPPED age=6.0mo > 2mo cutoff ts="6mo • 
+ 
+6 months ago • Visible to anyone on or off LinkedIn"
+[139] urn=idx-139 fork_depth=2 fork_children=2
+[139] text=0ch(none) images=0 → SKIPPED
+[140] urn=idx-140 fork_depth=2 fork_children=2
+[140] text=0ch(none) images=0 → SKIPPED
+[141] urn=idx-141 fork_depth=2 fork_children=2
+[141] text=0ch(none) images=0 → SKIPPED
+[142] urn=idx-142 fork_depth=2 fork_children=2
+[142] text=0ch(none) images=0 → SKIPPED
+[143] urn=idx-143 fork_depth=2 fork_children=2
+[143] text=0ch(none) images=0 → SKIPPED
+[144] urn=idx-144 fork_depth=2 fork_children=2
+[144] text=0ch(none) images=0 → SKIPPED
+[145] urn=idx-145 fork_depth=2 fork_children=2
+[145] text=0ch(none) images=0 → SKIPPED
+[146] urn=idx-146 fork_depth=2 fork_children=2
+[146] text=0ch(none) images=0 → SKIPPED
+[147] urn=idx-147 fork_depth=2 fork_children=2
+[147] text=0ch(none) images=0 → SKIPPED
+[148] urn=idx-148 fork_depth=2 fork_children=2
+[148] text=0ch(none) images=0 → SKIPPED
+[149] urn=idx-149 fork_depth=2 fork_children=2
+[149] text=0ch(none) images=0 → SKIPPED
+[150] urn=idx-150 fork_depth=2 fork_children=2
+[150] text=0ch(none) images=0 → SKIPPED
+[151] urn=idx-151 fork_depth=2 fork_children=2
+[151] text=0ch(none) images=0 → SKIPPED
+[152] urn=idx-152 fork_depth=2 fork_children=2
+[152] text=0ch(none) images=0 → SKIPPED
+[153] urn=idx-153 fork_depth=2 fork_children=2
+[153] text=0ch(none) images=0 → SKIPPED
+[154] text=931ch(selector) images=4 → KEPT | "It’s my first time in the United Kingdom of Great Britain an"
+[154] SKIPPED age=9.0mo > 2mo cutoff ts="9mo • 
+ 
+9 months ago • Visible to anyone on or off LinkedIn"
+[155] text=1162ch(selector) images=4 → KEPT | "At Spaeth Hill we build and design brands for the built envi"
+[155] SKIPPED age=9.0mo > 2mo cutoff ts="9mo • 
+ 
+9 months ago • Visible to anyone on or off LinkedIn"
+[156] text=280ch(selector) images=0 → KEPT | "I’m honored to announce that I’ve been endorsed by my organi"
+[156] SKIPPED age=10.0mo > 2mo cutoff ts="10mo • 
+ 
+10 months ago • Visible to anyone on or off LinkedIn"
+[157] text=989ch(selector) images=1 → KEPT | "🤩 This is an incredibly comprehensive paper on MCP, probabl"
+[157] SKIPPED age=9.0mo > 2mo cutoff ts="9mo • 
+ 
+9 months ago • Visible to anyone on or off LinkedIn"
+[158] text=204ch(selector) images=0 → KEPT | "So honored and excited to be appointed to the Board of Direc"
+[158] SKIPPED age=9.0mo > 2mo cutoff ts="9mo • Edited • 
+ 
+9 months ago • Edited • Visible to anyone on or off LinkedIn"
+[159] urn=idx-159 fork_depth=2 fork_children=2
+[159] text=0ch(none) images=0 → SKIPPED
+[160] urn=idx-160 fork_depth=2 fork_children=2
+[160] text=0ch(none) images=0 → SKIPPED
+[161] urn=idx-161 fork_depth=2 fork_children=2
+[161] text=0ch(none) images=0 → SKIPPED
+[162] urn=idx-162 fork_depth=2 fork_children=2
+[162] text=0ch(none) images=0 → SKIPPED
+[163] urn=idx-163 fork_depth=2 fork_children=2
+[163] text=0ch(none) images=0 → SKIPPED
+[164] urn=idx-164 fork_depth=2 fork_children=2
+[164] text=0ch(none) images=0 → SKIPPED
+[165] urn=idx-165 fork_depth=2 fork_children=2
+[165] text=0ch(none) images=0 → SKIPPED
+[166] urn=idx-166 fork_depth=2 fork_children=2
+[166] text=0ch(none) images=0 → SKIPPED
+[167] urn=idx-167 fork_depth=2 fork_children=2
+[167] text=0ch(none) images=0 → SKIPPED
+[168] urn=idx-168 fork_depth=2 fork_children=2
+[168] text=0ch(none) images=0 → SKIPPED
+[169] urn=idx-169 fork_depth=2 fork_children=2
+[169] text=0ch(none) images=0 → SKIPPED
+[170] urn=idx-170 fork_depth=2 fork_children=2
+[170] text=0ch(none) images=0 → SKIPPED
+[171] urn=idx-171 fork_depth=2 fork_children=2
+[171] text=0ch(none) images=0 → SKIPPED
+[172] urn=idx-172 fork_depth=2 fork_children=2
+[172] text=0ch(none) images=0 → SKIPPED
+[173] urn=idx-173 fork_depth=2 fork_children=2
+[173] text=0ch(none) images=0 → SKIPPED
+[174] text=131ch(selector) images=1 → KEPT | "This is the real power of graphs. They are ways of studying "
+[174] SKIPPED age=11.0mo > 2mo cutoff ts="11mo • 
+ 
+11 months ago • Visible to anyone on or off LinkedIn"
+[175] text=557ch(selector) images=4 → KEPT | "I built my own Spanish Language Learning MCP server! I finis"
+[175] SKIPPED age=11.0mo > 2mo cutoff ts="11mo • Edited • 
+ 
+11 months ago • Edited • Visible to anyone on or off LinkedIn"
+[176] text=287ch(selector) images=0 → KEPT | "I’m excited to share that I’ve officially earned my Project "
+[176] SKIPPED age=11.0mo > 2mo cutoff ts="11mo • 
+ 
+11 months ago • Visible to anyone on or off LinkedIn"
+[177] text=138ch(selector) images=0 → KEPT | "I’m happy to share that I’ve obtained a new certification: O"
+[177] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[178] text=2097ch(selector) images=1 → KEPT | "Building a 𝗽𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻 𝗴𝗿𝗮𝗱𝗲 𝗥𝗲𝘁𝗿𝗶𝗲𝘃𝗮�"
+[178] SKIPPED age=11.0mo > 2mo cutoff ts="11mo • 
+ 
+11 months ago • Visible to anyone on or off LinkedIn"
+[179] urn=idx-179 fork_depth=2 fork_children=2
+[179] text=0ch(none) images=0 → SKIPPED
+[180] urn=idx-180 fork_depth=2 fork_children=2
+[180] text=0ch(none) images=0 → SKIPPED
+[181] urn=idx-181 fork_depth=2 fork_children=2
+[181] text=0ch(none) images=0 → SKIPPED
+[182] urn=idx-182 fork_depth=2 fork_children=2
+[182] text=0ch(none) images=0 → SKIPPED
+[183] urn=idx-183 fork_depth=2 fork_children=2
+[183] text=0ch(none) images=0 → SKIPPED
+[184] urn=idx-184 fork_depth=2 fork_children=2
+[184] text=0ch(none) images=0 → SKIPPED
+[185] urn=idx-185 fork_depth=2 fork_children=2
+[185] text=0ch(none) images=0 → SKIPPED
+[186] urn=idx-186 fork_depth=2 fork_children=2
+[186] text=0ch(none) images=0 → SKIPPED
+[187] urn=idx-187 fork_depth=2 fork_children=2
+[187] text=0ch(none) images=0 → SKIPPED
+[188] urn=idx-188 fork_depth=2 fork_children=2
+[188] text=0ch(none) images=0 → SKIPPED
+[189] urn=idx-189 fork_depth=2 fork_children=2
+[189] text=0ch(none) images=0 → SKIPPED
+[190] urn=idx-190 fork_depth=2 fork_children=2
+[190] text=0ch(none) images=0 → SKIPPED
+[191] urn=idx-191 fork_depth=2 fork_children=2
+[191] text=0ch(none) images=0 → SKIPPED
+[192] urn=idx-192 fork_depth=2 fork_children=2
+[192] text=0ch(none) images=0 → SKIPPED
+[193] urn=idx-193 fork_depth=2 fork_children=2
+[193] text=0ch(none) images=0 → SKIPPED
+[194] text=326ch(selector) images=0 → KEPT | "I’m happy to share that I’ve been promoted to Principal Lear"
+[194] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[195] urn=101191692288 fork_depth=2 fork_children=3
+[195] text=1742ch(fork.children[1]) images=1 → KEPT | "Brandt Pileggi likes this Carlos Mercado Carlos Mercado    •"
+[195] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[196] text=86ch(selector) images=0 → KEPT | "I’m happy to share that I’m starting a new position as Execu"
+[196] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[197] text=110ch(selector) images=0 → KEPT | "We're hiring a founding engineer at Simple AI. Reach out if "
+[197] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[198] text=599ch(selector) images=0 → KEPT | "Allow me to interrupt your feed with a side hustle you’re pr"
+[198] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • Edited • 
+ 
+1 year ago • Edited • Visible to anyone on or off LinkedIn"
+[199] urn=idx-199 fork_depth=2 fork_children=2
+[199] text=0ch(none) images=0 → SKIPPED
+[200] urn=idx-200 fork_depth=2 fork_children=2
+[200] text=0ch(none) images=0 → SKIPPED
+[201] urn=idx-201 fork_depth=2 fork_children=2
+[201] text=0ch(none) images=0 → SKIPPED
+[202] urn=idx-202 fork_depth=2 fork_children=2
+[202] text=0ch(none) images=0 → SKIPPED
+[203] urn=idx-203 fork_depth=2 fork_children=2
+[203] text=0ch(none) images=0 → SKIPPED
+[204] urn=idx-204 fork_depth=2 fork_children=2
+[204] text=0ch(none) images=0 → SKIPPED
+[205] urn=idx-205 fork_depth=2 fork_children=2
+[205] text=0ch(none) images=0 → SKIPPED
+[206] urn=idx-206 fork_depth=2 fork_children=2
+[206] text=0ch(none) images=0 → SKIPPED
+[207] urn=idx-207 fork_depth=2 fork_children=2
+[207] text=0ch(none) images=0 → SKIPPED
+[208] urn=idx-208 fork_depth=2 fork_children=2
+[208] text=0ch(none) images=0 → SKIPPED
+[209] urn=idx-209 fork_depth=2 fork_children=2
+[209] text=0ch(none) images=0 → SKIPPED
+[210] urn=idx-210 fork_depth=2 fork_children=2
+[210] text=0ch(none) images=0 → SKIPPED
+[211] urn=idx-211 fork_depth=2 fork_children=2
+[211] text=0ch(none) images=0 → SKIPPED
+[212] urn=idx-212 fork_depth=2 fork_children=2
+[212] text=0ch(none) images=0 → SKIPPED
+[213] urn=idx-213 fork_depth=2 fork_children=2
+[213] text=0ch(none) images=0 → SKIPPED
+[214] text=1273ch(selector) images=0 → KEPT | "🚀 Introducing Woz - Your AI Technical Cofounder 🚀  Brad Ec"
+[214] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[215] text=42ch(selector) images=1 → KEPT | "Time to follow huggingface.co/deepseek-ai!"
+[215] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[216] text=668ch(selector) images=1 → KEPT | "I think this is pretty interesting:  Fine-tuning a model for"
+[216] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[217] text=1214ch(selector) images=1 → KEPT | "The coolest autonomous coding agent I've seen recently: use "
+[217] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[218] text=1727ch(selector) images=0 → KEPT | "Right now we are at a 5 year low for hiring in tech... But i"
+[218] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[219] urn=idx-219 fork_depth=2 fork_children=2
+[219] text=0ch(none) images=0 → SKIPPED
+[220] urn=idx-220 fork_depth=2 fork_children=2
+[220] text=0ch(none) images=0 → SKIPPED
+[221] urn=idx-221 fork_depth=2 fork_children=2
+[221] text=0ch(none) images=0 → SKIPPED
+[222] urn=idx-222 fork_depth=2 fork_children=2
+[222] text=0ch(none) images=0 → SKIPPED
+[223] urn=idx-223 fork_depth=2 fork_children=2
+[223] text=0ch(none) images=0 → SKIPPED
+[224] urn=idx-224 fork_depth=2 fork_children=2
+[224] text=0ch(none) images=0 → SKIPPED
+[225] urn=idx-225 fork_depth=2 fork_children=2
+[225] text=0ch(none) images=0 → SKIPPED
+[226] urn=idx-226 fork_depth=2 fork_children=2
+[226] text=0ch(none) images=0 → SKIPPED
+[227] urn=idx-227 fork_depth=2 fork_children=2
+[227] text=0ch(none) images=0 → SKIPPED
+[228] urn=idx-228 fork_depth=2 fork_children=2
+[228] text=0ch(none) images=0 → SKIPPED
+[229] urn=idx-229 fork_depth=2 fork_children=2
+[229] text=0ch(none) images=0 → SKIPPED
+[230] urn=idx-230 fork_depth=2 fork_children=2
+[230] text=0ch(none) images=0 → SKIPPED
+[231] urn=idx-231 fork_depth=2 fork_children=2
+[231] text=0ch(none) images=0 → SKIPPED
+[232] urn=idx-232 fork_depth=2 fork_children=2
+[232] text=0ch(none) images=0 → SKIPPED
+[233] urn=idx-233 fork_depth=2 fork_children=2
+[233] text=0ch(none) images=0 → SKIPPED
+[234] text=971ch(selector) images=0 → KEPT | "📣 Announcing the Mixed Reality Multiplayer Tabletop Templat"
+[234] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • Edited • 
+ 
+1 year ago • Edited • Visible to anyone on or off LinkedIn"
+[235] text=216ch(selector) images=1 → KEPT | "thank you to the dropout fans in the kitchen at @legalseafoo"
+[235] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[236] text=855ch(selector) images=0 → KEPT | "Got-OCR 2.0, the powerful OCR model from Stepfun, is now ava"
+[236] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • Edited • 
+ 
+1 year ago • Edited • Visible to anyone on or off LinkedIn"
+[237] text=1314ch(selector) images=1 → KEPT | "🫠 Some of my popular AI resources that regularly get plagia"
+[237] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[238] text=412ch(selector) images=4 → KEPT | "I decided to do a quick search to see if our podcast "The Pr"
+[238] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[239] urn=idx-239 fork_depth=2 fork_children=2
+[239] text=0ch(none) images=0 → SKIPPED
+[240] urn=idx-240 fork_depth=2 fork_children=2
+[240] text=0ch(none) images=0 → SKIPPED
+[241] urn=idx-241 fork_depth=2 fork_children=2
+[241] text=0ch(none) images=0 → SKIPPED
+[242] urn=idx-242 fork_depth=2 fork_children=2
+[242] text=0ch(none) images=0 → SKIPPED
+[243] urn=idx-243 fork_depth=2 fork_children=2
+[243] text=0ch(none) images=0 → SKIPPED
+[244] urn=idx-244 fork_depth=2 fork_children=2
+[244] text=0ch(none) images=0 → SKIPPED
+[245] urn=idx-245 fork_depth=2 fork_children=2
+[245] text=0ch(none) images=0 → SKIPPED
+[246] urn=idx-246 fork_depth=2 fork_children=2
+[246] text=0ch(none) images=0 → SKIPPED
+[247] urn=idx-247 fork_depth=2 fork_children=2
+[247] text=0ch(none) images=0 → SKIPPED
+[248] urn=idx-248 fork_depth=2 fork_children=2
+[248] text=0ch(none) images=0 → SKIPPED
+[249] urn=idx-249 fork_depth=2 fork_children=2
+[249] text=0ch(none) images=0 → SKIPPED
+[250] urn=idx-250 fork_depth=2 fork_children=2
+[250] text=0ch(none) images=0 → SKIPPED
+[251] urn=idx-251 fork_depth=2 fork_children=2
+[251] text=0ch(none) images=0 → SKIPPED
+[252] urn=idx-252 fork_depth=2 fork_children=2
+[252] text=0ch(none) images=0 → SKIPPED
+[253] text=1785ch(selector) images=1 → KEPT | "If you want to get a job in AI within 4-6 months, study this"
+[253] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • Edited • 
+ 
+1 year ago • Edited • Visible to anyone on or off LinkedIn"
+[254] text=244ch(selector) images=1 → KEPT | "This dude all these years ago never would have thought he wo"
+[254] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[255] text=244ch(selector) images=1 → KEPT | "This dude all these years ago never would have thought he wo"
+[255] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[256] text=99ch(selector) images=0 → KEPT | "I’m happy to share that I’m starting a new position as Accou"
+[256] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to Joshua’s connections"
+[257] text=1462ch(selector) images=0 → KEPT | "We are pleased to announce the publication of a new article "
+[257] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[258] urn=idx-258 fork_depth=2 fork_children=2
+[258] text=0ch(none) images=0 → SKIPPED
+[259] urn=idx-259 fork_depth=2 fork_children=2
+[259] text=0ch(none) images=0 → SKIPPED
+[260] urn=idx-260 fork_depth=2 fork_children=2
+[260] text=0ch(none) images=0 → SKIPPED
+[261] urn=idx-261 fork_depth=2 fork_children=2
+[261] text=0ch(none) images=0 → SKIPPED
+[262] urn=idx-262 fork_depth=2 fork_children=2
+[262] text=0ch(none) images=0 → SKIPPED
+[263] urn=idx-263 fork_depth=2 fork_children=2
+[263] text=0ch(none) images=0 → SKIPPED
+[264] urn=idx-264 fork_depth=2 fork_children=2
+[264] text=0ch(none) images=0 → SKIPPED
+[265] urn=idx-265 fork_depth=2 fork_children=2
+[265] text=0ch(none) images=0 → SKIPPED
+[266] urn=idx-266 fork_depth=2 fork_children=2
+[266] text=0ch(none) images=0 → SKIPPED
+[267] urn=idx-267 fork_depth=2 fork_children=2
+[267] text=0ch(none) images=0 → SKIPPED
+[268] urn=idx-268 fork_depth=2 fork_children=2
+[268] text=0ch(none) images=0 → SKIPPED
+[269] urn=idx-269 fork_depth=2 fork_children=2
+[269] text=0ch(none) images=0 → SKIPPED
+[270] urn=idx-270 fork_depth=2 fork_children=2
+[270] text=0ch(none) images=0 → SKIPPED
+[271] urn=idx-271 fork_depth=2 fork_children=2
+[271] text=0ch(none) images=0 → SKIPPED
+[272] urn=idx-272 fork_depth=2 fork_children=2
+[272] text=0ch(none) images=0 → SKIPPED
+[273] text=1402ch(selector) images=0 → KEPT | "Don’t negotiate against yourself.   When you voice a vulnera"
+[273] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[274] text=792ch(selector) images=1 → KEPT | "Making a video game is hard!   As I claw my way to the finis"
+[274] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[275] text=792ch(selector) images=1 → KEPT | "Making a video game is hard!   As I claw my way to the finis"
+[275] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[276] text=765ch(selector) images=1 → KEPT | "THE 2024 BOSSIES 🔸 January 16th, 2025  ▶️ https://buff.ly/3"
+[276] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[277] text=247ch(selector) images=0 → KEPT | "I just launched Comedy Book Club. It's a space for writers t"
+[277] SKIPPED age=12.0mo > 2mo cutoff ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn"
+[278] urn=idx-278 fork_depth=2 fork_children=2
+[278] text=0ch(none) images=0 → SKIPPED
+[279] urn=idx-279 fork_depth=2 fork_children=2
+[279] text=0ch(none) images=0 → SKIPPED
+[280] urn=idx-280 fork_depth=2 fork_children=2
+[280] text=0ch(none) images=0 → SKIPPED
+[281] urn=idx-281 fork_depth=2 fork_children=2
+[281] text=0ch(none) images=0 → SKIPPED
+[282] urn=idx-282 fork_depth=2 fork_children=2
+[282] text=0ch(none) images=0 → SKIPPED
+[283] urn=idx-283 fork_depth=2 fork_children=2
+[283] text=0ch(none) images=0 → SKIPPED
+[284] urn=idx-284 fork_depth=2 fork_children=2
+[284] text=0ch(none) images=0 → SKIPPED
+[285] urn=idx-285 fork_depth=2 fork_children=2
+[285] text=0ch(none) images=0 → SKIPPED
+[286] urn=idx-286 fork_depth=2 fork_children=2
+[286] text=0ch(none) images=0 → SKIPPED
+[287] urn=idx-287 fork_depth=2 fork_children=2
+[287] text=0ch(none) images=0 → SKIPPED
+[288] urn=idx-288 fork_depth=2 fork_children=2
+[288] text=0ch(none) images=0 → SKIPPED
+[289] urn=idx-289 fork_depth=2 fork_children=2
+[289] text=0ch(none) images=0 → SKIPPED
+[290] urn=idx-290 fork_depth=2 fork_children=2
+[290] text=0ch(none) images=0 → SKIPPED
+[291] urn=idx-291 fork_depth=2 fork_children=2
+[291] text=0ch(none) images=0 → SKIPPED
+[292] urn=idx-292 fork_depth=2 fork_children=2
+[292] text=0ch(none) images=0 → SKIPPED
+[293] urn=idx-293 fork_depth=2 fork_children=2
+[293] text=0ch(none) images=0 → SKIPPED
+[294] urn=idx-294 fork_depth=2 fork_children=2
+[294] text=0ch(none) images=0 → SKIPPED
+[295] urn=idx-295 fork_depth=2 fork_children=2
+[295] text=0ch(none) images=0 → SKIPPED
+[296] urn=idx-296 fork_depth=2 fork_children=2
+[296] text=0ch(none) images=0 → SKIPPED
+[297] urn=idx-297 fork_depth=2 fork_children=2
+[297] text=0ch(none) images=0 → SKIPPED
+result: 26 posts kept of 298 containers

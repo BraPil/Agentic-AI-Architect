@@ -1,0 +1,20 @@
+AAA LinkedIn Exporter — scroll log
+2026-04-19T00-58-29
+
+scroll 1: last_ts="" age=0.0mo
+scroll 2: last_ts="" age=0.0mo
+scroll 3: last_ts="" age=0.0mo
+scroll 4: last_ts="" age=0.0mo
+scroll 5: last_ts="" age=0.0mo
+scroll 6: last_ts="" age=0.0mo
+scroll 7: last_ts="" age=0.0mo
+scroll 8: last_ts="" age=0.0mo
+scroll 9: last_ts="" age=0.0mo
+scroll 10: last_ts="" age=0.0mo
+scroll 11: last_ts="" age=0.0mo
+scroll 12: last_ts="" age=0.0mo
+scroll 13: last_ts="" age=0.0mo
+scroll 14: last_ts="1yr • 
+ 
+1 year ago • Visible to anyone on or off LinkedIn" age=12.0mo
+age cutoff hit (12.0 > 2mo) — stopping

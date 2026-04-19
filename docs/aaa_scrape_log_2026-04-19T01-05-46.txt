@@ -1,0 +1,12 @@
+AAA LinkedIn Exporter — Scroll+Scrape log
+2026-04-19T01-05-46
+
+initial: +5 new (total 5)
+scroll 1: +6 new (total 11)
+scroll 2: +6 new (total 17)
+scroll 3: +5 new (total 22)
+scroll 4: +6 new (total 28)
+scroll 5: +5 new (total 33)
+scroll 6: +5 new (total 38)
+scroll 7: +13 new (total 51)
+result: 51 total posts collected

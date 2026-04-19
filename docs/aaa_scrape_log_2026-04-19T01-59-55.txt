@@ -1,0 +1,6 @@
+AAA LinkedIn Exporter — Scroll+Scrape log
+2026-04-19T01-59-55
+
+initial: +95 new (total 95)
+final-top: +0 new (total 95)
+result: 95 total posts collected

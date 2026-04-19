@@ -1,0 +1,151 @@
+{
+  "ok": true,
+  "posts": [
+    {
+      "post_url": "",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/michaelulin?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAILadwB89GlyHCx5M6obVR-Y9A0KalqaIo",
+      "timestamp": "1mo •",
+      "post_type": "image",
+      "text": "NASA figured out how to write bulletproof code in 2006 and almost nobody used it.\n\nGerard Holzmann at JPL published the \"Power of Ten,\" ten rules for safety-critical software. Simple stuff: every function fits on one printed page, every loop has a fixed upper bound, no dynamic memory after initialization, minimum two assertions per function. He kept it to ten rules because he'd watched organizations write 100+ page coding standards that developers just ignored.\n\nThe problem was always enforcement. You could put these rules on a wiki and tell people to follow them, but verifying compliance across hundreds of thousands of lines of code required either expensive tooling or a very patient human reviewer. Neither scaled well outside of JPL.\n\nI think about this a lot, actually. Not just the Power of Ten specifically, but this whole category of things: ideas that were clearly right but too expensive to enforce. Checklists that worked in theory but fell apart in practice. The gap between knowing what good looks like and actually doing it consistently.\n\nThat gap is what AI agents collapse. You encode the rules, the agent applies them on every commit, every PR, every deployment. It doesn't have an opinion about whether the rules are worth following. It doesn't skip the check because it's been a long week.\n\nI'm building agent workflows at Whimsey Labs right now, and honestly the hardest part isn't getting agents to follow rules. It's figuring out which rules are actually worth encoding. That's where the Power of Ten is helpful as a reference. Holzmann spent years figuring out which ten rules would give you the most coverage with the least friction. That kind of thinking transfers directly.\n\nStill figuring out the velocity tradeoff. But the distance between \"best practices exist\" and \"best practices get enforced\" just shrank by a lot.\n\nhttps://lnkd.in/gQ8txDXj",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQGBguUusrcsyQ/feedshare-shrink_800/B56Zz73vUpI0Ag-/0/1773752219422?e=1778112000&v=beta&t=OJ3VlPVc9Y1M2IEpasp5kgKF43fGbrPmkv1JMhdxu3s",
+          "alt": "No alternative text description for this image",
+          "width": 800,
+          "height": 1067
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/gQ8txDXj"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7436305863646179328/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/kelly-moncrief?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAABm9Y4B5eIqUBHGVwMokRWKYzzqJo5Mag0",
+      "timestamp": "1mo •",
+      "post_type": "image",
+      "text": "AI only scales when the data pipelines behind it deliver trusted data and real business value.\n\nBrilliantly simple visual below.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQF5PLNQ9ONDkw/feedshare-shrink_1280/B4EZzMQw4LJAAM-/0/1772953475862?e=1778112000&v=beta&t=lhVJLae0z1dGzfMQawvX3LYtLLMEucmNbmdafZpHBO4",
+          "alt": "No alternative text description for this image",
+          "width": 749,
+          "height": 472
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/dbf74Y9E"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7379036501323636736/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/kelly-moncrief?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAABm9Y4B5eIqUBHGVwMokRWKYzzqJo5Mag0",
+      "timestamp": "6mo •",
+      "post_type": "image",
+      "text": "The future of AI hinges on how well we can scale RAG—this is a great visual summary of the patterns and practices to get there.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4D22AQEp7lgCHJhjBQ/feedshare-shrink_1280/B4DZmeamDtJIAs-/0/1759299396438?e=1778112000&v=beta&t=u4nf4p_aYBtTfAJYp_mX4w9CxYOlwu7vvaNJrCA7q0I",
+          "alt": "diagram",
+          "width": 800,
+          "height": 694
+        }
+      ],
+      "external_links": [
+        "https://lnkd.in/dE-En6Y9",
+        "https://lnkd.in/dbf74Y9E"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7303136768227217409/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/crmercado?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAABVNKrYBUvQBiVNSDuaJexOy9hFgqFtIBIc",
+      "timestamp": "1yr •",
+      "post_type": "image",
+      "text": "noting",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQHj0Nit9npFGA/feedshare-shrink_2048_1536/B56ZVn0MKlHsAs-/0/1741203489957?e=1778112000&v=beta&t=LzKeQEGkHJbyB6pFmmlXJsndtNgYCMoXRN7t6hiqKIQ",
+          "alt": "chart, histogram",
+          "width": 644,
+          "height": 684
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7306317848987975680/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/samantha-st-louis?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAABC-9r8B8DDN3IE2l2hAepIkTHs6Z7e6isw",
+      "timestamp": "1yr •",
+      "post_type": "image",
+      "text": "The cookies were indeed top notch! I'll definitely be back!",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D5622AQGDUVjcoWbtgw/feedshare-shrink_800/B56ZWVBXN3HoAk-/0/1741961918789?e=1778112000&v=beta&t=24JMfdEjkIzYYTul0OsgAJ0FBLqOIbFHEesA32GUzVY",
+          "alt": "No alternative text description for this image",
+          "width": 475,
+          "height": 475
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7275132795260223488/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/sharatnagaraj?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAF_L70BLaPd4DmBt2zuJMcWnZ5BxQ0Y29k",
+      "timestamp": "1yr •",
+      "post_type": "article",
+      "text": "Wake Technical Community College is an awesome asset for our community and it is our pleasure to give back! Assisting with as many barriers to education is important. Happy Holidays!",
+      "images": [],
+      "external_links": [
+        "https://lnkd.in/eGwmgUUA",
+        "https://www.waketech.edu/post/wt-news-story/533395"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7271871371796795392/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/ladson-brearley?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAAQWqAsBa6oWadvdGtDKgFg049-Hls4O77U",
+      "timestamp": "1yr •",
+      "post_type": "article",
+      "text": "First Flight has given us a huge boost in getting our startup going. \n\nI’m excited about this opportunity to help other startups get going!",
+      "images": [],
+      "external_links": [
+        "https://lnkd.in/eX_TrQ_F",
+        "https://www.ffvcnc.org/second-navigators-test/ladson-brearley-pe"
+      ],
+      "article_url": ""
+    },
+    {
+      "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:7265073204279271426/",
+      "author": "",
+      "author_url": "https://www.linkedin.comhttps://www.linkedin.com/in/joshuakgill?miniProfileUrn=urn%3Ali%3Afsd_profile%3AACoAAALjWQYBvzbVm97b_EECrk3CaQL_tB4tIQw",
+      "timestamp": "1yr •",
+      "post_type": "image",
+      "text": "The biases of the builder and the society they come from is built into every system. It won't magically go away on it's own. It has to be recognized, planned for, and actively removed by including more voices into the ideation, creation, and execution process. This is what \nhashtag\n#DEI is about. Diversity of thought, equity-centered, and inclusive of all. Systems built without intentionality will reflect the status quo.",
+      "images": [
+        {
+          "src": "https://media.licdn.com/dms/image/v2/D4E22AQGXxb2ln1MzGw/feedshare-shrink_800/feedshare-shrink_800/0/1732128429019?e=1778112000&v=beta&t=YSM-3vNKhQpDpm9p1iPB4fxsCKGMlnbt8JBpZF-K_hc",
+          "alt": "No alternative text description for this image",
+          "width": 475,
+          "height": 554
+        }
+      ],
+      "external_links": [],
+      "article_url": ""
+    }
+  ],
+  "page_url": "https://www.linkedin.com/in/brandtpileggi/recent-activity/reactions/",
+  "scraped_at": "2026-04-18T21:06:39.524Z",
+  "count": 8
+}
