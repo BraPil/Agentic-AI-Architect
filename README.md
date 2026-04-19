@@ -9,11 +9,13 @@
 AAA is a **persona-organized knowledge base** built from the real output of leading AI practitioners — their LinkedIn posts, YouTube talks, and GitHub projects — enriched with Claude-extracted claims, tool mentions, and architectural patterns, and served through an MCP server that Claude can call directly.
 
 **Current state (April 2026):**
-- 120 indexed items across LinkedIn posts, YouTube transcripts, and GitHub READMEs
-- 50 unique author personas (Andrej Karpathy, Cole Medin, Mitko Vasilev, + 47 others)
+- **204 indexed items**: 79 LinkedIn posts, 60 blog posts, 24 arXiv abstracts, 20 YouTube transcripts, 14 GitHub READMEs, + more
+- **52 unique author personas**: Andrej Karpathy, Cole Medin, Mitko Vasilev, Simon Willison, Lilian Weng, + 47 others
 - All items enriched with Claude Haiku extraction (claims, tools, topics, voice signals)
-- MCP server live with 3 tools: `search_knowledge`, `get_architecture_recommendation`, `get_trending_tools`
-- Top tool signal from corpus: Claude Code (48×), GitHub (24×), Claude (15×), Cursor (9×)
+- MCP server with 3 tools: `search_knowledge`, `get_architecture_recommendation`, `get_trending_tools`
+- **Eval backbone**: 15 ground-truth questions, 15/15 passing (100%), avg relevance 0.465
+- Top tool signal: Claude Code (48×), GitHub (24×), Claude (15×), Cursor (9×)
+- ChromaDB snapshot committed — corpus persists across machine restarts
 
 ---
 
@@ -93,9 +95,14 @@ Agentic-AI-Architect/
 │       └── helpers.py
 ├── scripts/
 │   ├── run_mcp_server.sh              ← MCP server launcher
+│   ├── ingest_blogs.py                ← Blog RSS/Atom → ChromaDB
+│   ├── ingest_arxiv.py                ← arXiv abstracts → ChromaDB
 │   ├── process_linkedin_export.py     ← LinkedIn export → ChromaDB
 │   ├── extract_transcript_sources.py  ← YouTube transcripts → ChromaDB
-│   └── fetch_youtube_transcripts.py   ← yt-dlp / transcript-api fetcher
+│   ├── fetch_youtube_transcripts.py   ← yt-dlp / transcript-api fetcher
+│   ├── export_chromadb_snapshot.py    ← Export ChromaDB to JSON snapshot
+│   ├── restore_chromadb_snapshot.py   ← Restore ChromaDB from snapshot
+│   └── run_eval.py                    ← Evaluation suite runner
 ├── extensions/
 │   └── linkedin-exporter/             ← Chrome MV3 extension (v22)
 │       ├── manifest.json
@@ -167,16 +174,39 @@ python -m src.api.mcp_server
 ### Ingest new content
 
 ```bash
+# Blog posts (Simon Willison + Lilian Weng — no cookies needed)
+ANTHROPIC_API_KEY=sk-ant-... python3 scripts/ingest_blogs.py
+
+# arXiv paper abstracts (no API key needed for fetch)
+ANTHROPIC_API_KEY=sk-ant-... python3 scripts/ingest_arxiv.py
+
 # Process a LinkedIn Chrome extension export
-ANTHROPIC_API_KEY=sk-ant-... python scripts/process_linkedin_export.py \
+ANTHROPIC_API_KEY=sk-ant-... python3 scripts/process_linkedin_export.py \
   --export docs/linkedin_export_*.json --persona brandtpileggi
 
 # Fetch and index YouTube transcripts
-ANTHROPIC_API_KEY=sk-ant-... python scripts/fetch_youtube_transcripts.py \
+ANTHROPIC_API_KEY=sk-ant-... python3 scripts/fetch_youtube_transcripts.py \
   --cookies scripts/cookies.txt
+```
 
-# Re-extract and re-embed all transcripts
-ANTHROPIC_API_KEY=sk-ant-... python scripts/extract_transcript_sources.py
+### Persistence
+
+```bash
+# Export current ChromaDB to committed JSON snapshot
+python3 scripts/export_chromadb_snapshot.py
+
+# Restore after Codespace restart / new machine
+python3 scripts/restore_chromadb_snapshot.py
+```
+
+### Evaluation
+
+```bash
+# Run full eval suite (15 questions)
+python3 scripts/run_eval.py
+
+# Single question
+python3 scripts/run_eval.py --question eval-001 --verbose
 ```
 
 ### REST API (legacy query surface)
@@ -202,6 +232,17 @@ curl "http://localhost:8080/evaluate/query?question_id=stack-current-enterprise"
 ---
 
 ## Ingest Pipelines
+
+### Blogs (RSS/Atom → ChromaDB)
+- Fetches Simon Willison and Lilian Weng posts from public RSS/Atom feeds — no auth required
+- Stable MD5-based post IDs for reliable dedup across runs
+- Auto-updates snapshot after ingest
+- Add more blogs in `BLOG_REGISTRY` inside `src/pipeline/blog_ingest.py`
+
+### arXiv (API → ChromaDB)
+- Fetches paper abstracts via the arXiv Atom API (no key required)
+- 7 curated queries: agentic AI, RAG, memory, evaluation, code gen, CoT, RLHF
+- Deduped across queries within a single run
 
 ### LinkedIn (Chrome extension → ChromaDB)
 1. Install `extensions/linkedin-exporter/` as an unpacked Chrome extension
@@ -237,16 +278,18 @@ Moving machines: copy `data/linkedin_store/` or re-run ingest scripts.
 Sprint 1 — Make it queryable         ✅ COMPLETE
   MCP server with 3 tools, 120-item corpus, all content enriched
 
-Sprint 2 — Widen the knowledge base  ⬜ NEXT
-  Blogs, arXiv papers, GitHub trending, newsletter digests
-  Automated source refresh cycle
+Sprint 2 — Widen the knowledge base  ✅ COMPLETE
+  +60 blog posts (Simon Willison, Lilian Weng), +24 arXiv abstracts
+  Persistence: ChromaDB snapshot committed to repo
 
-Sprint 3 — Evaluation backbone       ⬜
-  Ground-truth eval set for recommendation quality
-  Feedback loop from MCP usage back into source weighting
+Sprint 3 — Evaluation backbone       ✅ COMPLETE
+  15 ground-truth questions, 15/15 passing (100%), avg relevance 0.465
+  run_eval.py scoring harness for regression detection
 
-Sprint 4 — Autonomous refresh        ⬜
-  Scheduled ingest cycles, change detection, proactive alerts
+Sprint 4 — Autonomous refresh        ⬜ NEXT
+  Scheduled ingest cycles (cron / APScheduler)
+  Change detection: alert when new high-signal content appears
+  More blog sources (Chip Huyen, Sebastian Ruder, newsletter digests)
   ExMorbus V3 integration (architectural oracle API)
 ```
 
