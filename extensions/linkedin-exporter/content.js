@@ -344,12 +344,15 @@ function parseAgeMonths(timestamp) {
 }
 
 // Peek at the timestamp of the last visible post without a full scrape.
+// Scans backward because trailing LIs are often empty placeholders with no timestamp.
 function getLastVisibleTimestamp() {
   const { containers } = findPostContainers();
-  if (!containers.length) return "";
-  const last = containers[containers.length - 1];
-  const contentEl = last.querySelector('[data-urn*="activity"]') || last;
-  return firstText(contentEl, TIMESTAMP_SELECTORS);
+  for (let i = containers.length - 1; i >= 0; i--) {
+    const contentEl = containers[i].querySelector('[data-urn*="activity"]') || containers[i];
+    const ts = firstText(contentEl, TIMESTAMP_SELECTORS);
+    if (ts) return ts;
+  }
+  return "";
 }
 
 // ---------------------------------------------------------------------------
@@ -542,6 +545,7 @@ async function scrapePosts(options = {}) {
               !l.includes("•") &&
               !l.match(/^\d/) &&
               !l.toLowerCase().includes("follow") &&
+              !l.toLowerCase().includes("feed post") &&
               !REACTION_VERBS.some(v => l.toLowerCase().includes(v)));
       if (nameLine) author = nameLine;
     }
@@ -643,5 +647,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "15";
+const AAA_CONTENT_VERSION = "16";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
