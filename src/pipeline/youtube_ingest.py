@@ -203,7 +203,7 @@ class _YtDlpFetcher:
         with tempfile.TemporaryDirectory() as tmpdir:
             cmd = [
                 "yt-dlp",
-                "--write-auto-sub", "--sub-lang", "en-orig,en",
+                "--write-auto-sub", "--sub-lang", "en",
                 "-f", "sb3",
                 "--skip-download",
                 "--sub-format", "json3",
