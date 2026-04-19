@@ -1,6 +1,6 @@
 "use strict";
 
-const CONTENT_VERSION = "12";
+const CONTENT_VERSION = "15";
 
 let exportData = null;
 
@@ -114,10 +114,14 @@ $("btnScroll").addEventListener("click", async () => {
   setStatus("Scrolling to load posts…", "info");
   setButtons(false);
 
+  const maxAgeMonths = parseFloat($("maxAge").value) || 0;
   chrome.tabs.sendMessage(tab.id,
-    { action: "scroll", maxScrolls, delay: 1500, requireVersion: CONTENT_VERSION },
+    { action: "scroll", maxScrolls, delay: 1500, maxAgeMonths, requireVersion: CONTENT_VERSION },
     res => {
       setButtons(true);
+      const log = res?.log || [];
+      showLog(log);
+      downloadLog(log, "scroll");
       if (chrome.runtime.lastError || !res?.ok) {
         setStatus("Scroll failed: " + (chrome.runtime.lastError?.message || res?.error || "unknown"), "err");
       } else {
@@ -131,8 +135,9 @@ $("btnScrape").addEventListener("click", async () => {
   setStatus("Scraping posts…", "info");
   setButtons(false);
 
+  const maxAgeMonths = parseFloat($("maxAge").value) || 0;
   chrome.tabs.sendMessage(tab.id,
-    { action: "scrape", expandAll: $("expandReadMore").checked, requireVersion: CONTENT_VERSION },
+    { action: "scrape", expandAll: $("expandReadMore").checked, maxAgeMonths, requireVersion: CONTENT_VERSION },
     res => handleScrapeResult(res, "Scrape"));
 });
 

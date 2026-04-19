@@ -323,25 +323,70 @@ function sleep(ms) {
 }
 
 // ---------------------------------------------------------------------------
-// Scroll-only (no scraping) — used by the standalone Scroll button
+// Timestamp age parsing
+// Handles LinkedIn formats: "9h •", "3d •", "2mo •", "2mo • Edited •", "1yr •"
+// Returns age in fractional months (0 if unparseable).
 // ---------------------------------------------------------------------------
 
-async function scrollToLoadAll(maxScrolls = 20, delayMs = 1500) {
+function parseAgeMonths(timestamp) {
+  if (!timestamp) return 0;
+  const t = timestamp.toLowerCase().trim();
+  const m = t.match(/^(\d+)\s*(h|d|mo|yr)/);
+  if (!m) return 0;
+  const n = parseInt(m[1], 10);
+  switch (m[2]) {
+    case "h":  return n / (24 * 30);
+    case "d":  return n / 30;
+    case "mo": return n;
+    case "yr": return n * 12;
+    default:   return 0;
+  }
+}
+
+// Peek at the timestamp of the last visible post without a full scrape.
+function getLastVisibleTimestamp() {
+  const { containers } = findPostContainers();
+  if (!containers.length) return "";
+  const last = containers[containers.length - 1];
+  const contentEl = last.querySelector('[data-urn*="activity"]') || last;
+  return firstText(contentEl, TIMESTAMP_SELECTORS);
+}
+
+// ---------------------------------------------------------------------------
+// Scroll-only (no scraping) — used by the standalone Scroll button
+// maxAgeMonths: stop scrolling when the last visible post is older than this.
+// 0 = no age limit.
+// ---------------------------------------------------------------------------
+
+async function scrollToLoadAll(maxScrolls = 20, delayMs = 1500, maxAgeMonths = 0) {
+  const log = [];
   let lastHeight = 0;
   let unchanged = 0;
   for (let i = 0; i < maxScrolls; i++) {
     window.scrollTo(0, document.body.scrollHeight);
     await sleep(delayMs);
     const newHeight = document.body.scrollHeight;
+
+    if (maxAgeMonths > 0) {
+      const ts = getLastVisibleTimestamp();
+      const age = parseAgeMonths(ts);
+      log.push(`scroll ${i + 1}: last_ts="${ts}" age=${age.toFixed(1)}mo`);
+      if (age > maxAgeMonths) {
+        log.push(`age cutoff hit (${age.toFixed(1)} > ${maxAgeMonths}mo) — stopping`);
+        break;
+      }
+    }
+
     if (newHeight === lastHeight) {
       unchanged++;
-      if (unchanged >= 2) break;
+      if (unchanged >= 2) { log.push("no new content — stopping"); break; }
     } else {
       unchanged = 0;
     }
     lastHeight = newHeight;
   }
   window.scrollTo(0, 0);
+  return { ok: true, log };
 }
 
 // Rolling scrape — scrape visible posts at each scroll step before LinkedIn
@@ -403,7 +448,7 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
 // ---------------------------------------------------------------------------
 
 async function scrapePosts(options = {}) {
-  const { expandAll = true } = options;
+  const { expandAll = true, maxAgeMonths = 0 } = options;
 
   const { containers, log: containerLog } = findPostContainers();
 
@@ -507,7 +552,12 @@ async function scrapePosts(options = {}) {
       : "";
 
     const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
-    runLog.push(`[${idx}] author="${author}" ts="${timestamp}"`);
+    const ageMonths = parseAgeMonths(timestamp);
+    if (maxAgeMonths > 0 && ageMonths > maxAgeMonths) {
+      runLog.push(`[${idx}] SKIPPED age=${ageMonths.toFixed(1)}mo > ${maxAgeMonths}mo cutoff ts="${timestamp}"`);
+      continue;
+    }
+    runLog.push(`[${idx}] author="${author}" ts="${timestamp}" age=${ageMonths.toFixed(1)}mo`);
     const postUrl = extractPostUrl(contentEl);
     const articleUrl = extractArticleUrl(contentEl);
     const postType = detectPostType(contentEl);
@@ -552,23 +602,23 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.action === "scroll") {
-    scrollToLoadAll(message.maxScrolls || 15, message.delay || 1500).then(() => {
-      sendResponse({ ok: true, message: "Scrolling complete" });
-    });
+    scrollToLoadAll(message.maxScrolls || 15, message.delay || 1500, message.maxAgeMonths || 0)
+      .then(({ log }) => sendResponse({ ok: true, message: "Scrolling complete", log }));
     return true;
   }
 
   if (message.action === "scrape") {
-    scrapePosts({ expandAll: message.expandAll !== false }).then(({ posts, log }) => {
-      sendResponse({
-        ok: true, posts, log,
-        page_url: window.location.href,
-        scraped_at: new Date().toISOString(),
-        count: posts.length,
+    scrapePosts({ expandAll: message.expandAll !== false, maxAgeMonths: message.maxAgeMonths || 0 })
+      .then(({ posts, log }) => {
+        sendResponse({
+          ok: true, posts, log,
+          page_url: window.location.href,
+          scraped_at: new Date().toISOString(),
+          count: posts.length,
+        });
+      }).catch(err => {
+        sendResponse({ ok: false, error: err.message, log: [`ERROR: ${err.message}`] });
       });
-    }).catch(err => {
-      sendResponse({ ok: false, error: err.message, log: [`ERROR: ${err.message}`] });
-    });
     return true;
   }
 
@@ -593,5 +643,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "12";
+const AAA_CONTENT_VERSION = "15";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
