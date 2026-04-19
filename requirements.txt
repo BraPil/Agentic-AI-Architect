@@ -24,7 +24,10 @@ uvicorn>=0.30.0
 # Uncomment the providers you want to use
 
 # openai>=1.30.0
-# anthropic>=0.26.0
+anthropic>=0.96.0
+
+# MCP server (Claude Desktop + MCP-compatible clients)
+mcp>=1.0.0
 
 # ── Optional: Agentic frameworks ──────────────────────────────────────────
 # LangGraph for stateful agent orchestration (Phase 4+)

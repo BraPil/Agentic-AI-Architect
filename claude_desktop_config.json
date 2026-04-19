@@ -1,0 +1,17 @@
+{
+  "_comment": "Add this block to your Claude Desktop config at:",
+  "_mac_path": "~/Library/Application Support/Claude/claude_desktop_config.json",
+  "_windows_path": "%APPDATA%\\Claude\\claude_desktop_config.json",
+  "_instructions": "Merge the 'mcpServers' block into your existing config. Update 'cwd' to the absolute path where you cloned Agentic-AI-Architect.",
+
+  "mcpServers": {
+    "aaa": {
+      "command": "python3",
+      "args": ["-m", "src.api.mcp_server"],
+      "cwd": "/path/to/Agentic-AI-Architect",
+      "env": {
+        "ANTHROPIC_API_KEY": "sk-ant-YOUR-KEY-HERE"
+      }
+    }
+  }
+}
