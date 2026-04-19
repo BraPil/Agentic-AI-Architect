@@ -5,6 +5,9 @@ into the ChromaDB persona store alongside LinkedIn, YouTube, and GitHub content.
 Supported sources (configured in BLOG_REGISTRY below):
   - Simon Willison's Weblog (simonwillison.net)
   - Lil'Log — Lilian Weng (lilianweng.github.io)
+  - Chip Huyen (huyenchip.com)
+  - Sebastian Ruder (ruder.io)
+  - Eugene Yan (eugeneyan.com)
 
 Flow:
   Feed URL → parse RSS/Atom → strip HTML → Claude Haiku extraction → ChromaDB
@@ -46,6 +49,30 @@ BLOG_REGISTRY: dict[str, dict] = {
         "author": "Lilian Weng",
         "author_url": "https://lilianweng.github.io",
         "feed_url": "https://lilianweng.github.io/index.xml",
+        "feed_type": "rss",
+        "max_posts": 30,
+    },
+    "chip_huyen": {
+        "persona_id": "chip_huyen",
+        "author": "Chip Huyen",
+        "author_url": "https://huyenchip.com",
+        "feed_url": "https://huyenchip.com/feed.xml",
+        "feed_type": "rss",
+        "max_posts": 30,
+    },
+    "sebastian_ruder": {
+        "persona_id": "sebastian_ruder",
+        "author": "Sebastian Ruder",
+        "author_url": "https://www.ruder.io",
+        "feed_url": "https://www.ruder.io/rss/",
+        "feed_type": "rss",
+        "max_posts": 30,
+    },
+    "eugene_yan": {
+        "persona_id": "eugene_yan",
+        "author": "Eugene Yan",
+        "author_url": "https://eugeneyan.com",
+        "feed_url": "https://eugeneyan.com/rss/",
         "feed_type": "rss",
         "max_posts": 30,
     },

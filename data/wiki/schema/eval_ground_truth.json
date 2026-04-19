@@ -1,10 +1,12 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "description": "Ground-truth evaluation set for AAA MCP recommendation quality",
   "created_at": "2026-04-19",
+  "updated_at": "2026-04-19",
   "questions": [
     {
       "id": "eval-001",
+      "type": "search",
       "question": "What does Andrej Karpathy say about the LLM OS concept?",
       "expected_persona": "andrej-karpathy",
       "expected_topics": ["LLM OS", "agentic AI", "operating system"],
@@ -15,6 +17,7 @@
     },
     {
       "id": "eval-002",
+      "type": "search",
       "question": "How should I design memory for a multi-agent system?",
       "expected_persona": null,
       "expected_topics": ["memory", "multi-agent", "architecture"],
@@ -25,6 +28,7 @@
     },
     {
       "id": "eval-003",
+      "type": "search",
       "question": "What tools does Cole Medin recommend for agentic coding workflows?",
       "expected_persona": "cole-medin",
       "expected_topics": ["agentic coding", "workflow", "tools"],
@@ -35,6 +39,7 @@
     },
     {
       "id": "eval-004",
+      "type": "search",
       "question": "What are the current best practices for RAG architecture?",
       "expected_persona": null,
       "expected_topics": ["RAG", "retrieval", "architecture"],
@@ -45,6 +50,7 @@
     },
     {
       "id": "eval-005",
+      "type": "search",
       "question": "What is vllm-turboquant and why does it matter?",
       "expected_persona": "mitko-vasilev",
       "expected_topics": ["quantization", "inference", "performance"],
@@ -55,6 +61,7 @@
     },
     {
       "id": "eval-006",
+      "type": "search",
       "question": "How do leading practitioners think about agent reliability and failure modes?",
       "expected_persona": null,
       "expected_topics": ["reliability", "agents", "failure"],
@@ -65,6 +72,7 @@
     },
     {
       "id": "eval-007",
+      "type": "search",
       "question": "What does Simon Willison say about LLM tool use and prompt injection risks?",
       "expected_persona": "simon-willison",
       "expected_topics": ["tool use", "prompt injection", "security"],
@@ -75,6 +83,7 @@
     },
     {
       "id": "eval-008",
+      "type": "search",
       "question": "What are the tradeoffs between fine-tuning and RAG for domain adaptation?",
       "expected_persona": null,
       "expected_topics": ["fine-tuning", "RAG", "domain adaptation"],
@@ -85,6 +94,7 @@
     },
     {
       "id": "eval-009",
+      "type": "search",
       "question": "How should I think about evaluation for agentic systems?",
       "expected_persona": null,
       "expected_topics": ["evaluation", "agentic", "benchmarks"],
@@ -95,6 +105,7 @@
     },
     {
       "id": "eval-010",
+      "type": "search",
       "question": "What is Karpathy's perspective on vibe coding?",
       "expected_persona": "andrej-karpathy",
       "expected_topics": ["vibe coding", "LLM", "software development"],
@@ -105,6 +116,7 @@
     },
     {
       "id": "eval-011",
+      "type": "search",
       "question": "What are the most discussed AI tools and frameworks right now?",
       "expected_persona": null,
       "expected_topics": ["tools", "frameworks"],
@@ -115,6 +127,7 @@
     },
     {
       "id": "eval-012",
+      "type": "search",
       "question": "How do you build a self-evolving knowledge base for AI agents?",
       "expected_persona": null,
       "expected_topics": ["knowledge base", "self-improving", "agents", "memory"],
@@ -125,6 +138,7 @@
     },
     {
       "id": "eval-013",
+      "type": "search",
       "question": "What does Lilian Weng say about reward hacking in reinforcement learning?",
       "expected_persona": "lilian-weng",
       "expected_topics": ["reward hacking", "reinforcement learning", "RLHF"],
@@ -135,6 +149,7 @@
     },
     {
       "id": "eval-014",
+      "type": "search",
       "question": "What are the architectural patterns for multi-agent orchestration?",
       "expected_persona": null,
       "expected_topics": ["orchestration", "multi-agent", "architecture"],
@@ -145,6 +160,7 @@
     },
     {
       "id": "eval-015",
+      "type": "search",
       "question": "What are the key challenges in deploying LLMs in production?",
       "expected_persona": null,
       "expected_topics": ["production", "deployment", "LLM", "challenges"],
@@ -152,6 +168,56 @@
       "must_cite_author": null,
       "min_relevance_score": 0.35,
       "notes": "Broad question — should return diverse sources"
+    },
+    {
+      "id": "eval-s01",
+      "type": "synthesis",
+      "question": "How should I design memory for a production multi-agent system?",
+      "expected_topics_in_recommendation": ["memory", "agent", "context"],
+      "expected_tools_in_recommendation": [],
+      "min_confidence": "medium",
+      "min_personas_cited": 2,
+      "notes": "Memory is well-represented across personas — synthesis should be high confidence"
+    },
+    {
+      "id": "eval-s02",
+      "type": "synthesis",
+      "question": "Should I use RAG or fine-tuning for domain adaptation in a production LLM system?",
+      "expected_topics_in_recommendation": ["RAG", "fine-tuning"],
+      "expected_tools_in_recommendation": [],
+      "min_confidence": "medium",
+      "min_personas_cited": 2,
+      "notes": "Classic architecture tradeoff — should produce a reasoned comparison"
+    },
+    {
+      "id": "eval-s03",
+      "type": "synthesis",
+      "question": "What are the best tools for agentic coding workflows in 2025?",
+      "expected_topics_in_recommendation": ["agentic", "coding", "workflow"],
+      "expected_tools_in_recommendation": ["Claude Code"],
+      "min_confidence": "high",
+      "min_personas_cited": 1,
+      "notes": "Claude Code dominates tool mentions — should appear in recommendation"
+    },
+    {
+      "id": "eval-s04",
+      "type": "synthesis",
+      "question": "How should I approach evaluation for an agentic AI system I'm building?",
+      "expected_topics_in_recommendation": ["evaluation", "agent"],
+      "expected_tools_in_recommendation": [],
+      "min_confidence": "medium",
+      "min_personas_cited": 1,
+      "notes": "Lilian Weng + arXiv papers cover this well — should produce practical guidance"
+    },
+    {
+      "id": "eval-s05",
+      "type": "synthesis",
+      "question": "What architectural patterns should I use for orchestrating multiple specialized AI agents?",
+      "expected_topics_in_recommendation": ["orchestration", "multi-agent", "architecture"],
+      "expected_tools_in_recommendation": [],
+      "min_confidence": "medium",
+      "min_personas_cited": 2,
+      "notes": "Core AAA query — should synthesize across LinkedIn, YouTube, and arXiv sources"
     }
   ]
 }

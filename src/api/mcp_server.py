@@ -11,7 +11,6 @@ Transport: stdio (default for Claude Desktop integration).
 
 Usage:
   python -m src.api.mcp_server          # stdio transport (Claude Desktop)
-  uvicorn src.api.mcp_server:app        # SSE transport (web clients)
 
 Registration (Claude Desktop):
   Add to ~/Library/Application Support/Claude/claude_desktop_config.json:
@@ -44,6 +43,7 @@ from mcp.server.fastmcp import FastMCP
 logger = logging.getLogger(__name__)
 
 _STORE_PATH = _REPO_ROOT / "data" / "linkedin_store"
+_USAGE_LOG = _REPO_ROOT / "data" / "mcp_usage.jsonl"
 _DEFAULT_N = 8
 _DEFAULT_TOP_TOOLS = 20
 _MAX_N = 25
@@ -64,6 +64,26 @@ def _get_store():
         _store = LinkedInPersonaStore(store_path=_STORE_PATH)
         _store.initialize()
     return _store
+
+
+# ---------------------------------------------------------------------------
+# Usage logging
+# ---------------------------------------------------------------------------
+
+def _log_tool_call(tool: str, params: dict, result_size: int) -> None:
+    """Append a structured tool-call record to the usage log."""
+    try:
+        _USAGE_LOG.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "tool": tool,
+            "params": params,
+            "result_bytes": result_size,
+        }
+        with _USAGE_LOG.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001
+        pass  # Never let logging break a tool call
 
 
 # ---------------------------------------------------------------------------
@@ -191,8 +211,9 @@ mcp = FastMCP(
     name="Agentic AI Architect",
     instructions=(
         "This server provides access to a curated knowledge base of AI architecture intelligence, "
-        "built from LinkedIn posts, YouTube transcripts, and GitHub READMEs by leading AI practitioners "
-        "(Andrej Karpathy, Cole Medin, Mitko Vasilev, and 50+ others). "
+        "built from LinkedIn posts, YouTube transcripts, blog posts, and GitHub READMEs by leading "
+        "AI practitioners (Andrej Karpathy, Cole Medin, Chip Huyen, Simon Willison, Lilian Weng, "
+        "and 50+ others). "
         "Use search_knowledge to find relevant insights, get_architecture_recommendation for "
         "synthesized guidance on a specific problem, and get_trending_tools to see what tools "
         "the AI community is actively discussing."
@@ -205,6 +226,7 @@ def search_knowledge(
     query: str,
     persona: str = "",
     n_results: int = _DEFAULT_N,
+    min_date: str = "",
 ) -> str:
     """Search the AI architecture knowledge base using semantic similarity.
 
@@ -212,22 +234,63 @@ def search_knowledge(
         query: Natural language query — what you want to know about AI architecture,
                tools, workflows, or best practices.
         persona: Optional. Filter results to a specific thought leader.
-                 Examples: "andrej-karpathy", "cole-medin", "mitko-vasilev".
+                 Examples: "andrej-karpathy", "cole-medin", "chip-huyen".
                  Leave empty to search across all personas.
         n_results: Number of results to return (1–25, default 8).
+        min_date: Optional. Only return content published on or after this date.
+                  Format: YYYY-MM-DD (e.g. "2025-01-01"). Leave empty for all dates.
 
     Returns:
         JSON array of matching knowledge items, each with author, content snippet,
-        relevance score, post type, and key metadata (tools, topics, claims).
+        relevance score, post type, timestamp, and key metadata (tools, topics, claims).
     """
     n_results = max(1, min(n_results, _MAX_N))
     store = _get_store()
 
-    hits = store.search(
-        query=query,
-        n_results=n_results,
-        persona_id=persona.strip() or None,
-    )
+    # Build optional date filter for ChromaDB where clause
+    date_filter: dict | None = None
+    if min_date.strip():
+        date_filter = {"timestamp": {"$gte": min_date.strip()}}
+
+    # Combine persona filter with date filter
+    persona_filter = persona.strip() or None
+    if date_filter and persona_filter:
+        where = {"$and": [{"persona_id": persona_filter}, date_filter]}
+        persona_filter_for_store = None  # handled in where
+    elif date_filter:
+        where = date_filter
+        persona_filter_for_store = None
+    else:
+        where = None
+        persona_filter_for_store = persona_filter
+
+    if where:
+        try:
+            total = store._collection.count()
+            raw = store._collection.query(
+                query_texts=[query],
+                n_results=min(n_results, max(1, total)),
+                where=where,
+                include=["documents", "metadatas", "distances"],
+            )
+            hits = [
+                {
+                    "post_id": raw["ids"][0][i],
+                    "document": raw["documents"][0][i],
+                    "metadata": raw["metadatas"][0][i],
+                    "score": round(1.0 - raw["distances"][0][i], 4),
+                }
+                for i in range(len(raw["ids"][0]))
+            ]
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Date-filtered search failed (%s) — falling back to unfiltered", exc)
+            hits = store.search(query=query, n_results=n_results, persona_id=persona_filter_for_store)
+    else:
+        hits = store.search(
+            query=query,
+            n_results=n_results,
+            persona_id=persona_filter_for_store,
+        )
 
     results = []
     for h in hits:
@@ -246,12 +309,17 @@ def search_knowledge(
             "post_url": meta.get("post_url", ""),
         })
 
-    return json.dumps({
+    payload = json.dumps({
         "query": query,
         "persona_filter": persona or None,
+        "min_date_filter": min_date or None,
         "total_results": len(results),
         "results": results,
     }, indent=2, ensure_ascii=False)
+
+    _log_tool_call("search_knowledge", {"query": query, "persona": persona, "n_results": n_results,
+                                         "min_date": min_date}, len(payload))
+    return payload
 
 
 @mcp.tool()
@@ -281,7 +349,7 @@ def get_architecture_recommendation(
 
     hits = store.search(query=problem_statement, n_results=n_sources)
     if not hits:
-        return json.dumps({
+        payload = json.dumps({
             "recommendation": "No relevant knowledge found for this problem statement.",
             "key_considerations": [],
             "relevant_tools": [],
@@ -290,6 +358,10 @@ def get_architecture_recommendation(
             "confidence_reason": "Knowledge base returned no results.",
             "evidence_count": 0,
         }, indent=2)
+        _log_tool_call("get_architecture_recommendation",
+                       {"problem_statement": problem_statement[:100], "n_sources": n_sources},
+                       len(payload))
+        return payload
 
     synthesis = _synthesize(problem_statement, hits)
 
@@ -303,13 +375,18 @@ def get_architecture_recommendation(
         for h in hits
     ]
 
-    return json.dumps({
+    payload = json.dumps({
         **synthesis,
         "problem_statement": problem_statement,
         "evidence_count": len(hits),
         "evidence_summary": evidence_summary,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }, indent=2, ensure_ascii=False)
+
+    _log_tool_call("get_architecture_recommendation",
+                   {"problem_statement": problem_statement[:100], "n_sources": n_sources},
+                   len(payload))
+    return payload
 
 
 @mcp.tool()
@@ -328,7 +405,7 @@ def get_trending_tools(
         persona: Optional. Restrict to a specific thought leader's mentions.
                  Examples: "andrej-karpathy", "cole-medin".
         post_type: Optional. Filter by content type: "youtube_transcript",
-                   "github_readme", "image", "text", "article".
+                   "github_readme", "blog_post", "text", "article".
 
     Returns:
         JSON object with ranked tool list (name, mention_count, mentioned_by personas),
@@ -336,8 +413,8 @@ def get_trending_tools(
     """
     store = _get_store()
 
-    if persona.strip() or post_type.strip():
-        items = store.get_posts_by_persona(persona.strip()) if persona.strip() else _get_all_items(store)
+    if persona.strip():
+        items = store.get_posts_by_persona(persona.strip())
     else:
         items = _get_all_items(store)
 
@@ -368,13 +445,18 @@ def get_trending_tools(
         for tool, count in tool_counter.most_common(top_n)
     ]
 
-    return json.dumps({
+    payload = json.dumps({
         "total_items_analyzed": len(items),
         "unique_tools_found": len(tool_counter),
         "persona_filter": persona or None,
         "post_type_filter": post_type or None,
         "top_tools": ranked,
     }, indent=2, ensure_ascii=False)
+
+    _log_tool_call("get_trending_tools",
+                   {"top_n": top_n, "persona": persona, "post_type": post_type},
+                   len(payload))
+    return payload
 
 
 def _get_all_items(store) -> list[dict]:

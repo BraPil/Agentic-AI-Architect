@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-Ingest blog posts from Simon Willison and Lilian Weng into the ChromaDB persona store.
+Ingest blog posts from registered sources into the ChromaDB persona store.
+
+Registered sources: Simon Willison, Lilian Weng, Chip Huyen, Sebastian Ruder, Eugene Yan.
+Add more in BLOG_REGISTRY inside src/pipeline/blog_ingest.py.
 
 Usage:
   ANTHROPIC_API_KEY=sk-ant-... python3 scripts/ingest_blogs.py
-  python3 scripts/ingest_blogs.py --no-extract          # text-only, no API key needed
-  python3 scripts/ingest_blogs.py --persona simon_willison
+  python3 scripts/ingest_blogs.py --no-extract              # text-only, no API key needed
+  python3 scripts/ingest_blogs.py --persona chip_huyen      # single source
   python3 scripts/ingest_blogs.py --max-posts 10
 """
 
