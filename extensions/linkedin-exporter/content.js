@@ -398,12 +398,14 @@ async function scrollToLoadAll(maxScrolls = 20, delayMs = 1500, maxAgeMonths = 0
 // ---------------------------------------------------------------------------
 
 async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
-                                      expandAll = true, maxPosts = 0) {
-  const accumulated = new Map(); // key → post object (dedup by post_url or text prefix)
+                                      expandAll = true, maxPosts = 0,
+                                      maxAgeMonths = 0) {
+  const accumulated = new Map();
   const runLog = [];
+  let ageCutoffHit = false;
 
   async function scrapeAndAccumulate(label) {
-    const { posts } = await scrapePosts({ expandAll });
+    const { posts } = await scrapePosts({ expandAll, maxAgeMonths });
     let added = 0;
     for (const p of posts) {
       const key = p.post_url || p.text.slice(0, 80);
@@ -412,11 +414,15 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
         added++;
       }
     }
+    // If maxAgeMonths is set and this step added nothing new (all were filtered
+    // by age), the cutoff has been reached — stop scrolling.
+    if (maxAgeMonths > 0 && added === 0 && accumulated.size > 0) {
+      ageCutoffHit = true;
+    }
     runLog.push(`${label}: +${added} new (total ${accumulated.size})`);
     return added;
   }
 
-  // Capture initial viewport
   await scrapeAndAccumulate("initial");
 
   let lastHeight = 0;
@@ -424,6 +430,7 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
 
   for (let i = 0; i < maxScrolls; i++) {
     if (maxPosts > 0 && accumulated.size >= maxPosts) break;
+    if (ageCutoffHit) { runLog.push("age cutoff reached — stopping scroll"); break; }
 
     window.scrollTo(0, document.body.scrollHeight);
     await sleep(delayMs);
@@ -431,7 +438,7 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
     const newHeight = document.body.scrollHeight;
     if (newHeight === lastHeight) {
       unchanged++;
-      if (unchanged >= 2) { runLog.push("scroll: no new content, stopping"); break; }
+      if (unchanged >= 2) { runLog.push("no new content — stopping"); break; }
     } else {
       unchanged = 0;
     }
@@ -528,11 +535,17 @@ async function scrapePosts(options = {}) {
       if (authorLink) {
         author = authorLink.title || authorLink.getAttribute("aria-label") || "";
         if (!author) {
-          // Read the first short text node inside the link
-          const t = (authorLink.innerText || authorLink.textContent || "").trim().split("\n")[0].trim();
-          if (t.length > 1 && t.length < 80 && !REACTION_VERBS.some(v => t.toLowerCase().includes(v))) {
-            author = t;
-          }
+          // Read the first short non-boilerplate line inside the link.
+          // The actor container link wraps the H2.visually-hidden "Feed post number X"
+          // heading, so we must skip lines matching that pattern.
+          const lines = (authorLink.innerText || authorLink.textContent || "")
+            .trim().split("\n").map(l => l.trim());
+          const t = lines.find(l =>
+            l.length > 1 && l.length < 80 &&
+            !l.match(/^feed post/i) &&
+            !REACTION_VERBS.some(v => l.toLowerCase().includes(v))
+          ) || "";
+          if (t) author = t;
         }
       }
     }
@@ -633,6 +646,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         message.delay || 1500,
         message.expandAll !== false,
         message.maxPosts || 0,
+        message.maxAgeMonths || 0,
       );
       sendResponse({
         ok: true, posts, log,
@@ -647,5 +661,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "16";
+const AAA_CONTENT_VERSION = "17";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
