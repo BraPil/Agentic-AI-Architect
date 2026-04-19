@@ -37,6 +37,10 @@ data/
 .env
 *.env.local
 
+# Cookie files (contain live auth tokens — never commit)
+cookies.txt
+*cookies*.txt
+
 # IDE
 .vscode/
 .idea/
