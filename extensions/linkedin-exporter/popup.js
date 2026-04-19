@@ -1,6 +1,6 @@
 "use strict";
 
-const CONTENT_VERSION = "20";
+const CONTENT_VERSION = "21";
 
 let exportData = null;
 

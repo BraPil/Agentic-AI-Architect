@@ -549,26 +549,15 @@ async function scrapePosts(options = {}) {
     const REACTION_VERBS = ["likes", "reacted", "commented", "reshared",
                             "celebrated", "shared", "posted", "follows"];
 
-    // Author — collect all profile links from the full LI (el), then use
-    // contentEl.contains() to prefer links inside the activity div (post author)
-    // over reactor links in the notification header above it.
-    // Reactor links also carry class "ember-view"; author links do not.
-    const allProfileLinks = [
-      ...el.querySelectorAll('a[href*="/in/"], a[href*="/company/"]'),
-    ];
-    const profileAnchor =
-      allProfileLinks.find(a => contentEl.contains(a) && !a.classList.contains("ember-view")) ||
-      allProfileLinks.find(a => !a.classList.contains("ember-view")) ||
-      allProfileLinks[0] ||
-      null;
-
-    const authorUrl = profileAnchor?.href || "";
-
+    // Author — iterate every profile link in the full LI. For each non-ember-view
+    // link, check its leaf spans (no child spans) for a name via textContent.
+    // XPath confirmed: li > ... > a > span[1] > span[1] > span > span[1] = name.
+    // CSS-hidden spans have empty innerText but populated textContent.
+    let profileAnchor = null;
     let author = "";
-    if (profileAnchor) {
-      // Name spans are CSS-hidden → innerText="". Use textContent on leaf spans.
-      // XPath confirmed: a/span[1]/span[1]/span/span[1] = "Cole Medin"
-      for (const span of profileAnchor.querySelectorAll("span")) {
+    for (const a of el.querySelectorAll('a[href*="/in/"], a[href*="/company/"]')) {
+      if (a.classList.contains("ember-view")) continue;
+      for (const span of a.querySelectorAll("span")) {
         if (span.querySelector("span")) continue; // skip non-leaf
         const t = (span.textContent || "").trim();
         if (t.length > 1 && t.length < 80 &&
@@ -577,10 +566,13 @@ async function scrapePosts(options = {}) {
             !t.match(/^\d/) &&
             !REACTION_VERBS.some(v => t.toLowerCase().includes(v))) {
           author = t;
+          profileAnchor = a;
           break;
         }
       }
+      if (profileAnchor) break;
     }
+    const authorUrl = profileAnchor?.href || "";
 
     const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
     const ageMonths = parseAgeMonths(timestamp);
@@ -675,5 +667,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "20";
+const AAA_CONTENT_VERSION = "21";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
