@@ -444,6 +444,19 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
     }
     lastHeight = newHeight;
 
+    // Check age of the last visible post before scraping — stop immediately
+    // if we've scrolled past the cutoff rather than waiting for a 0-add step.
+    if (maxAgeMonths > 0) {
+      const lastTs = getLastVisibleTimestamp();
+      const lastAge = parseAgeMonths(lastTs);
+      runLog.push(`scroll ${i + 1}: last_ts="${lastTs.slice(0, 20)}" age=${lastAge.toFixed(1)}mo`);
+      if (lastAge > maxAgeMonths) {
+        runLog.push(`age cutoff hit (${lastAge.toFixed(1)} > ${maxAgeMonths}mo) — stopping`);
+        await scrapeAndAccumulate(`scroll ${i + 1}`); // capture what's in view before stopping
+        break;
+      }
+    }
+
     await scrapeAndAccumulate(`scroll ${i + 1}`);
   }
 
@@ -662,5 +675,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "19";
+const AAA_CONTENT_VERSION = "20";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
