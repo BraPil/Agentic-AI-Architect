@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "description": "Ground-truth evaluation set for AAA MCP recommendation quality",
+  "created_at": "2026-04-19",
+  "questions": [
+    {
+      "id": "eval-001",
+      "question": "What does Andrej Karpathy say about the LLM OS concept?",
+      "expected_persona": "andrej-karpathy",
+      "expected_topics": ["LLM OS", "agentic AI", "operating system"],
+      "expected_tools": [],
+      "must_cite_author": "Andrej Karpathy",
+      "min_relevance_score": 0.4,
+      "notes": "Karpathy's LLM OS talk is directly indexed"
+    },
+    {
+      "id": "eval-002",
+      "question": "How should I design memory for a multi-agent system?",
+      "expected_persona": null,
+      "expected_topics": ["memory", "multi-agent", "architecture"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Multiple personas discuss memory — should return diverse results"
+    },
+    {
+      "id": "eval-003",
+      "question": "What tools does Cole Medin recommend for agentic coding workflows?",
+      "expected_persona": "cole-medin",
+      "expected_topics": ["agentic coding", "workflow", "tools"],
+      "expected_tools": ["Claude Code"],
+      "must_cite_author": "Cole Medin",
+      "min_relevance_score": 0.4,
+      "notes": "Cole Medin has 18 indexed items heavily focused on Claude Code"
+    },
+    {
+      "id": "eval-004",
+      "question": "What are the current best practices for RAG architecture?",
+      "expected_persona": null,
+      "expected_topics": ["RAG", "retrieval", "architecture"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Should surface arXiv papers and blog posts alongside practitioner views"
+    },
+    {
+      "id": "eval-005",
+      "question": "What is vllm-turboquant and why does it matter?",
+      "expected_persona": "mitko-vasilev",
+      "expected_topics": ["quantization", "inference", "performance"],
+      "expected_tools": ["vLLM"],
+      "must_cite_author": "arXiv Research",
+      "min_relevance_score": 0.3,
+      "notes": "Mitko Vasilev's top repo — should surface GitHub README"
+    },
+    {
+      "id": "eval-006",
+      "question": "How do leading practitioners think about agent reliability and failure modes?",
+      "expected_persona": null,
+      "expected_topics": ["reliability", "agents", "failure"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Cole Medin has a video on adversarial dev and agent reliability"
+    },
+    {
+      "id": "eval-007",
+      "question": "What does Simon Willison say about LLM tool use and prompt injection risks?",
+      "expected_persona": "simon-willison",
+      "expected_topics": ["tool use", "prompt injection", "security"],
+      "expected_tools": [],
+      "must_cite_author": "Simon Willison",
+      "min_relevance_score": 0.4,
+      "notes": "Simon Willison writes extensively about prompt injection"
+    },
+    {
+      "id": "eval-008",
+      "question": "What are the tradeoffs between fine-tuning and RAG for domain adaptation?",
+      "expected_persona": null,
+      "expected_topics": ["fine-tuning", "RAG", "domain adaptation"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Should surface arXiv and blog content"
+    },
+    {
+      "id": "eval-009",
+      "question": "How should I think about evaluation for agentic systems?",
+      "expected_persona": null,
+      "expected_topics": ["evaluation", "agentic", "benchmarks"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Cross-source question — Lilian Weng, arXiv, and practitioner posts"
+    },
+    {
+      "id": "eval-010",
+      "question": "What is Karpathy's perspective on vibe coding?",
+      "expected_persona": "andrej-karpathy",
+      "expected_topics": ["vibe coding", "LLM", "software development"],
+      "expected_tools": [],
+      "must_cite_author": "Andrej Karpathy",
+      "min_relevance_score": 0.4,
+      "notes": "Karpathy has a YouTube video specifically on vibe coding"
+    },
+    {
+      "id": "eval-011",
+      "question": "What are the most discussed AI tools and frameworks right now?",
+      "expected_persona": null,
+      "expected_topics": ["tools", "frameworks"],
+      "expected_tools": ["Claude Code", "GitHub", "Cursor"],
+      "must_cite_author": null,
+      "min_relevance_score": 0.3,
+      "notes": "get_trending_tools should clearly surface Claude Code at top"
+    },
+    {
+      "id": "eval-012",
+      "question": "How do you build a self-evolving knowledge base for AI agents?",
+      "expected_persona": null,
+      "expected_topics": ["knowledge base", "self-improving", "agents", "memory"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Cole Medin has a video on self-evolving memory with Karpathy's approach"
+    },
+    {
+      "id": "eval-013",
+      "question": "What does Lilian Weng say about reward hacking in reinforcement learning?",
+      "expected_persona": "lilian-weng",
+      "expected_topics": ["reward hacking", "reinforcement learning", "RLHF"],
+      "expected_tools": [],
+      "must_cite_author": "Lilian Weng",
+      "min_relevance_score": 0.4,
+      "notes": "Lilian Weng has a dedicated blog post on reward hacking"
+    },
+    {
+      "id": "eval-014",
+      "question": "What are the architectural patterns for multi-agent orchestration?",
+      "expected_persona": null,
+      "expected_topics": ["orchestration", "multi-agent", "architecture"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Should surface Cole Medin, arXiv papers, and practitioner posts"
+    },
+    {
+      "id": "eval-015",
+      "question": "What are the key challenges in deploying LLMs in production?",
+      "expected_persona": null,
+      "expected_topics": ["production", "deployment", "LLM", "challenges"],
+      "expected_tools": [],
+      "must_cite_author": null,
+      "min_relevance_score": 0.35,
+      "notes": "Broad question — should return diverse sources"
+    }
+  ]
+}

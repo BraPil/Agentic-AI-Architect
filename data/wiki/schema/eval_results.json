@@ -1,0 +1,734 @@
+{
+  "schema_version": "1.0",
+  "run_at": "2026-04-19T20:37:46.240287+00:00",
+  "total_questions": 15,
+  "passed": 15,
+  "failed": 0,
+  "overall_score": 1.0,
+  "avg_top_relevance": 0.4649,
+  "results": [
+    {
+      "question_id": "eval-001",
+      "question": "What does Andrej Karpathy say about the LLM OS concept?",
+      "passed": true,
+      "score": 0.75,
+      "top_relevance": 0.4888,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": false,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "llm os",
+            "agentic ai",
+            "operating system"
+          ],
+          "found": [
+            "agentic ai"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Cole Medin",
+          "post_type": "youtube_transcript",
+          "relevance": 0.4888,
+          "snippet": "Let's face it, every week you and I are playing the game, what's the latest and greatest in the AI space, right? It chan"
+        },
+        {
+          "author": "Simon Willison",
+          "post_type": "blog_post",
+          "relevance": 0.4088,
+          "snippet": "Quoting Bryan Cantrill\n\nThe problem is that LLMs inherently lack the virtue of laziness . Work costs nothing to an LLM. "
+        },
+        {
+          "author": "Charly Wargnier",
+          "post_type": "image",
+          "relevance": 0.385,
+          "snippet": "🚨 Andrej Karpathy’s just shared his new set-up on 𝕏.\n\nIt’s literally a self-improving second brain… with zero manual edi"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-002",
+      "question": "How should I design memory for a multi-agent system?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.5729,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "memory",
+            "multi-agent",
+            "architecture"
+          ],
+          "found": [
+            "memory",
+            "multi-agent",
+            "architecture"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Rahul Agarwal",
+          "post_type": "image",
+          "relevance": 0.5729,
+          "snippet": "AI agents fail without strong memory layers.\n\n5 key AI memory systems, explained simply.\n\n1. 𝗦𝗵𝗼𝗿𝘁-𝗧𝗲𝗿𝗺 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗥𝗲𝗮𝗹-𝗧𝗶𝗺"
+        },
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.5347,
+          "snippet": "LLM Powered Autonomous Agents\n\nBuilding agents with LLM (large language model) as its core controller is a cool concept."
+        },
+        {
+          "author": "Paolo Perrone",
+          "post_type": "image",
+          "relevance": 0.4735,
+          "snippet": "LangChain just open-sourced their answer to Claude Code.\n\n9.9K GitHub stars. 5 hours old.\n\nDeep Agents: the batteries-in"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-003",
+      "question": "What tools does Cole Medin recommend for agentic coding workflows?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.6692,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": true,
+        "tools_found": true,
+        "tools_detail": {
+          "expected": [
+            "claude code"
+          ],
+          "found": [
+            "claude code"
+          ]
+        },
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "agentic coding",
+            "workflow",
+            "tools"
+          ],
+          "found": [
+            "workflow",
+            "tools"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Sarthak Rastogi",
+          "post_type": "image",
+          "relevance": 0.6692,
+          "snippet": "An Anthropic hackathon winner just open-sourced his entire Claude Code setup.\n\nIt has 117k+ stars on Github -- for teach"
+        },
+        {
+          "author": "Mayank A.",
+          "post_type": "image",
+          "relevance": 0.6546,
+          "snippet": "Someone finally documented how to actually use Claude Code.\n\n13K stars. claude-code-best-practice.\n\nDirect from Boris Ch"
+        },
+        {
+          "author": "Stanislav Beliaev",
+          "post_type": "image",
+          "relevance": 0.6495,
+          "snippet": "Just found the most useful repo for Claude Code 🔥\n\nIt’s a constantly updated collection of the best practices:\n\n• Skills"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-004",
+      "question": "What are the current best practices for RAG architecture?",
+      "passed": true,
+      "score": 0.667,
+      "top_relevance": 0.3354,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": false,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "rag",
+            "retrieval",
+            "architecture"
+          ],
+          "found": [
+            "rag",
+            "retrieval",
+            "architecture"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Aishwarya Srinivasan",
+          "post_type": "image",
+          "relevance": 0.3354,
+          "snippet": "I’ve seen teams spend weeks picking the perfect embedding model for their RAG system, only to get mediocre results becau"
+        },
+        {
+          "author": "Stanislav Beliaev",
+          "post_type": "image",
+          "relevance": 0.2787,
+          "snippet": "12 GitHub repos that will 10x your Claude Code project 👇\n\nClaude Code has quietly become my most-used dev tool. These 12"
+        },
+        {
+          "author": "Mitko Vasilev",
+          "post_type": "image",
+          "relevance": 0.2628,
+          "snippet": "All legacy codebase modernization efforts in 2026 begin with: “let’s give an agent the repos”\nWhich is a great way to le"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-005",
+      "question": "What is vllm-turboquant and why does it matter?",
+      "passed": true,
+      "score": 0.6,
+      "top_relevance": 0.2522,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": false,
+        "author_cited": false,
+        "tools_found": true,
+        "tools_detail": {
+          "expected": [
+            "vllm"
+          ],
+          "found": [
+            "vllm"
+          ]
+        },
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "quantization",
+            "inference",
+            "performance"
+          ],
+          "found": [
+            "quantization",
+            "inference",
+            "performance"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Mitko Vasilev",
+          "post_type": "image",
+          "relevance": 0.2522,
+          "snippet": "I just woke up to Qwen3 Coder Next 💜 80B @ FP8, top speed ~291 tokens/sec on my lunchbox-sized nano PC. Yes, this is the"
+        },
+        {
+          "author": "Mitko Vasilev",
+          "post_type": "github_readme",
+          "relevance": 0.2323,
+          "snippet": "<!-- markdownlint-disable MD001 MD041 -->\n<p align=\"center\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)"
+        },
+        {
+          "author": "Mitko Vasilev",
+          "post_type": "github_readme",
+          "relevance": 0.2265,
+          "snippet": "# Firecracker + AgentFS Dev VM\n\nThis project runs a Firecracker microVM whose root filesystem is served from an AgentFS "
+        }
+      ]
+    },
+    {
+      "question_id": "eval-006",
+      "question": "How do leading practitioners think about agent reliability and failure modes?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.4591,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "reliability",
+            "agents",
+            "failure"
+          ],
+          "found": [
+            "reliability",
+            "agents",
+            "failure"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Alex Wang",
+          "post_type": "image",
+          "relevance": 0.4591,
+          "snippet": "Building an agent is only part of the job.\n\nThe more important part is everything around it:\n\n- API connections\n- webhoo"
+        },
+        {
+          "author": "Cole Medin",
+          "post_type": "image",
+          "relevance": 0.3968,
+          "snippet": "I'm starting a public experiment where I'm handing my entire codebase over to AI. No humans allowed to write or review a"
+        },
+        {
+          "author": "Aishwarya Naresh Reganti",
+          "post_type": "image",
+          "relevance": 0.3869,
+          "snippet": "😅 Tool-calling in AI agents is annoyingly brittle for large enterprise use-cases. This is a nice paper that addresses th"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-007",
+      "question": "What does Simon Willison say about LLM tool use and prompt injection risks?",
+      "passed": true,
+      "score": 0.75,
+      "top_relevance": 0.3216,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": false,
+        "author_cited": true,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "tool use",
+            "prompt injection",
+            "security"
+          ],
+          "found": [
+            "security"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.3216,
+          "snippet": "Prompt Engineering\n\nPrompt Engineering , also known as In-Context Prompting , refers to methods for how to communicate w"
+        },
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.3082,
+          "snippet": "Adversarial Attacks on LLMs\n\nThe use of large language models in the real world has strongly accelerated by the launch o"
+        },
+        {
+          "author": "Simon Willison",
+          "post_type": "blog_post",
+          "relevance": 0.3056,
+          "snippet": "Quoting Kyle Kingsbury\n\nI think we will see some people employed (though perhaps not explicitly) as meat shields : peopl"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-008",
+      "question": "What are the tradeoffs between fine-tuning and RAG for domain adaptation?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.3782,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "fine-tuning",
+            "rag",
+            "domain adaptation"
+          ],
+          "found": [
+            "rag"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.3782,
+          "snippet": "Domain Randomization for Sim2Real Transfer\n\nIn Robotics, one of the hardest problems is how to make your model transfer "
+        },
+        {
+          "author": "Aishwarya Srinivasan",
+          "post_type": "image",
+          "relevance": 0.3676,
+          "snippet": "I’ve seen teams spend weeks picking the perfect embedding model for their RAG system, only to get mediocre results becau"
+        },
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.3532,
+          "snippet": "Learning with not Enough Data Part 3: Data Generation\n\nHere comes the Part 3 on learning with not enough data (Previous:"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-009",
+      "question": "How should I think about evaluation for agentic systems?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.4978,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "evaluation",
+            "agentic",
+            "benchmarks"
+          ],
+          "found": [
+            "evaluation",
+            "agentic"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Cole Medin",
+          "post_type": "image",
+          "relevance": 0.4978,
+          "snippet": "The biggest problem in AI coding right now is sycophancy.\n\nNot in the broad \"AI agrees with everything you say\" sense, t"
+        },
+        {
+          "author": "Mitko Vasilev",
+          "post_type": "image",
+          "relevance": 0.471,
+          "snippet": "I taught my AI agents to rewrite their own ops manual. Not vibes.A Genetic-Pareto feedback loop.\n\nMy stack: `GEPA optimi"
+        },
+        {
+          "author": "Alex Wang",
+          "post_type": "image",
+          "relevance": 0.4686,
+          "snippet": "Building an agent is only part of the job.\n\nThe more important part is everything around it:\n\n- API connections\n- webhoo"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-010",
+      "question": "What is Karpathy's perspective on vibe coding?",
+      "passed": true,
+      "score": 0.75,
+      "top_relevance": 0.3122,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": false,
+        "author_cited": true,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "vibe coding",
+            "llm",
+            "software development"
+          ],
+          "found": [
+            "llm"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Cole Medin",
+          "post_type": "youtube_transcript",
+          "relevance": 0.3122,
+          "snippet": "Let's face it, every week you and I are playing the game, what's the latest and greatest in the AI space, right? It chan"
+        },
+        {
+          "author": "Andrej Karpathy",
+          "post_type": "youtube_transcript",
+          "relevance": 0.2808,
+          "snippet": "hi everyone so I've wanted to make this video for a while it is a comprehensive but General audience introduction to lar"
+        },
+        {
+          "author": "Simon Willison",
+          "post_type": "blog_post",
+          "relevance": 0.253,
+          "snippet": "Gemini 3.1 Flash TTS\n\nGemini 3.1 Flash TTS Google released Gemini 3.1 Flash TTS today, a new text-to-speech model that c"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-011",
+      "question": "What are the most discussed AI tools and frameworks right now?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.5671,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": true,
+        "tools_detail": {
+          "expected": [
+            "claude code",
+            "github",
+            "cursor"
+          ],
+          "found": [
+            "claude code",
+            "github",
+            "cursor"
+          ]
+        },
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "tools",
+            "frameworks"
+          ],
+          "found": [
+            "tools",
+            "frameworks"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Cole Medin",
+          "post_type": "youtube_transcript",
+          "relevance": 0.5671,
+          "snippet": "These days, the only AI agents that people seem to care about anymore are AI coding assistants. No one seems to cover an"
+        },
+        {
+          "author": "Paolo Perrone",
+          "post_type": "image",
+          "relevance": 0.5541,
+          "snippet": "Everyone's building AI agent demos.\n\nPalantir shipped an end-to-end agentic architecture.\n\n12 layers. The ENTIRE product"
+        },
+        {
+          "author": "Cole Medin",
+          "post_type": "youtube_transcript",
+          "relevance": 0.5518,
+          "snippet": "Cloud Code has been shipping features at a ridiculous pace recently. And even if you're not using Cloud Code as your pri"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-012",
+      "question": "How do you build a self-evolving knowledge base for AI agents?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.522,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "knowledge base",
+            "self-improving",
+            "agents",
+            "memory"
+          ],
+          "found": [
+            "knowledge base",
+            "self-improving",
+            "agents",
+            "memory"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Rahul Agarwal",
+          "post_type": "image",
+          "relevance": 0.522,
+          "snippet": "AI agents fail without strong memory layers.\n\n5 key AI memory systems, explained simply.\n\n1. 𝗦𝗵𝗼𝗿𝘁-𝗧𝗲𝗿𝗺 𝗠𝗲𝗺𝗼𝗿𝘆 (𝗥𝗲𝗮𝗹-𝗧𝗶𝗺"
+        },
+        {
+          "author": "Cole Medin",
+          "post_type": "youtube_transcript",
+          "relevance": 0.5185,
+          "snippet": "These days, the only AI agents that people seem to care about anymore are AI coding assistants. No one seems to cover an"
+        },
+        {
+          "author": "Paolo Perrone",
+          "post_type": "image",
+          "relevance": 0.5146,
+          "snippet": "Everyone's building AI agent demos.\n\nPalantir shipped an end-to-end agentic architecture.\n\n12 layers. The ENTIRE product"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-013",
+      "question": "What does Lilian Weng say about reward hacking in reinforcement learning?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.6649,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": true,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "reward hacking",
+            "reinforcement learning",
+            "rlhf"
+          ],
+          "found": [
+            "reward hacking",
+            "reinforcement learning",
+            "rlhf"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.6649,
+          "snippet": "Reward Hacking in Reinforcement Learning\n\nReward hacking occurs when a reinforcement learning (RL) agent exploits flaws "
+        },
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.4,
+          "snippet": "Exploration Strategies in Deep Reinforcement Learning\n\n[Updated on 2020-06-17: Add “exploration via disagreement” in the"
+        },
+        {
+          "author": "Lilian Weng",
+          "post_type": "blog_post",
+          "relevance": 0.3982,
+          "snippet": "Curriculum for Reinforcement Learning\n\n[Updated on 2020-02-03: mentioning PCG in the “Task-Specific Curriculum” section."
+        }
+      ]
+    },
+    {
+      "question_id": "eval-014",
+      "question": "What are the architectural patterns for multi-agent orchestration?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.5262,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "orchestration",
+            "multi-agent",
+            "architecture"
+          ],
+          "found": [
+            "orchestration",
+            "multi-agent",
+            "architecture"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Paolo Perrone",
+          "post_type": "image",
+          "relevance": 0.5262,
+          "snippet": "Everyone's building AI agent demos.\n\nPalantir shipped an end-to-end agentic architecture.\n\n12 layers. The ENTIRE product"
+        },
+        {
+          "author": "Alex Wang",
+          "post_type": "image",
+          "relevance": 0.4942,
+          "snippet": "Building an agent is only part of the job.\n\nThe more important part is everything around it:\n\n- API connections\n- webhoo"
+        },
+        {
+          "author": "Paolo Perrone",
+          "post_type": "article",
+          "relevance": 0.4868,
+          "snippet": "This repo teaches AI Agents how to THINK.\n\nAgent Skills for Context Engineering: the open-source skill library that ever"
+        }
+      ]
+    },
+    {
+      "question_id": "eval-015",
+      "question": "What are the key challenges in deploying LLMs in production?",
+      "passed": true,
+      "score": 1.0,
+      "top_relevance": 0.406,
+      "result_count": 8,
+      "checks": {
+        "has_results": true,
+        "relevance_threshold": true,
+        "author_cited": null,
+        "tools_found": null,
+        "topics_found": true,
+        "topics_detail": {
+          "expected": [
+            "production",
+            "deployment",
+            "llm",
+            "challenges"
+          ],
+          "found": [
+            "deployment",
+            "llm"
+          ]
+        }
+      },
+      "top_results": [
+        {
+          "author": "Simon Willison",
+          "post_type": "blog_post",
+          "relevance": 0.406,
+          "snippet": "Quoting Bryan Cantrill\n\nThe problem is that LLMs inherently lack the virtue of laziness . Work costs nothing to an LLM. "
+        },
+        {
+          "author": "GenAI Works",
+          "post_type": "image",
+          "relevance": 0.3626,
+          "snippet": "AI literacy is quickly becoming a core skill.\n\nLLMs are changing how we write, research, code, analyze data and build pr"
+        },
+        {
+          "author": "Stanislav Beliaev",
+          "post_type": "image",
+          "relevance": 0.3518,
+          "snippet": "This tool analyzes your hardware with one command and shows which LLMs are actually worth running on your machine 👇\n\nIt'"
+        }
+      ]
+    }
+  ]
+}
