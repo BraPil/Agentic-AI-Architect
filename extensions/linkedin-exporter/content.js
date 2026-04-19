@@ -460,7 +460,12 @@ async function scrollAndScrapeRolling(maxScrolls = 20, delayMs = 1500,
     await scrapeAndAccumulate(`scroll ${i + 1}`);
   }
 
+  // Final top-pass: scroll back to y=0 so LinkedIn re-renders the top posts,
+  // then scrape again to recover posts that were occluded during downward scroll.
   window.scrollTo(0, 0);
+  await sleep(2000);
+  await scrapeAndAccumulate("final-top");
+
   // Final age filter — catches posts that slipped through mid-scroll due to
   // empty timestamps in partially-rendered DOM during rolling capture.
   let posts = [...accumulated.values()];
@@ -667,5 +672,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "21";
+const AAA_CONTENT_VERSION = "22";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);
