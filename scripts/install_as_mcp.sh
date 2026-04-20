@@ -67,6 +67,51 @@ else
     echo "      See the snippet printed below."
 fi
 
+# ── 4. Write .claude/settings.local.json (Claude Code CLI config) ─────────────
+echo ""
+echo "[4/4] Writing .claude/settings.local.json for Claude Code..."
+mkdir -p "${PWD}/.claude"
+CLAUDE_SETTINGS="${PWD}/.claude/settings.local.json"
+
+if [ ! -f "${CLAUDE_SETTINGS}" ]; then
+    cat > "${CLAUDE_SETTINGS}" <<'EOF'
+{
+  "mcpServers": {
+    "aaa": {
+      "command": "python",
+      "args": ["-m", "src.api.mcp_server"],
+      "cwd": "/workspaces/Agentic-AI-Architect",
+      "env": {
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}
+EOF
+    echo "      Created ${CLAUDE_SETTINGS}"
+else
+    # Merge: only add mcpServers block if not already present
+    if ! grep -q '"mcpServers"' "${CLAUDE_SETTINGS}"; then
+        # Inject before the closing brace
+        python3 -c "
+import json, sys
+with open('${CLAUDE_SETTINGS}') as f:
+    data = json.load(f)
+data.setdefault('mcpServers', {})['aaa'] = {
+    'command': 'python',
+    'args': ['-m', 'src.api.mcp_server'],
+    'cwd': '/workspaces/Agentic-AI-Architect',
+    'env': {'ANTHROPIC_API_KEY': '\${ANTHROPIC_API_KEY}'}
+}
+with open('${CLAUDE_SETTINGS}', 'w') as f:
+    json.dump(data, f, indent=2)
+print('      Merged aaa into existing ${CLAUDE_SETTINGS}')
+"
+    else
+        echo "      mcpServers already present in ${CLAUDE_SETTINGS} — skipping."
+    fi
+fi
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════════════════════"
