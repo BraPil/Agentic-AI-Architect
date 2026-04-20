@@ -46,34 +46,18 @@ AAA_ENTRY=$(cat <<'JSONBLOCK'
       "type": "stdio",
       "command": "python",
       "args": ["-m", "src.api.mcp_server"],
-      "cwd": "/workspaces/Agentic-AI-Architect",
-      "env": {
-        "ANTHROPIC_API_KEY": "${input:aaa_anthropic_key}"
-      }
-    }
-JSONBLOCK
-)
-
-AAA_INPUT=$(cat <<'JSONBLOCK'
-    {
-      "id": "aaa_anthropic_key",
-      "type": "promptString",
-      "description": "Anthropic API key for AAA synthesis tools",
-      "password": true
+      "cwd": "/workspaces/Agentic-AI-Architect"
     }
 JSONBLOCK
 )
 
 if [ ! -f "${TARGET_MCP_JSON}" ]; then
-    # Create fresh file
+    # Create fresh file — ANTHROPIC_API_KEY is inherited from Codespace secrets
     cat > "${TARGET_MCP_JSON}" <<EOF
 {
   "servers": {
 ${AAA_ENTRY}
-  },
-  "inputs": [
-${AAA_INPUT}
-  ]
+  }
 }
 EOF
     echo "      Created ${TARGET_MCP_JSON}"
@@ -111,6 +95,5 @@ echo '  "aaa": {'
 echo '    "type": "stdio",'
 echo '    "command": "python",'
 echo '    "args": ["-m", "src.api.mcp_server"],'
-echo '    "cwd": "/workspaces/Agentic-AI-Architect",'
-echo '    "env": { "ANTHROPIC_API_KEY": "${input:aaa_anthropic_key}" }'
+echo '    "cwd": "/workspaces/Agentic-AI-Architect"'
 echo '  }'
