@@ -1,13 +1,13 @@
 {
   "schema_version": "1.1",
-  "run_at": "2026-04-19T23:50:30.234405+00:00",
+  "run_at": "2026-04-20T06:56:01.896475+00:00",
   "total_questions": 20,
   "search_questions": 15,
   "synthesis_questions": 5,
   "passed": 20,
   "failed": 0,
   "overall_score": 1.0,
-  "avg_top_relevance": 0.4647,
+  "avg_top_relevance": 0.4628,
   "results": [
     {
       "question_id": "eval-001",
@@ -318,7 +318,7 @@
       "type": "search",
       "passed": true,
       "score": 0.75,
-      "top_relevance": 0.3206,
+      "top_relevance": 0.303,
       "result_count": 8,
       "checks": {
         "has_results": true,
@@ -341,20 +341,20 @@
         {
           "author": "Simon Willison",
           "post_type": "blog_post",
-          "relevance": 0.3206,
+          "relevance": 0.303,
           "snippet": "Quoting Kyle Kingsbury\n\nI think we will see some people employed (though perhaps not explicitly) as meat shields : peopl"
-        },
-        {
-          "author": "Simon Willison",
-          "post_type": "blog_post",
-          "relevance": 0.2988,
-          "snippet": "Quoting Bryan Cantrill\n\nThe problem is that LLMs inherently lack the virtue of laziness . Work costs nothing to an LLM. "
         },
         {
           "author": "Simon Willison",
           "post_type": "blog_post",
           "relevance": 0.2485,
           "snippet": "Trusted access for the next era of cyber defense\n\nTrusted access for the next era of cyber defense OpenAI's answer to Cl"
+        },
+        {
+          "author": "Simon Willison",
+          "post_type": "blog_post",
+          "relevance": 0.2365,
+          "snippet": "Quoting Bryan Cantrill\n\nThe problem is that LLMs inherently lack the virtue of laziness . Work costs nothing to an LLM. "
         }
       ]
     },
@@ -445,10 +445,10 @@
           "snippet": "The biggest problem in AI coding right now is sycophancy.\n\nNot in the broad \"AI agrees with everything you say\" sense, t"
         },
         {
-          "author": "Eugene Yan",
-          "post_type": "blog_post",
-          "relevance": 0.4711,
-          "snippet": "Weights & Biases LLM-Evaluator Hackathon - Hackathon Judge\n\nBeing a human judge at the Weights & Biases LLM-as-a-Judge H"
+          "author": "Mitko Vasilev",
+          "post_type": "image",
+          "relevance": 0.471,
+          "snippet": "I taught my AI agents to rewrite their own ops manual. Not vibes.A Genetic-Pareto feedback loop.\n\nMy stack: `GEPA optimi"
         }
       ]
     },
@@ -612,7 +612,7 @@
       "type": "search",
       "passed": true,
       "score": 1.0,
-      "top_relevance": 0.5523,
+      "top_relevance": 0.566,
       "result_count": 8,
       "checks": {
         "has_results": true,
@@ -637,20 +637,20 @@
         {
           "author": "Lilian Weng",
           "post_type": "blog_post",
-          "relevance": 0.5523,
+          "relevance": 0.566,
           "snippet": "Reward Hacking in Reinforcement Learning\n\nReward hacking occurs when a reinforcement learning (RL) agent exploits flaws "
         },
         {
           "author": "Lilian Weng",
           "post_type": "blog_post",
-          "relevance": 0.4376,
-          "snippet": "Curriculum for Reinforcement Learning\n\n[Updated on 2020-02-03: mentioning PCG in the “Task-Specific Curriculum” section."
+          "relevance": 0.3897,
+          "snippet": "Exploration Strategies in Deep Reinforcement Learning\n\n[Updated on 2020-06-17: Add “exploration via disagreement” in the"
         },
         {
           "author": "Lilian Weng",
           "post_type": "blog_post",
-          "relevance": 0.4067,
-          "snippet": "Exploration Strategies in Deep Reinforcement Learning\n\n[Updated on 2020-06-17: Add “exploration via disagreement” in the"
+          "relevance": 0.3801,
+          "snippet": "Meta Reinforcement Learning\n\nIn my earlier post on meta-learning , the problem is mainly defined in the context of few-s"
         }
       ]
     },
@@ -708,7 +708,7 @@
       "type": "search",
       "passed": true,
       "score": 1.0,
-      "top_relevance": 0.5781,
+      "top_relevance": 0.5544,
       "result_count": 8,
       "checks": {
         "has_results": true,
@@ -725,7 +725,6 @@
           ],
           "found": [
             "production",
-            "deployment",
             "llm",
             "challenges"
           ]
@@ -735,13 +734,13 @@
         {
           "author": "Eugene Yan",
           "post_type": "blog_post",
-          "relevance": 0.5781,
+          "relevance": 0.5544,
           "snippet": "What We've Learned From A Year of Building with LLMs\n\nFrom the tactical nuts & bolts to the operational day-to-day to th"
         },
         {
           "author": "Eugene Yan",
           "post_type": "blog_post",
-          "relevance": 0.4511,
+          "relevance": 0.4547,
           "snippet": "AI Engineer 2024 Keynote - What We Learned from a Year of LLMs\n\nSpecial double-feature closing keynote from the 6 author"
         },
         {
@@ -764,19 +763,20 @@
         "Rahul Agarwal",
         "Lilian Weng",
         "Paolo Perrone",
+        "Louis-François Bouchard",
         "Mitko Vasilev",
         "Alex Wang",
-        "Andrej Karpathy",
-        "Charly Wargnier"
+        "Charly Wargnier",
+        "Andrej Karpathy"
       ],
       "relevant_tools": [
-        "LangChain Deep Agents",
-        "Obsidian/Markdown wikis for knowledge indexing",
-        "Ontology/semantic triple stores for contextual data",
-        "Telemetry and distributed tracing for multi-agent observability",
-        "RAG systems (though Karpathy suggests simpler alternatives may suffice)"
+        "LangChain (agent orchestration framework)",
+        "Deep Agents (MIT-licensed multi-agent harness with planning and filesystem access)",
+        "Obsidian Markdown + LLM indexing (self-improving knowledge base pattern)",
+        "Palantir's 12-layer agentic stack (reference architecture for production)",
+        "Telemetry/monitoring systems for distributed agent coordination"
       ],
-      "recommendation_snippet": "Implement a three-tier memory architecture: (1) Short-term memory for real-time conversation context using token-aware buffers, (2) Long-term memory via semantic knowledge bases or ontologies for pers",
+      "recommendation_snippet": "Implement a tiered memory architecture combining short-term context buffers (for real-time conversations), persistent long-term storage (for knowledge retention), and semantic indexing via an ontology",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -806,17 +806,18 @@
       "top_relevance": null,
       "confidence": "medium",
       "personas_cited": [
+        "Eugene Yan",
         "Aishwarya Srinivasan",
         "Chip Huyen",
-        "Eugene Yan",
         "Utkarsh Bajaj"
       ],
       "relevant_tools": [
-        "llmfit (hardware analysis for model selection and context window matching)",
-        "Evaluation frameworks grounded in scientific method (mentioned by Chip Huyen and Eugene Yan)",
-        "KV cache optimization techniques (for managing inference costs across both approaches)"
+        "Task-specific LLM evaluators for classification, summarization, and translation",
+        "Retrieval pipeline optimization (chunking, embedding selection)",
+        "llmfit for hardware-aware model selection and inference cost analysis",
+        "Eval-driven development practices and scientific methodology for testing"
       ],
-      "recommendation_snippet": "Use RAG as your primary domain adaptation strategy for production systems, but supplement it with a disciplined evaluation process rather than relying on fine-tuning alone. RAG provides faster iterati",
+      "recommendation_snippet": "Use RAG as your primary domain adaptation strategy for production systems, supplemented by task-specific evaluation and careful attention to retrieval quality. Fine-tuning should be reserved for cases",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -855,13 +856,14 @@
         "Shayan Rais"
       ],
       "relevant_tools": [
-        "Claude Code (native agentic platform with multi-agent orchestration)",
-        "claude-code-best-practices repository (117k+ GitHub stars with 13 agents, 56 skills, 32 commands)",
-        "LangChain Deep Agents (open-source, model-agnostic alternative)",
-        "Cursor IDE, OpenCode, Codex CLI (compatible execution environments)",
-        "MCP Servers: Context7, Playwright, DeepWiki (production-validated)"
+        "Claude Code (primary agentic coding platform)",
+        "claude-code-best-practices repository",
+        "LangChain Deep Agents (open-source alternative)",
+        "Cursor IDE (compatible integration point)",
+        "MCP servers: Context7, Playwright, DeepWiki",
+        "Git Worktrees (parallel development management)"
       ],
-      "recommendation_snippet": "For agentic coding workflows in 2025, Claude Code emerges as the market leader with battle-tested multi-agent orchestration capabilities, supplemented by open-source best-practice repositories (claude",
+      "recommendation_snippet": "For agentic coding workflows in 2025, adopt Claude Code as your primary agent framework, supplemented by open-source best-practice repositories (particularly the claude-code-best-practices repo with 1",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -900,20 +902,19 @@
       "confidence": "high",
       "personas_cited": [
         "Cole Medin",
-        "Chip Huyen",
         "Mitko Vasilev",
+        "Chip Huyen",
         "Alex Wang",
-        "Paolo Perrone",
-        "Stanislav Beliaev"
+        "Paolo Perrone"
       ],
       "relevant_tools": [
         "Adversarial Dev harness (GAN-inspired three-agent pattern)",
         "Claude Agent SDK / Codex SDK",
         "Pydantic AI",
-        "MCP servers (Model Context Protocol)",
-        "n8n for workflow integration"
+        "MCP (Model Context Protocol) servers",
+        "Genetic-Pareto feedback loops (GEPA)"
       ],
-      "recommendation_snippet": "Implement a multi-agent adversarial evaluation architecture that separates planning, building, and evaluation into distinct agents with opposing objectives, rather than relying on self-evaluation. Gro",
+      "recommendation_snippet": "Implement a multi-agent adversarial evaluation architecture that separates planning, building, and evaluation into distinct agents with opposing incentives, rather than relying on self-evaluation. Use",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -948,13 +949,12 @@
       ],
       "relevant_tools": [
         "Claude Agent SDK",
-        "Codex SDK",
         "Pydantic AI",
-        "n8n",
         "OpenAI Agents SDK",
-        "Archon (open-source harness builder)"
+        "Archon (open-source harness builder)",
+        "n8n"
       ],
-      "recommendation_snippet": "Adopt a separation-of-concerns harness architecture that divides agent responsibilities into distinct contexts (planning, building, evaluation) rather than using monolithic single-agent systems. Imple",
+      "recommendation_snippet": "Adopt a separation-of-concerns harness architecture that divides orchestration into distinct specialized agents (planning, execution, evaluation) with clear context boundaries and adversarial feedback",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
