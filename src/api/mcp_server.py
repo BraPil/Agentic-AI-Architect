@@ -483,6 +483,17 @@ def _get_all_items(store) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Persona tools (ask_persona, compare_personas, get_consensus)
+# ---------------------------------------------------------------------------
+
+try:
+    from src.api.persona_tools import register_persona_tools  # noqa: PLC0415
+    register_persona_tools(mcp)
+except Exception as _persona_exc:  # noqa: BLE001
+    logger.warning("Persona tools not loaded: %s", _persona_exc)
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
