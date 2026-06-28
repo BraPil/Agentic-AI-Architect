@@ -96,6 +96,9 @@
 | 2026-06-28 | Docs | CLAUDE.md + docs/ + data/wiki/ | OK | Full documentation pass: CLAUDE.md arch map, work-log (2 entries), decision-log (5 entries), discovery-log (3 entries), lessons-learned (2 entries), SCHEMA.md (project_learning layer), RUNBOOKS.md (3 new runbooks + troubleshooting) |
 | 2026-06-28 | Review | project_learning ingest (Opus adversarial) | OK | Found 5 issues; added source_tier, trend-pollution exclusion, synthesis tiering, _normalize_date, 23 tests; re-ingested (10 add, 47 upsert); corpus 167→179; 243 tests pass |
 | 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 177 items; project learnings now carry source_tier=internal + normalized timestamps |
+| 2026-06-28 | Ingest | repo:BraPil/Organic_Agentic_AutoDev | OK | Ingested bio-mimicry agent ecosystem (stem cells, slime mold, Mouseion runtime, evolution); identified as AAA's P6 learning-loop engine |
+| 2026-06-28 | Design | docs/aaa-organic-learning-loop-v0.md | OK | Integration spec: OAA as living regulated MoltBook for AAA; 3-tier provenance (external/internal/experimental); bounded cycle; Mouseion convergence; scope (B) |
+| 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 185 items (4 new decision + 2 new discovery learnings re-ingested) |
 
 ---
 
