@@ -124,7 +124,12 @@ def _get_top_tools(n: int = 20) -> dict[str, int]:
         items = _get_all_items(store)
         counter: Counter = Counter()
         for item in items:
-            tools_str = item.get("metadata", {}).get("mentioned_tools", "")
+            meta = item.get("metadata", {})
+            # Skip internal project learnings — self-references must not drive
+            # external trend alerts.
+            if meta.get("source_tier") == "internal" or meta.get("post_type") == "project_learning":
+                continue
+            tools_str = meta.get("mentioned_tools", "")
             for t in tools_str.split(","):
                 t = t.strip()
                 if t:

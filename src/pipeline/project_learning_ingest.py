@@ -106,8 +106,15 @@ class LearningEntry:
             "persona_id": "aaa_project",
             "author": "Agentic AI Architect",
             "post_type": "project_learning",
+            # source_tier distinguishes internal institutional memory from external
+            # thought-leader content. Consumers (trend aggregation, synthesis labelling)
+            # must not treat internal priors as external authority. See decision-log 2026-06-28.
+            "source_tier": "internal",
             "learning_type": self.learning_type,
-            "timestamp": self.date,
+            # Store a lexically-comparable full date so the min_date filter
+            # (ChromaDB $gte string comparison) works. ID still uses the raw date
+            # for stability — see _stable_id.
+            "timestamp": _normalize_date(self.date),
             "status": self.status,
             "title": self.title[:200],
             "mentioned_tools": ", ".join(self.mentioned_tools),
@@ -149,9 +156,35 @@ def _extract_tags(text: str, candidates: list[str]) -> list[str]:
 
 
 def _stable_id(learning_type: str, date: str, title: str) -> str:
-    """Deterministic ID: pl-{md5(type:date:title_first_120)}."""
+    """Deterministic ID: pl-{md5(type:date:title_first_120)}.
+
+    Uses the raw date string so IDs stay stable even as _normalize_date evolves;
+    changing the ID scheme would orphan every previously-indexed entry.
+    """
     key = f"{learning_type}:{date}:{title[:120]}"
     return "pl-" + hashlib.md5(key.encode()).hexdigest()[:16]
+
+
+def _normalize_date(raw: str) -> str:
+    """Normalize a log date to a lexically-comparable YYYY-MM-DD string.
+
+    Log entries use coarse dates like "2026-03". ChromaDB's min_date filter does a
+    string $gte comparison, and "2026-03" >= "2026-03-15" is False (shorter string
+    sorts first), which silently drops entries. Padding to a full date fixes this.
+
+    "2026"       -> "2026-01-01"
+    "2026-03"    -> "2026-03-01"
+    "2026-03-14" -> "2026-03-14"  (unchanged)
+    Anything unparseable is returned as-is.
+    """
+    raw = (raw or "").strip()
+    m = re.match(r"^(\d{4})(?:-(\d{1,2}))?(?:-(\d{1,2}))?$", raw)
+    if not m:
+        return raw
+    year = m.group(1)
+    month = (m.group(2) or "1").zfill(2)
+    day = (m.group(3) or "1").zfill(2)
+    return f"{year}-{month}-{day}"
 
 
 # ---------------------------------------------------------------------------

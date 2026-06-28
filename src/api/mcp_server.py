@@ -109,9 +109,16 @@ def _get_anthropic():
 
 
 _SYNTHESIS_PROMPT = """\
-You are an expert AI Architect. Given the following knowledge excerpts retrieved from a corpus \
-of AI thought leaders (LinkedIn posts, YouTube transcripts, GitHub READMEs), synthesize a \
+You are an expert AI Architect. Given the following knowledge excerpts, synthesize a \
 concise, actionable architecture recommendation.
+
+The evidence comes from two distinct tiers, and you must treat them differently:
+- EXTERNAL items are content from AI thought leaders (LinkedIn posts, blogs, YouTube, \
+GitHub, arXiv). These are independent authority.
+- "AAA INTERNAL PRIOR" items are this system's OWN past decisions, discoveries, and lessons. \
+They are institutional memory, NOT external authority. Use them to stay consistent with prior \
+decisions and to avoid repeating known mistakes — but do NOT cite them as if an outside expert \
+said them, and do NOT list them under personas_cited.
 
 PROBLEM STATEMENT:
 {problem}
@@ -124,7 +131,8 @@ Return a JSON object with exactly these keys:
   "recommendation": "2-4 sentence primary recommendation",
   "key_considerations": ["up to 5 specific considerations or tradeoffs"],
   "relevant_tools": ["tools or frameworks mentioned in the evidence that are directly applicable"],
-  "personas_cited": ["names of thought leaders whose content informed this recommendation"],
+  "personas_cited": ["names of EXTERNAL thought leaders only — never 'Agentic AI Architect'"],
+  "internal_priors_applied": ["brief note of any AAA INTERNAL PRIOR items that shaped this answer"],
   "confidence": "high | medium | low",
   "confidence_reason": "one sentence"
 }}
@@ -141,12 +149,17 @@ def _synthesize(problem: str, hits: list[dict]) -> dict:
     evidence_lines = []
     for i, h in enumerate(hits, 1):
         meta = h.get("metadata", {})
-        author = meta.get("author", meta.get("persona_id", "unknown"))
         post_type = meta.get("post_type", "")
         score = h.get("score", 0)
         doc_snippet = h.get("document", "")[:600]
+        if meta.get("source_tier") == "internal" or post_type == "project_learning":
+            lt = meta.get("learning_type", "note")
+            label = f"AAA INTERNAL PRIOR ({lt})"
+        else:
+            author = meta.get("author", meta.get("persona_id", "unknown"))
+            label = f"{author} ({post_type})"
         evidence_lines.append(
-            f"[{i}] {author} ({post_type}, relevance={score:.2f}):\n{doc_snippet}"
+            f"[{i}] {label}, relevance={score:.2f}:\n{doc_snippet}"
         )
 
     prompt = _SYNTHESIS_PROMPT.format(
@@ -177,11 +190,19 @@ def _fallback_synthesis(problem: str, hits: list[dict]) -> dict:
     """Return a structured fallback when Claude is unavailable."""
     tools: list[str] = []
     personas: list[str] = []
+    internal_priors: list[str] = []
     for h in hits:
         meta = h.get("metadata", {})
-        author = meta.get("author", "")
-        if author:
-            personas.append(author)
+        is_internal = (meta.get("source_tier") == "internal"
+                       or meta.get("post_type") == "project_learning")
+        if is_internal:
+            # Internal priors are institutional memory, not external authority.
+            title = meta.get("title", "") or h.get("document", "")[:80]
+            internal_priors.append(title[:80])
+        else:
+            author = meta.get("author", "")
+            if author:
+                personas.append(author)
         for t in meta.get("mentioned_tools", "").split(","):
             t = t.strip()
             if t:
@@ -204,6 +225,7 @@ def _fallback_synthesis(problem: str, hits: list[dict]) -> dict:
         ],
         "relevant_tools": top_tools,
         "personas_cited": top_personas,
+        "internal_priors_applied": list(dict.fromkeys(internal_priors))[:5],
         "confidence": "low",
         "confidence_reason": "No LLM synthesis available — raw retrieval only.",
     }
@@ -428,6 +450,18 @@ def get_trending_tools(
 
     if post_type.strip():
         items = [i for i in items if i.get("metadata", {}).get("post_type") == post_type.strip()]
+
+    # Exclude AAA's own internal project learnings from the community trend signal —
+    # they are self-references, not external discourse. Only include them if the caller
+    # explicitly asks (via persona=aaa_project or post_type=project_learning).
+    explicitly_internal = (post_type.strip() == "project_learning"
+                           or persona.strip() == "aaa_project")
+    if not explicitly_internal:
+        items = [
+            i for i in items
+            if i.get("metadata", {}).get("source_tier") != "internal"
+            and i.get("metadata", {}).get("post_type") != "project_learning"
+        ]
 
     tool_counter: Counter = Counter()
     tool_personas: dict[str, set] = {}

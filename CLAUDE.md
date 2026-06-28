@@ -239,7 +239,7 @@ Phase 7: Production Hardening ⬜ NOT STARTED
 - P1.6 Initial evaluation set, executable scoring, and persisted evaluation history ✅
 - P1.7 Explicit source weighting, enterprise overlay fields, and segment-aware evaluation ✅
 - P1.8 Curated-source ingest improvements, including user-provided LinkedIn PDF ingest ✅
-- P1.9 Project learning feedback loop: decision/discovery/lesson logs indexed into ChromaDB ✅
+- P1.9 Internal project memory searchable: decision/discovery/lesson logs indexed into ChromaDB (retrieval prerequisite; true outcome-feedback learning is P6) ✅
 
 Important clarification:
 

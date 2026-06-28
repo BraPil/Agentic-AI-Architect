@@ -91,9 +91,11 @@
 | 2026-06-28 | Design | docs/templates/claude-md/ | OK | World-class CLAUDE.md template ecosystem; 16 files; Board of Governors adversarial design session |
 | 2026-06-28 | WikiPage | pages/pattern_claude_md_ecosystem.md | OK | AI Engineering OS pattern; Architectural Constitution; initialization survey; companion doc system |
 | 2026-06-28 | UpdateIndex | index.md | OK | Added pattern_claude_md_ecosystem; total items 261 |
-| 2026-06-28 | Ingest | project_learnings (decision/discovery/lesson) | OK | 47 entries from 3 log files indexed into ChromaDB; corpus 120→167; feedback loop closed |
+| 2026-06-28 | Ingest | project_learnings (decision/discovery/lesson) | OK | Internal logs indexed into ChromaDB (retrieval over internal memory, not outcome-feedback learning) |
 | 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 167 items (120 external + 47 project learnings) |
 | 2026-06-28 | Docs | CLAUDE.md + docs/ + data/wiki/ | OK | Full documentation pass: CLAUDE.md arch map, work-log (2 entries), decision-log (5 entries), discovery-log (3 entries), lessons-learned (2 entries), SCHEMA.md (project_learning layer), RUNBOOKS.md (3 new runbooks + troubleshooting) |
+| 2026-06-28 | Review | project_learning ingest (Opus adversarial) | OK | Found 5 issues; added source_tier, trend-pollution exclusion, synthesis tiering, _normalize_date, 23 tests; re-ingested (10 add, 47 upsert); corpus 167→179; 243 tests pass |
+| 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 177 items; project learnings now carry source_tier=internal + normalized timestamps |
 
 ---
 
