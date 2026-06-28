@@ -2,7 +2,7 @@
 
 > Append-only ingest and update log. Never delete entries. Dates are ISO 8601.
 > Use for audit trail, git history, and automated parsing (unix-tool compatible).
-> Last entry: 2026-06-28
+> Last entry: 2026-06-28 (pattern_claude_md_ecosystem added)
 
 ---
 
@@ -88,6 +88,9 @@
 | 2026-06-28 | Maintenance | wiki/ | OK | Lint clean: 0 contradictions, 0 orphans, 0 dead links |
 | 2026-06-28 | Feature | scripts/run_mcp_server_sse.sh | OK | HTTP/SSE transport for remote MCP access |
 | 2026-06-28 | Docs | docs/aaa_alarmv3_strategy_2026-04-20.md | OK | Strategy document committed to repo |
+| 2026-06-28 | Design | docs/templates/claude-md/ | OK | World-class CLAUDE.md template ecosystem; 16 files; Board of Governors adversarial design session |
+| 2026-06-28 | WikiPage | pages/pattern_claude_md_ecosystem.md | OK | AI Engineering OS pattern; Architectural Constitution; initialization survey; companion doc system |
+| 2026-06-28 | UpdateIndex | index.md | OK | Added pattern_claude_md_ecosystem; total items 261 |
 
 ---
 
@@ -95,7 +98,7 @@
 
 | Metric | Value | Date |
 |--------|-------|------|
-| **Total entries ingested** | 260 | 2026-06-28 |
+| **Total entries ingested** | 261 | 2026-06-28 |
 | **Personas indexed** | 56 | 2026-06-28 |
 | **Raw sources** | 180+ files | 2026-06-28 |
 | **Wiki pages** | 50+ curated | 2026-06-28 |

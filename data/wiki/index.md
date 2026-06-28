@@ -3,8 +3,8 @@
 > Content catalog for the Agentic AI Architect knowledge wiki.  
 > Three layers: raw/ (source artifacts) → pages/ (curated synthesis) → schema/ (typed extracts).  
 > Operations: Ingest, Query, Lint.  
-> **Last rebuilt**: 2026-06-28  
-> **Total items**: 260 indexed across 56 personas  
+> **Last rebuilt**: 2026-06-28 (updated 2026-06-28)
+> **Total items**: 261 indexed across 56 personas
 > **Phases referenced**: P0–P5 completed; P6–P7 planned
 
 ---
@@ -68,6 +68,7 @@ Vector store: ChromaDB at `data/linkedin_store/` (12.4 MB).
 | [pattern_dark_factory](pages/pattern_dark_factory.md) | Pattern | Cole Medin's dark-factory experiment framework | reviewed |
 | [pattern_autoresearch_loop](pages/pattern_autoresearch_loop.md) | Pattern | Andrej Karpathy's autonomous research orchestration | draft |
 | [pattern_archon_harness](pages/pattern_archon_harness.md) | Pattern | Cole Medin's Archon multi-agent orchestration | draft |
+| [pattern_claude_md_ecosystem](pages/pattern_claude_md_ecosystem.md) | Pattern | AI Engineering OS — CLAUDE.md template with Architectural Constitution, companion docs, and initialization survey | reviewed |
 | [concept_orchestration](pages/concept_orchestration.md) | Concept | How agents coordinate work and share state | draft |
 | [concept_prompt_injection](pages/concept_prompt_injection.md) | Concept | Prompt injection defense and sanitization | draft |
 | [concept_evaluation](pages/concept_evaluation.md) | Concept | LLM eval frameworks and ground-truth scoring | reviewed |
