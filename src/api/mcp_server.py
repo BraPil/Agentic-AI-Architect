@@ -152,9 +152,14 @@ def _synthesize(problem: str, hits: list[dict]) -> dict:
         post_type = meta.get("post_type", "")
         score = h.get("score", 0)
         doc_snippet = h.get("document", "")[:600]
-        if meta.get("source_tier") == "internal" or post_type == "project_learning":
+        tier = meta.get("source_tier", "")
+        if tier == "internal" or post_type == "project_learning":
             lt = meta.get("learning_type", "note")
             label = f"AAA INTERNAL PRIOR ({lt})"
+        elif tier == "experimental":
+            label = "EXPERIMENTAL (unpromoted agent artifact — treat as a hypothesis, not authority)"
+        elif tier == "grounded":
+            label = "AAA GROUNDED (human-promoted agent artifact)"
         else:
             author = meta.get("author", meta.get("persona_id", "unknown"))
             label = f"{author} ({post_type})"
@@ -193,10 +198,11 @@ def _fallback_synthesis(problem: str, hits: list[dict]) -> dict:
     internal_priors: list[str] = []
     for h in hits:
         meta = h.get("metadata", {})
-        is_internal = (meta.get("source_tier") == "internal"
-                       or meta.get("post_type") == "project_learning")
-        if is_internal:
-            # Internal priors are institutional memory, not external authority.
+        # Only external content counts as a cited persona. Internal priors and
+        # agent-generated artifacts (experimental/grounded) are never external authority.
+        non_external = (meta.get("source_tier") in ("internal", "experimental", "grounded")
+                        or meta.get("post_type") in ("project_learning", "learning_artifact"))
+        if non_external:
             title = meta.get("title", "") or h.get("document", "")[:80]
             internal_priors.append(title[:80])
         else:
@@ -255,6 +261,7 @@ def search_knowledge(
     persona: str = "",
     n_results: int = _DEFAULT_N,
     min_date: str = "",
+    include_experimental: bool = False,
 ) -> str:
     """Search the AI architecture knowledge base using semantic similarity.
 
@@ -267,6 +274,9 @@ def search_knowledge(
         n_results: Number of results to return (1–25, default 8).
         min_date: Optional. Only return content published on or after this date.
                   Format: YYYY-MM-DD (e.g. "2025-01-01"). Leave empty for all dates.
+        include_experimental: Include unpromoted agent-generated artifacts (the
+                  quarantined `experimental` tier). Default False — these are NOT
+                  trusted knowledge and must be reviewed via the promotion tools first.
 
     Returns:
         JSON array of matching knowledge items, each with author, content snippet,
@@ -274,6 +284,8 @@ def search_knowledge(
     """
     n_results = max(1, min(n_results, _MAX_N))
     store = _get_store()
+    # Over-fetch when quarantining so post-filtering doesn't starve the result set.
+    fetch_n = n_results if include_experimental else min(_MAX_N, n_results + 10)
 
     # Build optional date filter for ChromaDB where clause
     date_filter: dict | None = None
@@ -297,7 +309,7 @@ def search_knowledge(
             total = store._collection.count()
             raw = store._collection.query(
                 query_texts=[query],
-                n_results=min(n_results, max(1, total)),
+                n_results=min(fetch_n, max(1, total)),
                 where=where,
                 include=["documents", "metadatas", "distances"],
             )
@@ -312,13 +324,19 @@ def search_knowledge(
             ]
         except Exception as exc:  # noqa: BLE001
             logger.warning("Date-filtered search failed (%s) — falling back to unfiltered", exc)
-            hits = store.search(query=query, n_results=n_results, persona_id=persona_filter_for_store)
+            hits = store.search(query=query, n_results=fetch_n, persona_id=persona_filter_for_store)
     else:
         hits = store.search(
             query=query,
-            n_results=n_results,
+            n_results=fetch_n,
             persona_id=persona_filter_for_store,
         )
+
+    # Quarantine: drop unpromoted agent-generated artifacts unless explicitly requested.
+    if not include_experimental:
+        hits = [h for h in hits
+                if h.get("metadata", {}).get("source_tier") != "experimental"]
+    hits = hits[:n_results]
 
     results = []
     for h in hits:
@@ -451,16 +469,16 @@ def get_trending_tools(
     if post_type.strip():
         items = [i for i in items if i.get("metadata", {}).get("post_type") == post_type.strip()]
 
-    # Exclude AAA's own internal project learnings from the community trend signal —
-    # they are self-references, not external discourse. Only include them if the caller
-    # explicitly asks (via persona=aaa_project or post_type=project_learning).
-    explicitly_internal = (post_type.strip() == "project_learning"
-                           or persona.strip() == "aaa_project")
+    # Community trend signal must reflect EXTERNAL discourse only. Exclude AAA's own
+    # internal project learnings AND agent-generated artifacts (experimental/grounded) —
+    # they are self-references, not community signal. Include only if explicitly requested.
+    explicitly_internal = (post_type.strip() in ("project_learning", "learning_artifact")
+                           or persona.strip() in ("aaa_project", "oaa_agent"))
     if not explicitly_internal:
         items = [
             i for i in items
-            if i.get("metadata", {}).get("source_tier") != "internal"
-            and i.get("metadata", {}).get("post_type") != "project_learning"
+            if i.get("metadata", {}).get("source_tier") not in ("internal", "experimental", "grounded")
+            and i.get("metadata", {}).get("post_type") not in ("project_learning", "learning_artifact")
         ]
 
     tool_counter: Counter = Counter()
@@ -525,6 +543,12 @@ try:
     register_persona_tools(mcp)
 except Exception as _persona_exc:  # noqa: BLE001
     logger.warning("Persona tools not loaded: %s", _persona_exc)
+
+try:
+    from src.api.learning_tools import register_learning_tools  # noqa: PLC0415
+    register_learning_tools(mcp)
+except Exception as _learning_exc:  # noqa: BLE001
+    logger.warning("Learning tools not loaded: %s", _learning_exc)
 
 
 # ---------------------------------------------------------------------------

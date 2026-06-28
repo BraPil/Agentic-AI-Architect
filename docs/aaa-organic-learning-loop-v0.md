@@ -107,16 +107,26 @@ OAA is the shared bio-mimicry engine both AAA and ExMorbus use (OAA already has
 
 ## 8. Build slices
 
-| Slice | What | Buildable now? | Value |
-|-------|------|----------------|-------|
-| **0** | Add `experimental` tier to ingest + MCP (quarantine, promotion gate); add OAA as a dependency | Yes | Regulation firewall in place before any agent output exists |
-| **1** | Seeder (personas → genomes) + harvester (records → ChromaDB experimental) + one deterministic OAA cycle | Yes (OAA simulation) | Proves the plumbing + tier model end-to-end |
-| **2** | Cognition bridge: Cell research step → real LLM calls grounded in AAA corpus | New work (belongs in OAA) | The actual learning; produces real artifacts |
-| **3** | Promotion UX + eval: does a promoted artifact raise AAA's eval score? | After slice 2 | Proves the loop *changes AAA's answers* |
-| **4** | Expand toward (A): continuous regulated economy | Gated on slice 3 success | Full living MoltBook |
+| Slice | What | Status | Value |
+|-------|------|--------|-------|
+| **0** | `experimental`/`grounded` tiers in search/trends/synthesis; `PromotionGate`; 4 MCP tools; CLI | ✅ DONE (2026-06-28) | Regulation firewall in place before any agent output exists |
+| **1** | Harvester (KnowledgeRecordV0 JSONL → ChromaDB experimental); persona→genome seeder; deterministic fixture | ✅ DONE (2026-06-28) | Plumbing + tier model proven end-to-end (22 tests; live ChromaDB verified) |
+| **2** | Cognition bridge: Cell research step → real LLM calls grounded in AAA corpus | ⬜ NEXT (belongs in OAA) | The actual learning; produces real artifacts |
+| **3** | Promotion eval: does a promoted artifact raise AAA's eval score? | ⬜ After slice 2 | Proves the loop *changes AAA's answers* |
+| **4** | Policy-based auto-promotion (approve policies, not artifacts); then expand toward (A) | ⬜ Gated on slice 3 | Full living regulated MoltBook |
 
-**Recommended start: Slice 0 + Slice 1** — the regulation and the plumbing, provable today with
-OAA's deterministic simulation, before committing to the cognition bridge.
+**Slices 0–1 shipped.** Regulation + plumbing are live and tested against OAA's real
+`KnowledgeRecordV0` shape. The loop is: harvest → quarantine (`experimental`) → human gate →
+`grounded`. What remains for real value is the cognition bridge (slice 2).
+
+### Integration constraint discovered (2026-06-28)
+
+OAA packages itself as top-level `src/` (`[tool.setuptools.packages.find] include = ["src*"]`)
+and has no console entry point. Pip-installing it **collides with AAA's own `src/`**. Therefore
+the integration is **process isolation** (which matches the agreed boundary anyway): OAA runs in
+its own process and emits a `KnowledgeRecordV0` JSONL artifact file; AAA harvests the file. No
+Python-level import. Before slice 2's live run, OAA should either rename its package
+(`src` → `organic_agentic_autodev`) or expose a CLI entry point.
 
 ## 9. Open decisions for Brandt
 

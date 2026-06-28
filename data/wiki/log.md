@@ -99,6 +99,7 @@
 | 2026-06-28 | Ingest | repo:BraPil/Organic_Agentic_AutoDev | OK | Ingested bio-mimicry agent ecosystem (stem cells, slime mold, Mouseion runtime, evolution); identified as AAA's P6 learning-loop engine |
 | 2026-06-28 | Design | docs/aaa-organic-learning-loop-v0.md | OK | Integration spec: OAA as living regulated MoltBook for AAA; 3-tier provenance (external/internal/experimental); bounded cycle; Mouseion convergence; scope (B) |
 | 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 185 items (4 new decision + 2 new discovery learnings re-ingested) |
+| 2026-06-28 | Feature | src/learning/ (slices 0–1) | OK | Regulated OAA learning bridge: experimental/grounded tiers, PromotionGate, harvester, seeder, 4 MCP tools, CLI; 265 tests pass; live ChromaDB verified |
 
 ---
 

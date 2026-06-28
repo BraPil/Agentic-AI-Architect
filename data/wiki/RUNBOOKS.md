@@ -147,6 +147,40 @@ for h in hits:
 "
 ```
 
+### Learning Loop — Harvest & Promotion (OAA artifacts)
+
+The regulated bridge to Organic Agentic AutoDev (OAA). OAA runs as its own process and emits a
+`KnowledgeRecordV0` JSONL file; AAA harvests it into the quarantined `experimental` tier, and a
+human promotes good artifacts to `grounded`. See `docs/aaa-organic-learning-loop-v0.md`.
+
+```bash
+# Harvest OAA artifacts into ChromaDB (experimental tier — quarantined)
+python3 -c "
+import sys; sys.path.insert(0,'.')
+from src.pipeline.linkedin_persona_store import LinkedInPersonaStore
+from src.learning.harvester import HarvestPipeline
+s=LinkedInPersonaStore(); s.initialize()
+print(HarvestPipeline(s._collection).run('path/to/oaa_artifacts.jsonl'))
+"
+
+# Review candidates awaiting promotion (highest confidence first)
+python3 scripts/promote_learnings.py --list
+python3 scripts/promote_learnings.py --list --min-confidence 0.7
+
+# Promote / reject / demote
+python3 scripts/promote_learnings.py --promote la-kr_001 --by brandt
+python3 scripts/promote_learnings.py --reject  la-kr_002 --reason "unverified"
+python3 scripts/promote_learnings.py --demote  la-kr_001 --reason "contradicted later"
+
+# Calibrate a future auto-promotion policy without writing anything
+python3 scripts/promote_learnings.py --dry-run --min-confidence 0.85
+```
+
+Via MCP (primary surface): `list_promotion_candidates`, `promote_artifact`, `reject_artifact`,
+`demote_artifact`. Quarantine guarantees: experimental artifacts never appear in `search_knowledge`
+(unless `include_experimental=true`), never count in `get_trending_tools`, never cited as a persona.
+Audit trail: `data/learning_promotions.jsonl`.
+
 ### Corpus Refresh
 
 Runs all ingest steps in sequence: project learnings → blog posts → arXiv papers → snapshot export.
