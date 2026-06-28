@@ -52,7 +52,7 @@ def register_persona_tools(mcp) -> None:
         Args:
             persona_id: Persona slug, e.g. "andrej-karpathy", "cole-medin",
                         "chip-huyen", "simon-willison", "lilian-weng".
-                        Use get_trending_tools or /v1/personas to list available slugs.
+                        Call get_trending_tools (persona="") to discover all available slugs.
             question: What you want to know — any AI architecture or tools question.
             n_sources: Items to retrieve before synthesis (1–25, default 8).
 
@@ -109,7 +109,7 @@ def register_persona_tools(mcp) -> None:
             question: The question to compare perspectives on.
             personas: Comma-separated persona slugs to compare, e.g.
                       "andrej-karpathy,chip-huyen,simon-willison".
-                      Defaults to a curated set of 4 well-indexed personas.
+                      Defaults to andrej-karpathy, cole-medin, chip-huyen, simon-willison.
             n_sources: Items per persona before synthesis (1–25, default 6).
 
         Returns:
