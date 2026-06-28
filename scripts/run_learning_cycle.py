@@ -67,7 +67,10 @@ def main() -> None:
                              "organic_agentic_autodev package.")
     parser.add_argument("--personas", default="", help="Comma-separated persona ids (default: core set)")
     parser.add_argument("--top-k", type=int, default=8, help="Grounding snippets to retrieve")
-    parser.add_argument("--model", default="claude-haiku-4-5-20251001", help="LLM model for cognition")
+    # Default to Sonnet: learning artifacts get promoted into the permanent corpus,
+    # so artifact quality matters more than per-run cost. Override with --model for
+    # cheap dry runs (haiku) or maximum quality (opus).
+    parser.add_argument("--model", default="claude-sonnet-4-6", help="LLM model for cognition")
     parser.add_argument("--no-harvest", action="store_true", help="Run the cycle but skip harvesting")
     args = parser.parse_args()
 
