@@ -11,13 +11,26 @@ This document defines the structure, conventions, and operational workflows for 
 
 The wiki is a **living, curated git repository of markdown files**. It stores everything the AI Architect system knows: personas, frameworks, trends, tools, architectural patterns, decisions, and operations.
 
-### Three Layers
+### Three Layers (External Knowledge)
 
 | Layer | What | Why | Who Updates |
 |-------|------|-----|-------------|
 | **Raw** (`raw/`) | Immutable source documents | Source of truth; never modified | Ingestion pipeline |
 | **Pages** (`pages/`) | Synthesized, curated markdown | Human-digestible knowledge | Human reviewers + LLM synthesis |
 | **Schema** (`schema/`) | Typed JSON extracts | Machine-readable queries | LLM extraction + human validation |
+
+### Fourth Layer (Internal Knowledge — added 2026-06-28)
+
+| Layer | What | Why | Who Updates |
+|-------|------|-----|-------------|
+| **Project learnings** (`docs/*-log.md` → ChromaDB) | Decisions, discoveries, lessons from real AAA builds | Closes the feedback loop: internal knowledge becomes searchable alongside external | `scripts/ingest_project_learnings.py` (step 1 of `refresh_corpus.py`) |
+
+**Post type**: `project_learning`  
+**Sub-types** (`learning_type` metadata field): `decision` | `discovery` | `lesson`  
+**Persona**: `aaa_project`  
+**Source files**: `docs/decision-log.md`, `docs/discovery-log.md`, `docs/lessons-learned-log.md`  
+**ID scheme**: `pl-{md5(type:date:title[:120])[:16]}`  
+**Update behavior**: upsert — re-run ingest after editing a log entry to refresh its embedding
 
 ### Core Principle
 

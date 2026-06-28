@@ -48,7 +48,8 @@ src/
 │   └── vector_store.py        ← FAISS / sentence-transformers / TF-IDF
 ├── pipeline/        ← data flow components
 │   ├── ingestion.py           ← URL → KnowledgeBase end-to-end
-│   └── processing.py          ← clean, chunk, deduplicate content
+│   ├── processing.py          ← clean, chunk, deduplicate content
+│   └── project_learning_ingest.py ← indexes decision/discovery/lesson logs into ChromaDB
 └── utils/
     └── helpers.py             ← sanitize_text, chunk_text, retry_with_backoff, rate_limit
 
@@ -61,7 +62,8 @@ docs/
 ├── phase-3-trends.md             ← scored trend registry
 ├── phase-4-tools.md              ← tools landscape
 ├── phase-5-implementation-plan.md← phased dev roadmap + branch structure
-└── exmorbus-v3-integration.md    ← ExMorbus V3 integration: MoltBook synthesis, API contracts, vision
+├── exmorbus-v3-integration.md    ← ExMorbus V3 integration: MoltBook synthesis, API contracts, vision
+└── templates/claude-md/          ← world-class CLAUDE.md template ecosystem (16 files)
 
 tests/               ← mirrors src/ structure
 ```
@@ -233,10 +235,11 @@ Phase 7: Production Hardening ⬜ NOT STARTED
 - P1.2 Content Processing Pipeline: PDF parsing (PyMuPDF + LlamaParse)
 - P1.3 Research Agent: LLM-powered extraction (requires `llm_client` config)
 - P1.4 Ingestion Pipeline: Queue-based processing with priority
-- P1.5 Canonical answer contract and typed external schemas
-- P1.6 Initial evaluation set, executable scoring, and persisted evaluation history
-- P1.7 Explicit source weighting, enterprise overlay fields, and segment-aware evaluation
-- P1.8 Curated-source ingest improvements, including user-provided LinkedIn PDF ingest
+- P1.5 Canonical answer contract and typed external schemas ✅
+- P1.6 Initial evaluation set, executable scoring, and persisted evaluation history ✅
+- P1.7 Explicit source weighting, enterprise overlay fields, and segment-aware evaluation ✅
+- P1.8 Curated-source ingest improvements, including user-provided LinkedIn PDF ingest ✅
+- P1.9 Project learning feedback loop: decision/discovery/lesson logs indexed into ChromaDB ✅
 
 Important clarification:
 

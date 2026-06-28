@@ -1,6 +1,6 @@
 # AAA Operational Runbooks
 
-**Last Updated**: 2026-06-28
+**Last Updated**: 2026-06-28 (project learning ingest added; corpus 167 items)
 
 Quick reference guides for deploying, monitoring, and maintaining the Agentic AI Architect system in production.
 
@@ -81,9 +81,13 @@ Health check: `curl http://localhost:8000/v1/health`
 python3 -c "
 from src.api.mcp_server import _get_store
 store = _get_store()
-print(f'ChromaDB items: {store._collection.count()}')
+total = store._collection.count()
+print(f'ChromaDB items: {total}')  # Expected: 167+ (120 external + 47 project learnings)
 personas = store.get_personas()
 print(f'Personas indexed: {len(personas)}')
+# Verify project learnings are present
+pl = store._collection.get(where={'post_type': 'project_learning'}, include=[])
+print(f'Project learning entries: {len(pl[\"ids\"])}')  # Expected: 47+
 "
 
 # 2. REST API status
@@ -93,10 +97,62 @@ curl -s http://localhost:8000/v1/health | jq .
 tail -20 data/mcp_usage.jsonl
 ```
 
-### Corpus Refresh
+### Project Learning Ingest
+
+Run whenever `docs/decision-log.md`, `docs/discovery-log.md`, or `docs/lessons-learned-log.md`
+is updated with new entries. Also runs automatically as step 1 of every `refresh_corpus.py` run.
 
 ```bash
-# Manual refresh (polls sources, ingests new content)
+# Ingest all three logs (18 decisions, 20 discoveries, 9 lessons as of 2026-06-28)
+python3 scripts/ingest_project_learnings.py
+
+# Dry run — parse and count only, no ChromaDB writes
+python3 scripts/ingest_project_learnings.py --dry-run
+
+# One log only
+python3 scripts/ingest_project_learnings.py --type decision
+python3 scripts/ingest_project_learnings.py --type discovery
+python3 scripts/ingest_project_learnings.py --type lesson
+
+# After ingest, export snapshot so changes persist across restarts
+python3 scripts/export_chromadb_snapshot.py
+```
+
+**Verify results:**
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '.')
+from src.pipeline.linkedin_persona_store import LinkedInPersonaStore
+store = LinkedInPersonaStore(); store.initialize()
+result = store._collection.get(where={'post_type': 'project_learning'}, include=['metadatas'])
+by_type = {}
+for m in result['metadatas']:
+    t = m.get('learning_type', 'unknown')
+    by_type[t] = by_type.get(t, 0) + 1
+print('Project learnings indexed:', by_type)
+print('Total corpus:', store._collection.count())
+"
+```
+
+**Test retrieval:**
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '.')
+from src.pipeline.linkedin_persona_store import LinkedInPersonaStore
+store = LinkedInPersonaStore(); store.initialize()
+hits = store.search('what did we learn building this system', n_results=5)
+for h in hits:
+    m = h['metadata']
+    print(f\"[{m.get('post_type','?')}/{m.get('learning_type','')}] {h['score']:.3f}: {h['document'][:100]}\")
+"
+```
+
+### Corpus Refresh
+
+Runs all ingest steps in sequence: project learnings → blog posts → arXiv papers → snapshot export.
+
+```bash
+# Manual refresh (all sources)
 python3 scripts/refresh_corpus.py
 
 # Daemon mode (runs every 6 hours)
@@ -213,6 +269,42 @@ print(f"Found {len(result['ids'])} items for andrej-karpathy")
 # Try a broad search
 hits = store.search(query="AI", n_results=5)
 print(f"Broad search returned {len(hits)} results")
+```
+
+---
+
+### "Project learning entries not appearing in search results"
+
+**Symptom**: Queries about AAA's own decisions/lessons return only external content
+
+**Causes and fixes**:
+
+```bash
+# 1. Check if project learnings are indexed at all
+python3 -c "
+import sys; sys.path.insert(0, '.')
+from src.pipeline.linkedin_persona_store import LinkedInPersonaStore
+store = LinkedInPersonaStore(); store.initialize()
+r = store._collection.get(where={'post_type': 'project_learning'}, include=[])
+print('Project learning entries:', len(r['ids']))
+"
+
+# 2. If 0 — run the ingest
+python3 scripts/ingest_project_learnings.py
+
+# 3. If ChromaDB was restored from snapshot without project learnings, re-ingest
+python3 scripts/restore_chromadb_snapshot.py
+python3 scripts/ingest_project_learnings.py
+python3 scripts/export_chromadb_snapshot.py  # update snapshot
+
+# 4. If entries exist but don't surface — try filtering by post_type directly
+python3 -c "
+import json, sys; sys.path.insert(0, '.')
+from src.api.mcp_server import search_knowledge
+result = json.loads(search_knowledge('deduplication', n_results=10))
+for r in result['results']:
+    print(r['post_type'], r['relevance_score'], r['snippet'][:60])
+"
 ```
 
 ---

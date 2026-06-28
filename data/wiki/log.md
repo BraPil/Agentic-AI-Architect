@@ -93,6 +93,7 @@
 | 2026-06-28 | UpdateIndex | index.md | OK | Added pattern_claude_md_ecosystem; total items 261 |
 | 2026-06-28 | Ingest | project_learnings (decision/discovery/lesson) | OK | 47 entries from 3 log files indexed into ChromaDB; corpus 120→167; feedback loop closed |
 | 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 167 items (120 external + 47 project learnings) |
+| 2026-06-28 | Docs | CLAUDE.md + docs/ + data/wiki/ | OK | Full documentation pass: CLAUDE.md arch map, work-log (2 entries), decision-log (5 entries), discovery-log (3 entries), lessons-learned (2 entries), SCHEMA.md (project_learning layer), RUNBOOKS.md (3 new runbooks + troubleshooting) |
 
 ---
 
