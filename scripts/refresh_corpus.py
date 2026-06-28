@@ -162,17 +162,43 @@ def _detect_and_notify(before: dict[str, int], after: dict[str, int], corpus_siz
         logger.warning("Webhook notification failed: %s", exc)
 
 
+def run_project_learning_ingest(dry_run: bool) -> dict:
+    """Ingest project decision, discovery, and lesson logs into ChromaDB."""
+    logger.info("── Project learning ingest ──────────────────")
+    if dry_run:
+        logger.info("DRY RUN: skipping project learning ingest")
+        return {"status": "skipped", "added": 0}
+    try:
+        from src.pipeline.project_learning_ingest import ProjectLearningIngestPipeline  # noqa: PLC0415
+        pipeline = ProjectLearningIngestPipeline()
+        results = pipeline.run()
+        total_added = sum(r.added for r in results)
+        total_skipped = sum(r.skipped for r in results)
+        for r in results:
+            logger.info(
+                "  %s: %d added, %d updated/skipped, %d failed",
+                r.learning_type, r.added, r.skipped, r.failed,
+            )
+        logger.info("Project learning total: %d new entries added", total_added)
+        return {"status": "ok", "added": total_added, "skipped": total_skipped}
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Project learning ingest failed: %s", exc)
+        return {"status": "error", "error": str(exc), "added": 0}
+
+
 def run_refresh_cycle(api_key: str | None, dry_run: bool) -> dict:
-    """Run one full refresh cycle: blog → arXiv → snapshot."""
+    """Run one full refresh cycle: project learnings → blog → arXiv → snapshot."""
     started_at = datetime.now(timezone.utc).isoformat()
     logger.info("Starting corpus refresh cycle at %s", started_at)
 
     tools_before = _get_top_tools() if not dry_run else {}
 
+    learning_result = run_project_learning_ingest(dry_run)
     blog_result = run_blog_ingest(api_key, dry_run)
     arxiv_result = run_arxiv_ingest(api_key, dry_run)
 
-    total_added = blog_result.get("added", 0) + arxiv_result.get("added", 0)
+    total_added = (learning_result.get("added", 0) + blog_result.get("added", 0)
+                   + arxiv_result.get("added", 0))
 
     snapshot_ok = False
     if total_added > 0 or dry_run:
@@ -193,6 +219,7 @@ def run_refresh_cycle(api_key: str | None, dry_run: bool) -> dict:
         "started_at": started_at,
         "finished_at": datetime.now(timezone.utc).isoformat(),
         "total_added": total_added,
+        "project_learnings": learning_result,
         "blog": blog_result,
         "arxiv": arxiv_result,
         "snapshot_exported": snapshot_ok,
@@ -200,8 +227,9 @@ def run_refresh_cycle(api_key: str | None, dry_run: bool) -> dict:
     }
 
     logger.info(
-        "Refresh complete: %d new items added (blog=%d, arxiv=%d)",
-        total_added, blog_result.get("added", 0), arxiv_result.get("added", 0),
+        "Refresh complete: %d new items added (learnings=%d, blog=%d, arxiv=%d)",
+        total_added, learning_result.get("added", 0),
+        blog_result.get("added", 0), arxiv_result.get("added", 0),
     )
     return result
 
