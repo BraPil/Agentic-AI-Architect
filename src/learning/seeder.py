@@ -64,6 +64,20 @@ _CORE_PERSONA_GENOMES: dict[str, dict[str, Any]] = {
                    "cooperation": 0.65, "persistence": 0.95, "compassion": 0.65},
         "capabilities": ["rigor", "survey_synthesis", "evaluation"],
     },
+    "eugene-yan": {
+        "display_name": "Eugene Yan",
+        "suggested_role": _ROLE_RESEARCHER,
+        "genome": {"curiosity": 0.85, "risk_tolerance": 0.45, "specialisation": 0.75,
+                   "cooperation": 0.75, "persistence": 0.85, "compassion": 0.7},
+        "capabilities": ["applied_ml", "recsys", "evaluation", "practical_patterns"],
+    },
+    "sebastian-ruder": {
+        "display_name": "Sebastian Ruder",
+        "suggested_role": _ROLE_RESEARCHER,
+        "genome": {"curiosity": 0.9, "risk_tolerance": 0.4, "specialisation": 0.85,
+                   "cooperation": 0.7, "persistence": 0.9, "compassion": 0.65},
+        "capabilities": ["nlp_research", "survey", "transfer_learning"],
+    },
     "chip-huyen": {
         "display_name": "Chip Huyen",
         "suggested_role": _ROLE_CRITIC,

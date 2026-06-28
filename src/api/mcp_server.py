@@ -324,12 +324,15 @@ def search_knowledge(
             ]
         except Exception as exc:  # noqa: BLE001
             logger.warning("Date-filtered search failed (%s) — falling back to unfiltered", exc)
-            hits = store.search(query=query, n_results=fetch_n, persona_id=persona_filter_for_store)
+            hits = store.search(query=query, n_results=fetch_n,
+                                persona_id=persona_filter_for_store,
+                                include_experimental=include_experimental)
     else:
         hits = store.search(
             query=query,
             n_results=fetch_n,
             persona_id=persona_filter_for_store,
+            include_experimental=include_experimental,
         )
 
     # Quarantine: drop unpromoted agent-generated artifacts unless explicitly requested.

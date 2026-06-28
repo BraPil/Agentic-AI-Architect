@@ -111,8 +111,8 @@ OAA is the shared bio-mimicry engine both AAA and ExMorbus use (OAA already has
 |-------|------|--------|-------|
 | **0** | `experimental`/`grounded` tiers in search/trends/synthesis; `PromotionGate`; 4 MCP tools; CLI | ✅ DONE (2026-06-28) | Regulation firewall in place before any agent output exists |
 | **1** | Harvester (KnowledgeRecordV0 JSONL → ChromaDB experimental); persona→genome seeder; deterministic fixture | ✅ DONE (2026-06-28) | Plumbing + tier model proven end-to-end (22 tests; live ChromaDB verified) |
-| **2** | Cognition bridge: Cell research step → real LLM calls grounded in AAA corpus | ⬜ NEXT (belongs in OAA) | The actual learning; produces real artifacts |
-| **3** | Promotion eval: does a promoted artifact raise AAA's eval score? | ⬜ After slice 2 | Proves the loop *changes AAA's answers* |
+| **2** | Cognition bridge: Researcher→Critic→Synthesizer cycle, real LLM, grounded in AAA corpus | ✅ DONE (2026-06-28; OAA `src/cognition/`, patch in docs/oaa-patches) | The actual learning; produces real artifacts |
+| **3** | Promotion eval: does a promoted artifact raise AAA's answer relevance? | ✅ PROVEN (2026-06-28): 0.6687 → 0.7771 (+0.108) | The loop *demonstrably changes AAA's answers* |
 | **4** | Policy-based auto-promotion (approve policies, not artifacts); then expand toward (A) | ⬜ Gated on slice 3 | Full living regulated MoltBook |
 
 **Slices 0–1 shipped.** Regulation + plumbing are live and tested against OAA's real

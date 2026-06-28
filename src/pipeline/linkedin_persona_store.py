@@ -207,6 +207,7 @@ class LinkedInPersonaStore:
         persona_id: str | None = None,
         post_type: str | None = None,
         keyword: str | None = None,
+        include_experimental: bool = False,
     ) -> list[dict]:
         """
         Hybrid search combining semantic vector similarity with optional filters.
@@ -217,6 +218,11 @@ class LinkedInPersonaStore:
             persona_id: Restrict to a specific author persona slug.
             post_type:  Restrict to text | image | video | article.
             keyword:    Substring that must appear in the document text.
+            include_experimental: Include unpromoted agent-generated artifacts
+                        (source_tier="experimental"). Default False — these are
+                        quarantined and must be promoted before they count as
+                        knowledge. Enforced HERE at the store layer so every
+                        caller (MCP, grounding, eval) inherits the quarantine.
 
         Returns:
             List of dicts with keys: post_id, document, metadata, score (0–1).
@@ -238,15 +244,19 @@ class LinkedInPersonaStore:
 
         where_doc: dict | None = {"$contains": keyword} if keyword else None
 
+        # Quarantine is enforced by post-filtering (not a $ne where-clause, which in
+        # ChromaDB also drops legacy docs that lack the source_tier field entirely).
+        # Over-fetch so dropping experimental hits doesn't starve the result set.
+        fetch = min(n_results, total) if include_experimental else min(n_results + 15, total)
         results = self._collection.query(
             query_texts=[query],
-            n_results=min(n_results, total),
+            n_results=fetch,
             where=where or None,
             where_document=where_doc,
             include=["documents", "metadatas", "distances"],
         )
 
-        return [
+        hits = [
             {
                 "post_id":  results["ids"][0][i],
                 "document": results["documents"][0][i],
@@ -255,6 +265,9 @@ class LinkedInPersonaStore:
             }
             for i in range(len(results["ids"][0]))
         ]
+        if not include_experimental:
+            hits = [h for h in hits if h["metadata"].get("source_tier") != "experimental"]
+        return hits[:n_results]
 
     def get_personas(self) -> list[dict]:
         """Return all indexed personas sorted by post count."""

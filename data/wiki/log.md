@@ -100,6 +100,8 @@
 | 2026-06-28 | Design | docs/aaa-organic-learning-loop-v0.md | OK | Integration spec: OAA as living regulated MoltBook for AAA; 3-tier provenance (external/internal/experimental); bounded cycle; Mouseion convergence; scope (B) |
 | 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 185 items (4 new decision + 2 new discovery learnings re-ingested) |
 | 2026-06-28 | Feature | src/learning/ (slices 0–1) | OK | Regulated OAA learning bridge: experimental/grounded tiers, PromotionGate, harvester, seeder, 4 MCP tools, CLI; 265 tests pass; live ChromaDB verified |
+| 2026-06-28 | Feature | OAA src/cognition/ + scripts/run_learning_cycle.py (slices 2–3) | OK | Cognition bridge (Researcher→Critic→Synthesizer, real LLM); live cycle proof: promoted artifact raised answer relevance 0.6687→0.7771; store-layer quarantine bug fixed |
+| 2026-06-28 | Query | "agentic knowledge store: heterogeneous content + SQLite→Postgres" | OK | Live learning cycle; 4 artifacts scored 0.64–0.72; 1 promoted to grounded; corpus 185→186 |
 
 ---
 
