@@ -104,6 +104,8 @@
 | 2026-06-28 | Query | "agentic knowledge store: heterogeneous content + SQLite→Postgres" | OK | Live learning cycle; 4 artifacts scored 0.64–0.72; 1 promoted to grounded; corpus 185→186 |
 | 2026-06-28 | Integration | OAA pip-installable (PR #1) + AAA rewired | OK | Packaging collision resolved; verified pip install + no src collision; orchestrator uses installed package |
 | 2026-06-28 | Query | "principles for evaluating an AI knowledge retrieval system" | OK | Cycle vs installed OAA; synthesis 0.703 promoted; answer relevance 0.4617→0.7229; corpus 186→187 |
+| 2026-06-28 | Ingest | blog corpus (Willison/Weng/Huyen/Ruder/Yan) | OK | 115 blog posts re-ingested with Claude enrichment; store 187→302; grounding restored on security/eval/RL topics |
+| 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 302 items (235 external incl. 115 blogs, 65 internal, 2 grounded) |
 
 ---
 
