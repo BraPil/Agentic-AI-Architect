@@ -81,13 +81,14 @@ numpy>=1.26.0
 youtube-transcript-api>=0.6.0
 
 # ── Optional: Organic Agentic AutoDev (OAA) — the P6 learning-loop engine ──
-# NOTE: OAA currently packages itself as top-level `src/`, which COLLIDES with
-# AAA's own `src/`. Do NOT pip-install it into this environment until OAA renames
-# its package (or ships a console entry point). The intended integration is
-# PROCESS ISOLATION: OAA runs in its own venv/process and emits KnowledgeRecordV0
-# artifacts to a JSONL file that AAA harvests (src/learning/harvester.py).
-# See docs/aaa-organic-learning-loop-v0.md §6, §8.
-# organic-agentic-autodev @ git+https://github.com/BraPil/Organic_Agentic_AutoDev.git
+# Packaging collision RESOLVED (OAA PR #1: src-layout as organic_agentic_autodev).
+# OAA is now pip-installable and imports without colliding with AAA's `src/`.
+# Required only to RUN learning cycles (scripts/run_learning_cycle.py); AAA's core
+# query/MCP surface works without it. Integration is still process isolation —
+# AAA invokes it as a subprocess and harvests its KnowledgeRecordV0 artifacts.
+# Pinned to the PR head until merged to main; switch to @main (or a tag) after merge.
+# organic-agentic-autodev @ git+https://github.com/BraPil/Organic_Agentic_AutoDev.git@35e0e01d283ba834eadfe877d7a0c5acf21516c1
+# See docs/aaa-organic-learning-loop-v0.md.
 
 # ── Optional: MLflow experiment tracking ──────────────────────────────────
 # mlflow>=2.13.0

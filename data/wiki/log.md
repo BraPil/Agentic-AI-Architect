@@ -102,6 +102,8 @@
 | 2026-06-28 | Feature | src/learning/ (slices 0–1) | OK | Regulated OAA learning bridge: experimental/grounded tiers, PromotionGate, harvester, seeder, 4 MCP tools, CLI; 265 tests pass; live ChromaDB verified |
 | 2026-06-28 | Feature | OAA src/cognition/ + scripts/run_learning_cycle.py (slices 2–3) | OK | Cognition bridge (Researcher→Critic→Synthesizer, real LLM); live cycle proof: promoted artifact raised answer relevance 0.6687→0.7771; store-layer quarantine bug fixed |
 | 2026-06-28 | Query | "agentic knowledge store: heterogeneous content + SQLite→Postgres" | OK | Live learning cycle; 4 artifacts scored 0.64–0.72; 1 promoted to grounded; corpus 185→186 |
+| 2026-06-28 | Integration | OAA pip-installable (PR #1) + AAA rewired | OK | Packaging collision resolved; verified pip install + no src collision; orchestrator uses installed package |
+| 2026-06-28 | Query | "principles for evaluating an AI knowledge retrieval system" | OK | Cycle vs installed OAA; synthesis 0.703 promoted; answer relevance 0.4617→0.7229; corpus 186→187 |
 
 ---
 

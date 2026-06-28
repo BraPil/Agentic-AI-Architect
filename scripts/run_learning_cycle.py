@@ -61,8 +61,10 @@ def _build_grounding(question: str, top_k: int) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run one AAA learning cycle (seed → OAA → harvest)")
     parser.add_argument("--question", required=True, help="Architecture question for the cycle")
-    parser.add_argument("--oaa-path", default="../Organic_Agentic_AutoDev",
-                        help="Path to the Organic_Agentic_AutoDev checkout")
+    parser.add_argument("--oaa-path", default="",
+                        help="Optional: run from an OAA checkout instead of the installed "
+                             "package (dev override). Default: use the pip-installed "
+                             "organic_agentic_autodev package.")
     parser.add_argument("--personas", default="", help="Comma-separated persona ids (default: core set)")
     parser.add_argument("--top-k", type=int, default=8, help="Grounding snippets to retrieve")
     parser.add_argument("--model", default="claude-haiku-4-5-20251001", help="LLM model for cognition")
@@ -83,16 +85,30 @@ def main() -> None:
     artifacts_path = work / "artifacts.jsonl"
     seed_path.write_text(json.dumps(spec, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    oaa = Path(args.oaa_path).resolve()
-    if not (oaa / "src" / "cognition" / "run_cycle.py").exists():
-        logger.error("OAA cognition runner not found at %s", oaa)
-        sys.exit(1)
+    # OAA runs as its own process (process isolation). Default: the pip-installed
+    # organic_agentic_autodev package. Optional --oaa-path runs from a dev checkout.
+    module = "organic_agentic_autodev.cognition.run_cycle"
+    cwd: str | None = None
+    if args.oaa_path:
+        oaa = Path(args.oaa_path).resolve()
+        if not (oaa / "organic_agentic_autodev" / "cognition" / "run_cycle.py").exists():
+            logger.error("OAA cognition runner not found at %s", oaa)
+            sys.exit(1)
+        cwd = str(oaa)
+    else:
+        try:
+            import organic_agentic_autodev  # noqa: F401, PLC0415
+        except ImportError:
+            logger.error("organic_agentic_autodev is not installed. Either "
+                         "`pip install git+https://github.com/BraPil/Organic_Agentic_AutoDev.git` "
+                         "or pass --oaa-path to a checkout.")
+            sys.exit(1)
 
     logger.info("Running OAA cycle (subprocess, process-isolated)…")
     proc = subprocess.run(
-        [sys.executable, "-m", "src.cognition.run_cycle",
+        [sys.executable, "-m", module,
          "--seed", str(seed_path), "--out", str(artifacts_path), "--model", args.model],
-        cwd=str(oaa), capture_output=True, text=True,
+        cwd=cwd, capture_output=True, text=True,
     )
     if proc.returncode != 0:
         logger.error("OAA cycle failed:\n%s", proc.stderr[-2000:])

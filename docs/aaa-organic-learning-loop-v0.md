@@ -119,14 +119,18 @@ OAA is the shared bio-mimicry engine both AAA and ExMorbus use (OAA already has
 `KnowledgeRecordV0` shape. The loop is: harvest → quarantine (`experimental`) → human gate →
 `grounded`. What remains for real value is the cognition bridge (slice 2).
 
-### Integration constraint discovered (2026-06-28)
+### Integration constraint — RESOLVED (2026-06-28)
 
-OAA packages itself as top-level `src/` (`[tool.setuptools.packages.find] include = ["src*"]`)
-and has no console entry point. Pip-installing it **collides with AAA's own `src/`**. Therefore
-the integration is **process isolation** (which matches the agreed boundary anyway): OAA runs in
-its own process and emits a `KnowledgeRecordV0` JSONL artifact file; AAA harvests the file. No
-Python-level import. Before slice 2's live run, OAA should either rename its package
-(`src` → `organic_agentic_autodev`) or expose a CLI entry point.
+Originally OAA packaged itself as top-level `src/`, colliding with AAA's `src/`. OAA PR #1
+fixed this (src-layout as `organic_agentic_autodev` + console entry point `oaa-learning-cycle`).
+Verified from AAA: `pip install git+…@<PR#1 head>` works, `import organic_agentic_autodev`
+does not collide with AAA's `src/`, and the run-cycle CLI contract is unchanged. AAA now
+invokes OAA as a pip-installed subprocess (process isolation preserved; no local checkout
+needed). `scripts/run_learning_cycle.py` defaults to the installed package; `--oaa-path` is a
+dev override. Requirements pin: PR-head SHA until PR #1 merges, then switch to `@main`/tag.
+
+**Loop re-proven against the installed package**: a fresh cycle's synthesis earned 0.703,
+was promoted, and raised AAA's answer relevance for the question 0.4617 → 0.7229 (+0.261).
 
 ## 9. Open decisions for Brandt
 
