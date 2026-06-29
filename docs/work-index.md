@@ -47,6 +47,7 @@ Current strategy:
 - `docs/source-weighting-model-v2.md`
 - `docs/segment-aware-evaluation-v2.md`
 - `docs/research-training-cycle-v1.md`
+- `docs/p6-outcome-capture-v0.md` — P6 outcome-capture spec (slice 1: record adopted/worked, expose source signal)
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_operator_runbook_v1.md`
 - `docs/orchestration-strategy-spike-v1.md`

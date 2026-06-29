@@ -15,6 +15,11 @@ Provenance tiers (see docs/aaa-organic-learning-loop-v0.md):
     grounded      — agent artifacts promoted by a human (trusted, but not external authority)
 """
 
+from src.learning.outcomes import (
+    OutcomeRecord,
+    RecommendationOutcomeStore,
+    compute_recommendation_id,
+)
 from src.learning.promotion import (
     DEFAULT_CONFIDENCE_THRESHOLD,
     PromotionGate,
@@ -29,4 +34,7 @@ __all__ = [
     "DEFAULT_CONFIDENCE_THRESHOLD",
     "TIER_EXPERIMENTAL",
     "TIER_GROUNDED",
+    "RecommendationOutcomeStore",
+    "OutcomeRecord",
+    "compute_recommendation_id",
 ]

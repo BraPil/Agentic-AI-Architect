@@ -111,6 +111,7 @@
 | 2026-06-29 | Merge | CI weekly refresh (8b4ffb2) ∪ local | OK | CI run had regressed to 334 (dropped persona corpus); resolved as union not clobber → store 417; kept CI's fresh eval |
 | 2026-06-29 | Fix | scripts/refresh_corpus.py | OK | Restore-from-snapshot now runs BEFORE ingest so CI can no longer regress the corpus; +4 tests (test_refresh_corpus.py) |
 | 2026-06-29 | Ingest | data/seeds/karpathy_llm_wiki.md (re-synthesis) | OK | Refreshed pattern_llm_wiki.md to full authoritative gist; codified the index.md (where-we-are) + log.md (what-we-did) tracking discipline |
+| 2026-06-29 | Feature | P6 outcome capture (slice 1) | OK | src/learning/outcomes.py: record recommendation→outcome (adopted/worked), per-source Laplace-smoothed signal; +2 MCP tools, CLI, 14 tests (283 total). Capture+expose only; ranking integration deferred to slice 2 |
 
 ---
 

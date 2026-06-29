@@ -87,6 +87,33 @@ def _log_tool_call(tool: str, params: dict, result_size: int) -> None:
         pass  # Never let logging break a tool call
 
 
+_OUTCOME_LEDGER = _REPO_ROOT / "data" / "recommendation_outcomes.jsonl"
+
+
+def _record_recommendation_event(problem_statement: str, generated_at: str,
+                                 synthesis: dict) -> str:
+    """Stamp + log a recommendation so its outcome can later be tied back.
+
+    Returns the recommendation_id. Best-effort: any failure degrades to returning
+    the id without a ledger entry, never raising into the tool path.
+    """
+    from src.learning.outcomes import (  # noqa: PLC0415
+        RecommendationOutcomeStore, compute_recommendation_id,
+    )
+    rec_id = compute_recommendation_id(problem_statement, generated_at)
+    try:
+        RecommendationOutcomeStore(_OUTCOME_LEDGER).record_recommendation(
+            recommendation_id=rec_id,
+            problem_statement=problem_statement,
+            personas_cited=synthesis.get("personas_cited") or [],
+            tools=synthesis.get("relevant_tools") or [],
+            confidence=str(synthesis.get("confidence", "")),
+        )
+    except Exception:  # noqa: BLE001
+        logger.warning("Failed to log recommendation event %s", rec_id)
+    return rec_id
+
+
 # ---------------------------------------------------------------------------
 # Synthesis helper (Claude Haiku)
 # ---------------------------------------------------------------------------
@@ -425,13 +452,22 @@ def get_architecture_recommendation(
         for h in hits
     ]
 
+    # P6 outcome capture: stamp a stable id and log the recommendation event so an
+    # outcome (adopted? worked?) can later be tied back. Best-effort — must never
+    # break the recommendation itself.
+    generated_at = datetime.now(timezone.utc).isoformat()
+    recommendation_id = _record_recommendation_event(problem_statement, generated_at, synthesis)
+
     payload = json.dumps({
         "schema_version": _SCHEMA_VERSION,
+        "recommendation_id": recommendation_id,
         **synthesis,
         "problem_statement": problem_statement,
         "evidence_count": len(hits),
         "evidence_summary": evidence_summary,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": generated_at,
+        "outcome_hint": "Record what happened with record_recommendation_outcome("
+                        f"'{recommendation_id}', adopted=…, worked=…) to teach AAA.",
     }, indent=2, ensure_ascii=False)
 
     _log_tool_call("get_architecture_recommendation",
