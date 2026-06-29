@@ -178,3 +178,67 @@ def test_record_recommendation_event_stamps_and_logs(tmp_path, monkeypatch):
     # And an outcome can be tied back to the stamped id.
     out = RecommendationOutcomeStore(ledger).record_outcome(rec_id, adopted=True, worked=True)
     assert out.success is True
+
+
+# ---------------------------------------------------------------------------
+# Slice 2 — MCP server outcome re-ranking wiring
+# ---------------------------------------------------------------------------
+
+def _seed_proven_persona(ledger, persona: str, n: int) -> None:
+    store = RecommendationOutcomeStore(ledger)
+    for i in range(n):
+        rid = f"seed-{i}"
+        store.record_recommendation(rid, f"problem {i}", personas_cited=[persona])
+        store.record_outcome(rid, adopted=True, worked=True)
+
+
+def test_apply_outcome_weighting_reranks_once_evidence_clears_gate(tmp_path, monkeypatch):
+    import src.api.mcp_server as srv
+    from src.learning.outcome_weighting import MIN_EVIDENCE_DEFAULT
+
+    ledger = tmp_path / "outcomes.jsonl"
+    monkeypatch.setattr(srv, "_OUTCOME_LEDGER", ledger)
+    monkeypatch.setattr(srv, "_OUTCOME_WEIGHTING_ENABLED", True)
+    _seed_proven_persona(ledger, "Andrej Karpathy", MIN_EVIDENCE_DEFAULT)
+
+    hits = [
+        {"post_id": "a", "score": 0.90, "metadata": {"author": "Someone Else"}},
+        {"post_id": "k", "score": 0.80, "metadata": {"author": "Andrej Karpathy"}},
+    ]
+    reranked, status = srv._apply_outcome_weighting(hits)
+
+    assert status["active"] is True
+    assert status["gated_personas"] == 1
+    assert status["min_evidence"] == MIN_EVIDENCE_DEFAULT
+    assert reranked[0]["post_id"] == "k"  # proven persona lifted above higher relevance
+
+
+def test_apply_outcome_weighting_is_noop_with_empty_ledger(tmp_path, monkeypatch):
+    import src.api.mcp_server as srv
+
+    monkeypatch.setattr(srv, "_OUTCOME_LEDGER", tmp_path / "empty.jsonl")
+    monkeypatch.setattr(srv, "_OUTCOME_WEIGHTING_ENABLED", True)
+    hits = [{"post_id": "a", "score": 0.9, "metadata": {"author": "X"}}]
+
+    reranked, status = srv._apply_outcome_weighting(hits)
+    assert reranked == hits
+    assert status["active"] is False
+
+
+def test_apply_outcome_weighting_respects_kill_switch(tmp_path, monkeypatch):
+    import src.api.mcp_server as srv
+    from src.learning.outcome_weighting import MIN_EVIDENCE_DEFAULT
+
+    ledger = tmp_path / "outcomes.jsonl"
+    monkeypatch.setattr(srv, "_OUTCOME_LEDGER", ledger)
+    monkeypatch.setattr(srv, "_OUTCOME_WEIGHTING_ENABLED", False)
+    _seed_proven_persona(ledger, "Andrej Karpathy", MIN_EVIDENCE_DEFAULT)
+
+    hits = [
+        {"post_id": "a", "score": 0.90, "metadata": {"author": "Someone Else"}},
+        {"post_id": "k", "score": 0.80, "metadata": {"author": "Andrej Karpathy"}},
+    ]
+    reranked, status = srv._apply_outcome_weighting(hits)
+    assert reranked == hits  # disabled → untouched, even with proven signal
+    assert status["active"] is False
+    assert status["enabled"] is False

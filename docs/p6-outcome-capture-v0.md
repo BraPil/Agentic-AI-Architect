@@ -1,9 +1,10 @@
 # P6 Outcome Capture — Spec v0
 
-> **Status**: Slice 1 built and tested (2026-06-29). **Owner**: Brandt (#12).
-> The first half of true P6 learning: AAA now *records whether its recommendations
-> were adopted and worked*, and aggregates that into a per-source signal. Wiring the
-> signal into live retrieval ranking is **Slice 2** (deliberately deferred).
+> **Status**: Slices 1 + 2 built and tested (2026-06-29). **Owner**: Brandt (#12).
+> Slice 1: AAA *records whether its recommendations were adopted and worked* and
+> aggregates that into a per-source signal. Slice 2: that signal now *re-ranks live
+> retrieval* in `get_architecture_recommendation` — proven sources lead, failed
+> sources sink — behind a minimum-evidence gate. The loop is closed.
 
 ---
 
@@ -70,18 +71,51 @@ zero out a source's weight.
 | Core | `src/learning/outcomes.py` (`RecommendationOutcomeStore`, `OutcomeRecord`) |
 | Tests | `tests/test_outcomes.py` (14 tests, no network/keys) |
 
-## 6. Explicitly NOT in this slice (Slice 2)
+## 6. Slice 1 boundaries (now extended by Slice 2)
 
-- **No ranking change.** `weight_multiplier` is computed and exposed but **not** applied to
-  retrieval/eval. The store does not touch ChromaDB. This keeps eval scores stable while
-  the dataset is tiny.
-- **No auto-grading.** Outcomes are human-reported. AAA must not grade its own homework
-  (same echo-chamber firewall principle as the experimental→grounded promotion gate).
+- **Slice 1 applied no ranking change** — `weight_multiplier` was computed and exposed but
+  not used. Slice 2 (§7) now applies it, but only past the minimum-evidence gate, so eval
+  scores stay stable while the dataset is tiny.
+- **No auto-grading** (still holds). Outcomes are human-reported. AAA must not grade its own
+  homework (same echo-chamber firewall as the experimental→grounded promotion gate).
 
-## 7. Slice 2 (next)
+## 7. Slice 2 — built 2026-06-29
 
-1. Feed `persona_signal` / `tool_signal` multipliers into the source-weighting model
-   (`docs/source-weighting-model-v2.md`) so retrieval ranking reflects what actually worked.
-2. Add a minimum-evidence threshold (e.g. ≥5 outcomes for an entity) before its multiplier
-   leaves neutral, so ranking only moves on real signal.
-3. Track eval relevance before/after to prove the weighting helps, not hurts.
+The signal now drives ranking. Implementation: `src/learning/outcome_weighting.py`
+(pure functions) consumed by `get_architecture_recommendation` in
+`src/api/mcp_server.py`.
+
+**Which rail.** Outcome events are generated on the MCP recommendation path over the
+ChromaDB persona store, and the signal keys on persona/tool *entities* that live in
+that store. The `source-weighting-model-v2` rail (`src/api/rest.py`) instead weights
+`KnowledgeBase` *source types* and learns from eval-run scores — persona multipliers
+do not map onto it. So slice 2 wires the outcome signal into **Rail B (the ChromaDB
+recommendation path where the outcomes are actually produced)**, not Rail A's
+`RETRIEVAL_SOURCE_WEIGHTS`. See `docs/decision-log.md`.
+
+**How it ranks.** After `store.search()` returns semantic hits and before synthesis,
+each hit is re-scored as `relevance × outcome_multiplier`, then re-sorted (stable, so
+ties keep relevance order). A hit's multiplier is the **mean** of the applicable
+entity multipliers — its author persona plus any matched `mentioned_tools` — each
+already bounded to `[0.5, 1.5]` by slice 1, so the combination stays in range and no
+single source dominates. The original `score` is preserved; `outcome_multiplier` and
+`ranking_score` are attached for audit, and the payload carries an `outcome_weighting`
+block (`active`, `gated_personas`, `gated_tools`, `min_evidence`).
+
+**Minimum-evidence gate.** An entity's multiplier only leaves neutral once it has
+≥ `MIN_EVIDENCE_DEFAULT` (5) recorded outcomes. Below that the re-rank is an *exact
+no-op*. Today's ledger is empty, so weighting is inert until real outcomes accrue —
+by design: the mechanism is live and tested now, but it never reshapes retrieval on
+noise. Kill-switch: `AAA_OUTCOME_WEIGHTING=0`.
+
+**Proving lift.** The live eval harness scores Rail A and cannot measure this rail, so
+lift is proven deterministically instead: `tests/test_outcome_weighting.py::
+test_seeded_outcomes_lift_proven_persona_to_top` seeds 5 adopted-and-worked outcomes
+for a persona and asserts its lower-relevance hit moves from last to first. When real
+outcomes accumulate, compare `active:true` vs `AAA_OUTCOME_WEIGHTING=0` recommendation
+ordering on the same problem to observe the production delta.
+
+### Still open (slice 3 candidates)
+- Segment-aware outcome multipliers (enterprise vs startup), mirroring v2's segment split.
+- Decay so stale outcomes weigh less than recent ones.
+- Surface the per-entity track record in the recommendation payload for transparency.

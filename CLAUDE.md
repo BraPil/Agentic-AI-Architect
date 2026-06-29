@@ -226,14 +226,14 @@ Phase 2: Intelligence Layer   ⬜ NOT STARTED
 Phase 3: Agent Specialization ⬜ NOT STARTED
 Phase 4: Orchestration        ⬜ NOT STARTED
 Phase 5: API & Integration    ⬜ NOT STARTED  ← ExMorbus V3 integration target
-Phase 6: Self-Improvement     🔄 IN PROGRESS  ← OAA learning loop (slices 0–3) + outcome capture (slice 1)
+Phase 6: Self-Improvement     🔄 IN PROGRESS  ← OAA learning loop (slices 0–3) + outcome capture (slices 1–2)
 Phase 7: Production Hardening ⬜ NOT STARTED
 ```
 
 **Phase 6 status** (self-improvement; pulled forward alongside P1 because the learning
 substrate informs retrieval quality):
 - OAA regulated learning loop slices 0–3 ✅ (experimental/grounded tiers, PromotionGate, cognition bridge; proven to raise answer relevance) — see `docs/aaa-organic-learning-loop-v0.md`
-- Outcome capture slice 1 ✅ (`record_recommendation_outcome` → per-source signal; capture+expose only, ranking integration deferred to slice 2) — see `docs/p6-outcome-capture-v0.md`
+- Outcome capture slices 1–2 ✅ (slice 1: `record_recommendation_outcome` → per-source signal; slice 2: that signal re-ranks live retrieval in `get_architecture_recommendation`, gated at ≥5 outcomes/entity so it's inert until real data accrues) — see `docs/p6-outcome-capture-v0.md`
 
 **Phase 1 current priorities** (from `docs/phase-5-implementation-plan.md`):
 - P1.1 Crawler Agent: Playwright integration for JS-rendered pages

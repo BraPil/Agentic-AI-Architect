@@ -89,6 +89,46 @@ def _log_tool_call(tool: str, params: dict, result_size: int) -> None:
 
 _OUTCOME_LEDGER = _REPO_ROOT / "data" / "recommendation_outcomes.jsonl"
 
+# Kill-switch for the P6 slice-2 outcome re-ranking. On by default; set
+# AAA_OUTCOME_WEIGHTING=0 to fall back to pure semantic order (used by the
+# before/after eval comparison and as an operational safety valve).
+_OUTCOME_WEIGHTING_ENABLED = os.environ.get("AAA_OUTCOME_WEIGHTING", "1").lower() not in (
+    "0", "false", "no", "off",
+)
+
+
+def _apply_outcome_weighting(hits: list[dict]) -> tuple[list[dict], dict]:
+    """Re-rank retrieval hits by recorded outcome signal (P6 slice 2).
+
+    Sources whose past recommendations were adopted-and-worked rank higher;
+    those adopted-and-failed rank lower — but only once an entity has cleared the
+    minimum-evidence gate, so a small ledger leaves ranking untouched.
+
+    Best-effort: any failure (or the kill-switch) returns the hits unchanged so
+    the recommendation path never breaks on the learning layer.
+    """
+    status: dict = {"active": False, "enabled": _OUTCOME_WEIGHTING_ENABLED,
+                    "min_evidence": None, "gated_personas": 0, "gated_tools": 0}
+    if not _OUTCOME_WEIGHTING_ENABLED or not hits:
+        return hits, status
+    try:
+        from src.learning.outcomes import RecommendationOutcomeStore  # noqa: PLC0415
+        from src.learning.outcome_weighting import (  # noqa: PLC0415
+            MIN_EVIDENCE_DEFAULT, gated_multipliers, rerank_by_outcomes,
+        )
+        agg = RecommendationOutcomeStore(_OUTCOME_LEDGER).aggregate()
+        persona_signal = agg.get("persona_signal", {})
+        tool_signal = agg.get("tool_signal", {})
+        gated_p = gated_multipliers(persona_signal, MIN_EVIDENCE_DEFAULT)
+        gated_t = gated_multipliers(tool_signal, MIN_EVIDENCE_DEFAULT)
+        status.update(min_evidence=MIN_EVIDENCE_DEFAULT, gated_personas=len(gated_p),
+                      gated_tools=len(gated_t), active=bool(gated_p or gated_t))
+        reranked = rerank_by_outcomes(hits, persona_signal, tool_signal, MIN_EVIDENCE_DEFAULT)
+        return reranked, status
+    except Exception:  # noqa: BLE001
+        logger.warning("Outcome weighting failed; falling back to semantic order")
+        return hits, status
+
 
 def _record_recommendation_event(problem_statement: str, generated_at: str,
                                  synthesis: dict) -> str:
@@ -440,6 +480,11 @@ def get_architecture_recommendation(
                        len(payload))
         return payload
 
+    # P6 slice 2: re-rank by recorded outcome signal before synthesis so proven
+    # sources lead the evidence the synthesizer sees. No-op until an entity
+    # clears the minimum-evidence gate.
+    hits, outcome_weighting = _apply_outcome_weighting(hits)
+
     synthesis = _synthesize(problem_statement, hits)
 
     evidence_summary = [
@@ -447,6 +492,7 @@ def get_architecture_recommendation(
             "author": h.get("metadata", {}).get("author", "unknown"),
             "post_type": h.get("metadata", {}).get("post_type"),
             "relevance_score": h.get("score"),
+            "outcome_multiplier": h.get("outcome_multiplier", 1.0),
             "snippet": h.get("document", "")[:300],
         }
         for h in hits
@@ -465,6 +511,7 @@ def get_architecture_recommendation(
         "problem_statement": problem_statement,
         "evidence_count": len(hits),
         "evidence_summary": evidence_summary,
+        "outcome_weighting": outcome_weighting,
         "generated_at": generated_at,
         "outcome_hint": "Record what happened with record_recommendation_outcome("
                         f"'{recommendation_id}', adopted=…, worked=…) to teach AAA.",
