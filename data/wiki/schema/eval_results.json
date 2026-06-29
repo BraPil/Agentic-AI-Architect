@@ -1,13 +1,13 @@
 {
   "schema_version": "1.1",
-  "run_at": "2026-06-22T08:08:07.760509+00:00",
+  "run_at": "2026-06-29T07:51:31.342518+00:00",
   "total_questions": 20,
   "search_questions": 15,
   "synthesis_questions": 5,
   "passed": 20,
   "failed": 0,
   "overall_score": 1.0,
-  "avg_top_relevance": 0.4658,
+  "avg_top_relevance": 0.4679,
   "results": [
     {
       "question_id": "eval-001",
@@ -305,10 +305,10 @@
           "snippet": "Building an agent is only part of the job.\n\nThe more important part is everything around it:\n\n- API connections\n- webhoo"
         },
         {
-          "author": "Cole Medin",
-          "post_type": "image",
-          "relevance": 0.3968,
-          "snippet": "I'm starting a public experiment where I'm handing my entire codebase over to AI. No humans allowed to write or review a"
+          "author": "Simon Willison",
+          "post_type": "blog_post",
+          "relevance": 0.4069,
+          "snippet": "Quoting Jon Udell\n\nHuman Agent in the loop I dislike the phrase “human in the loop” because it cedes authority to the ma"
         }
       ]
     },
@@ -318,7 +318,7 @@
       "type": "search",
       "passed": true,
       "score": 0.75,
-      "top_relevance": 0.3042,
+      "top_relevance": 0.3983,
       "result_count": 8,
       "checks": {
         "has_results": true,
@@ -333,6 +333,7 @@
             "security"
           ],
           "found": [
+            "prompt injection",
             "security"
           ]
         }
@@ -341,20 +342,20 @@
         {
           "author": "Simon Willison",
           "post_type": "blog_post",
-          "relevance": 0.3042,
-          "snippet": "The Fable 5 Export Controls Harm US Cyber Defense\n\nThe Fable 5 Export Controls Harm US Cyber Defense I quoted The Atlant"
+          "relevance": 0.3983,
+          "snippet": "What happened after 2,000 people tried to hack my AI assistant\n\nWhat happened after 2,000 people tried to hack my AI ass"
         },
         {
           "author": "Simon Willison",
           "post_type": "blog_post",
-          "relevance": 0.2874,
-          "snippet": "Statement on the US government directive to suspend access to Fable 5 and Mythos 5\n\nStatement on the US government direc"
+          "relevance": 0.3745,
+          "snippet": "Incident Report: CVE-2026-LGTM\n\nIncident Report: CVE-2026-LGTM Spectacular hypothetical incident report by Andrew Nesbit"
         },
         {
           "author": "Simon Willison",
           "post_type": "blog_post",
-          "relevance": 0.2775,
-          "snippet": "Quoting Matteo Wong, The Atlantic\n\nKatie Moussouris, a cybersecurity expert and the CEO of Luta Security, told me that A"
+          "relevance": 0.3682,
+          "snippet": "Quoting Tom MacWright\n\nIn the last few months, I've started to see [job applications] that were clearly cowritten by an "
         }
       ]
     },
@@ -439,16 +440,16 @@
           "snippet": "Agents\n\nIntelligent agents are considered by many to be the ultimate goal of AI. The classic book by Stuart Russell and "
         },
         {
+          "author": "Agentic AI Architect",
+          "post_type": "project_learning",
+          "relevance": 0.5116,
+          "snippet": "DECISION: Keep `Agentic-AI-Architect` as a standalone product repository for now [Accepted]\n\nRationale: Product focus is"
+        },
+        {
           "author": "Cole Medin",
           "post_type": "image",
           "relevance": 0.4978,
           "snippet": "The biggest problem in AI coding right now is sycophancy.\n\nNot in the broad \"AI agrees with everything you say\" sense, t"
-        },
-        {
-          "author": "Mitko Vasilev",
-          "post_type": "image",
-          "relevance": 0.471,
-          "snippet": "I taught my AI agents to rewrite their own ops manual. Not vibes.A Genetic-Pareto feedback loop.\n\nMy stack: `GEPA optimi"
         }
       ]
     },
@@ -612,7 +613,7 @@
       "type": "search",
       "passed": true,
       "score": 1.0,
-      "top_relevance": 0.5683,
+      "top_relevance": 0.5571,
       "result_count": 8,
       "checks": {
         "has_results": true,
@@ -637,19 +638,19 @@
         {
           "author": "Lilian Weng",
           "post_type": "blog_post",
-          "relevance": 0.5683,
+          "relevance": 0.5571,
           "snippet": "Reward Hacking in Reinforcement Learning\n\nReward hacking occurs when a reinforcement learning (RL) agent exploits flaws "
         },
         {
           "author": "Lilian Weng",
           "post_type": "blog_post",
-          "relevance": 0.4109,
+          "relevance": 0.4004,
           "snippet": "Exploration Strategies in Deep Reinforcement Learning\n\n[Updated on 2020-06-17: Add “exploration via disagreement” in the"
         },
         {
           "author": "Lilian Weng",
           "post_type": "blog_post",
-          "relevance": 0.4051,
+          "relevance": 0.3875,
           "snippet": "Curriculum for Reinforcement Learning\n\n[Updated on 2020-02-03: mentioning PCG in the “Task-Specific Curriculum” section."
         }
       ]
@@ -689,16 +690,16 @@
           "snippet": "Everyone's building AI agent demos.\n\nPalantir shipped an end-to-end agentic architecture.\n\n12 layers. The ENTIRE product"
         },
         {
+          "author": "Agentic AI Architect",
+          "post_type": "project_learning",
+          "relevance": 0.505,
+          "snippet": "DECISION: Keep `Agentic-AI-Architect` as a standalone product repository for now [Accepted]\n\nRationale: Product focus is"
+        },
+        {
           "author": "Alex Wang",
           "post_type": "image",
           "relevance": 0.4942,
           "snippet": "Building an agent is only part of the job.\n\nThe more important part is everything around it:\n\n- API connections\n- webhoo"
-        },
-        {
-          "author": "Paolo Perrone",
-          "post_type": "article",
-          "relevance": 0.4868,
-          "snippet": "This repo teaches AI Agents how to THINK.\n\nAgent Skills for Context Engineering: the open-source skill library that ever"
         }
       ]
     },
@@ -708,7 +709,7 @@
       "type": "search",
       "passed": true,
       "score": 1.0,
-      "top_relevance": 0.596,
+      "top_relevance": 0.5434,
       "result_count": 8,
       "checks": {
         "has_results": true,
@@ -735,20 +736,20 @@
         {
           "author": "Eugene Yan",
           "post_type": "blog_post",
-          "relevance": 0.596,
+          "relevance": 0.5434,
           "snippet": "What We've Learned From A Year of Building with LLMs\n\nFrom the tactical nuts & bolts to the operational day-to-day to th"
+        },
+        {
+          "author": "Eugene Yan",
+          "post_type": "blog_post",
+          "relevance": 0.4993,
+          "snippet": "AI Engineer 2024 Keynote - What We Learned from a Year of LLMs\n\nSpecial double-feature closing keynote from the 6 author"
         },
         {
           "author": "Chip Huyen",
           "post_type": "blog_post",
           "relevance": 0.4501,
           "snippet": "Open challenges in LLM research\n\n[ LinkedIn discussion , Twitter thread ] Never before in my life had I seen so many sma"
-        },
-        {
-          "author": "Eugene Yan",
-          "post_type": "blog_post",
-          "relevance": 0.4085,
-          "snippet": "Netflix PRS 2024 - Applying LLMs to Recommendation Experiences\n\nChallenges and lessons from deploying LLM experiences: e"
         }
       ]
     },
@@ -764,18 +765,16 @@
         "Rahul Agarwal",
         "Lilian Weng",
         "Paolo Perrone",
-        "Mitko Vasilev",
         "Alex Wang",
-        "Charly Wargnier"
+        "Mitko Vasilev"
       ],
       "relevant_tools": [
-        "LangChain Deep Agents",
-        "Vector databases or semantic ontologies (Palantir Ontology pattern)",
-        "Observability/telemetry frameworks (as demonstrated in Mitko's multi-worker setup)",
-        "Obsidian Markdown wikis with LLM auto-indexing",
-        "Planning frameworks with write_todos and task decomposition"
+        "LangChain (ecosystem agility and composability)",
+        "Deep Agents (planning + filesystem + shell execution framework)",
+        "Vector databases for semantic search and long-term knowledge retrieval",
+        "Ontology/knowledge graph systems for multi-agent coordination"
       ],
-      "recommendation_snippet": "Design a three-layer memory architecture: (1) Short-term memory for real-time context using conversation buffers with token limits, (2) Long-term memory via persistent knowledge stores or semantic ont",
+      "recommendation_snippet": "Implement a tiered memory architecture with short-term context buffers (session/conversation state), long-term persistent storage (knowledge base), and a semantic ontology layer for multi-agent coordi",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -803,22 +802,19 @@
       "passed": true,
       "score": 1.0,
       "top_relevance": null,
-      "confidence": "medium",
+      "confidence": "high",
       "personas_cited": [
         "Aishwarya Srinivasan",
         "Sebastian Ruder",
         "Eugene Yan",
-        "Chip Huyen",
-        "Utkarsh Bajaj"
+        "Chip Huyen"
       ],
       "relevant_tools": [
-        "Embedding model selection frameworks for RAG",
-        "Document chunking strategies (11+ documented approaches)",
-        "LLM-as-Judge evaluation frameworks",
-        "llmfit hardware analysis tool for inference planning",
-        "KV cache optimization for production deployments"
+        "llmfit (hardware compatibility scanner for model selection)",
+        "Chunking strategy frameworks (11 documented approaches per Srinivasan)",
+        "LLM-as-Judge for evaluation, with caveats about process integration"
       ],
-      "recommendation_snippet": "Use RAG as your primary approach for production domain adaptation, supplemented by evaluation-driven iteration rather than fine-tuning. RAG provides faster iteration cycles and better grounding withou",
+      "recommendation_snippet": "For production domain adaptation, prefer RAG as your primary strategy—it offers faster iteration, lower computational cost, and safer deployment without model retraining. Use fine-tuning only when RAG",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -857,14 +853,14 @@
         "Shayan Rais"
       ],
       "relevant_tools": [
-        "Claude Code (native multi-agent platform)",
-        "claude-code-best-practices repository (13+ agents, 56+ skills, 32+ commands)",
-        "LangChain Deep Agents (model-agnostic alternative)",
+        "Claude Code (native agentic orchestration platform)",
+        "Claude Code best-practices repository (117k+ GitHub stars, 13 agents, 56+ skills, 32 commands)",
+        "Deep Agents (LangChain open-source, MIT licensed alternative)",
         "MCP servers: Context7, Playwright, DeepWiki",
         "Git Worktrees (parallel development)",
-        "Cursor IDE and OpenCode (alternative interfaces)"
+        "Cursor IDE, OpenCode, Codex CLI (alternative interfaces)"
       ],
-      "recommendation_snippet": "For agentic coding workflows in 2025, adopt Claude Code as your primary agent orchestration platform, supplemented by open-source best-practice repositories (claude-code-best-practices) that provide b",
+      "recommendation_snippet": "For agentic coding workflows in 2025, adopt Claude Code as your primary platform—it has proven production maturity (10 months daily use, 992 internal tests, real shipped products) and native multi-age",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -909,14 +905,12 @@
         "Paolo Perrone"
       ],
       "relevant_tools": [
-        "Adversarial Dev harness (GAN-inspired three-agent pattern)",
-        "Claude Agent SDK / Codex SDK",
-        "GEPA (Genetic-Pareto feedback loop optimizer)",
-        "Pydantic AI",
-        "LangChain",
-        "n8n"
+        "Adversarial Dev (GAN-inspired three-agent harness with separate planning, building, evaluation agents)",
+        "Claude Agent SDK or Codex SDK (platform-agnostic agent implementation)",
+        "Genetic-Pareto feedback loops with logs-as-actionable-intel for skill optimization",
+        "Weights & Biases (LLM-as-a-judge infrastructure for automated evaluation)"
       ],
-      "recommendation_snippet": "Implement a multi-agent adversarial evaluation architecture that separates planning, building, and evaluation into distinct agents with opposing incentives, rather than relying on self-evaluation. Tre",
+      "recommendation_snippet": "Implement a multi-agent adversarial evaluation architecture that separates planning, building, and evaluation into distinct agents with opposing incentives, rather than relying on self-evaluation. Pai",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -947,17 +941,16 @@
         "Cole Medin",
         "Paolo Perrone",
         "Chip Huyen",
-        "Alex Wang"
+        "Alex Wang",
+        "Eugene Yan"
       ],
       "relevant_tools": [
-        "Claude Agent SDK",
-        "Codex SDK",
-        "Pydantic AI",
-        "LangChain",
-        "n8n",
-        "Archon (open-source harness builder)"
+        "Claude Agent SDK / Codex SDK (for multi-agent harness patterns)",
+        "Pydantic AI, LangChain, n8n (agent frameworks, though note mainstream focus has shifted)",
+        "Archon (open-source harness builder for orchestration and determinism)",
+        "Palantir-style 12-layer stack (reference architecture for ontology, context engineering, and permissions)"
       ],
-      "recommendation_snippet": "Use a specialized agent separation pattern with distinct contexts for planning, building, and evaluation (adversarial harness model), complemented by a harness/orchestration layer that makes agent int",
+      "recommendation_snippet": "Adopt a harness-based orchestration pattern that separates concerns (planning, building, evaluation) into distinct specialized agents with adversarial tension to drive quality. Layer LLM integration, ",
       "checks": {
         "has_recommendation": true,
         "confidence_adequate": true,
@@ -971,8 +964,7 @@
             "architecture"
           ],
           "found": [
-            "orchestration",
-            "architecture"
+            "orchestration"
           ]
         }
       }
