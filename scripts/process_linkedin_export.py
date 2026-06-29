@@ -257,8 +257,13 @@ def main() -> None:
         store = None
         store_ids = set()
 
-    # Legacy dedup from research_sources.json
-    existing_ids = load_existing_ids() | store_ids
+    # Dedup against the STORE only — the authoritative ingest target. Using
+    # research_sources.json here was a bug: that file is a historical superset, so
+    # posts present in it but absent from a rebuilt store were permanently skipped
+    # and never (re)indexed. (See docs/lessons-learned-log.md, 2026-04.)
+    # research_sources.json is still used below for append-dedup, not skip-dedup.
+    json_ids = load_existing_ids()
+    existing_ids = set(store_ids)
 
     persona_dir = RAW_DIR / args.persona
     if not args.dry_run:
@@ -349,7 +354,11 @@ def main() -> None:
                 "rawPath": str(raw_path),
                 **extracted,
             }
-            save_source(entry)
+            # Append to research_sources.json only if not already recorded there
+            # (the store is the skip authority; this just avoids duplicate log rows).
+            if src_id not in json_ids:
+                save_source(entry)
+                json_ids.add(src_id)
             existing_ids.add(src_id)
 
             # Seed into KnowledgeBase (SQLite, existing agents)

@@ -1,0 +1,11 @@
+AAA LinkedIn Exporter — Scroll+Scrape log
+2026-06-28T23-22-22
+
+initial: +0 new (total 0)
+scroll 1: last_ts="" age=0.0mo
+scroll 1: +0 new (total 0)
+scroll 2: last_ts="" age=0.0mo
+scroll 2: +0 new (total 0)
+no new content — stopping
+final-top: +0 new (total 0)
+result: 0 total posts collected
