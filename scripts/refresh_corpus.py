@@ -90,6 +90,39 @@ def run_arxiv_ingest(api_key: str | None, dry_run: bool) -> dict:
         return {"status": "error", "error": str(exc), "added": 0}
 
 
+def run_snapshot_restore(dry_run: bool) -> bool:
+    """Restore the committed snapshot into the live store BEFORE ingest.
+
+    This guards against corpus regression: in CI (and any fresh checkout) the
+    live ChromaDB binaries may be stale or inconsistent with the committed
+    snapshot. Restoring first guarantees ingest builds on the full committed
+    corpus instead of a partial base, so the persona corpus and promoted
+    learning artifacts can never be silently dropped. The restore is
+    incremental (skips already-indexed IDs), so it is a no-op when the live
+    store is already complete.
+    """
+    logger.info("── Snapshot restore (pre-ingest) ────────────")
+    if dry_run:
+        logger.info("DRY RUN: skipping snapshot restore")
+        return True
+    try:
+        result = subprocess.run(
+            [sys.executable, str(_REPO_ROOT / "scripts" / "restore_chromadb_snapshot.py")],
+            cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        if result.returncode == 0:
+            logger.info("Snapshot restored (live store reconciled to committed corpus)")
+            return True
+        logger.warning("Snapshot restore returned non-zero: %s", result.stderr[:200])
+        return False
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Snapshot restore failed: %s", exc)
+        return False
+
+
 def run_snapshot_export(dry_run: bool) -> bool:
     """Export ChromaDB snapshot to JSON."""
     logger.info("── Snapshot export ──────────────────────────")
@@ -192,9 +225,13 @@ def run_project_learning_ingest(dry_run: bool) -> dict:
 
 
 def run_refresh_cycle(api_key: str | None, dry_run: bool) -> dict:
-    """Run one full refresh cycle: project learnings → blog → arXiv → snapshot."""
+    """Run one full refresh cycle: restore → project learnings → blog → arXiv → snapshot."""
     started_at = datetime.now(timezone.utc).isoformat()
     logger.info("Starting corpus refresh cycle at %s", started_at)
+
+    # Restore the committed snapshot FIRST so ingest never builds on a partial
+    # base (prevents the CI corpus-regression bug). No-op when already complete.
+    restore_ok = run_snapshot_restore(dry_run)
 
     tools_before = _get_top_tools() if not dry_run else {}
 
@@ -224,6 +261,7 @@ def run_refresh_cycle(api_key: str | None, dry_run: bool) -> dict:
         "started_at": started_at,
         "finished_at": datetime.now(timezone.utc).isoformat(),
         "total_added": total_added,
+        "snapshot_restored": restore_ok,
         "project_learnings": learning_result,
         "blog": blog_result,
         "arxiv": arxiv_result,
