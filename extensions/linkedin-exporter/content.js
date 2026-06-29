@@ -328,6 +328,23 @@ function sleep(ms) {
 // Returns age in fractional months (0 if unparseable).
 // ---------------------------------------------------------------------------
 
+// Decode an absolute timestamp from a LinkedIn activity ID. Activity IDs are
+// snowflake-encoded: the high bits are a Unix-ms timestamp, so (id >> 22) yields
+// creation time in ms. This is drift-proof — it needs no DOM selectors, unlike the
+// relative "2mo" string which breaks whenever LinkedIn reworks its markup.
+function decodeActivityTimestamp(urlOrUrn) {
+  const m = (urlOrUrn || "").match(/activity[:/](\d{18,20})/);
+  if (!m) return null;
+  try {
+    const ms = Number(BigInt(m[1]) >> 22n);
+    // Sanity bounds: after 2010, not in the far future.
+    if (ms < 1262304000000 || ms > Date.now() + 86400000) return null;
+    return { ms, iso: new Date(ms).toISOString() };
+  } catch (_) {
+    return null;
+  }
+}
+
 function parseAgeMonths(timestamp) {
   if (!timestamp) return 0;
   const t = timestamp.toLowerCase().trim();
@@ -580,13 +597,21 @@ async function scrapePosts(options = {}) {
     const authorUrl = profileAnchor?.href || "";
 
     const timestamp = firstText(contentEl, TIMESTAMP_SELECTORS);
-    const ageMonths = parseAgeMonths(timestamp);
+    const postUrl = extractPostUrl(contentEl);
+    // Prefer the absolute timestamp decoded from the activity URN; fall back to
+    // the relative "2mo" string only when the URN is unavailable.
+    const urnAttr = contentEl.getAttribute("data-urn")
+      || contentEl.closest("[data-urn]")?.getAttribute("data-urn") || "";
+    const decoded = decodeActivityTimestamp(urnAttr) || decodeActivityTimestamp(postUrl);
+    const ageMonths = decoded
+      ? (Date.now() - decoded.ms) / 2592000000   // ms → months (30d)
+      : parseAgeMonths(timestamp);
     if (maxAgeMonths > 0 && ageMonths > maxAgeMonths) {
       runLog.push(`[${idx}] SKIPPED age=${ageMonths.toFixed(1)}mo > ${maxAgeMonths}mo cutoff ts="${timestamp}"`);
       continue;
     }
-    runLog.push(`[${idx}] author="${author}" ts="${timestamp}" age=${ageMonths.toFixed(1)}mo`);
-    const postUrl = extractPostUrl(contentEl);
+    const publishedAt = decoded ? decoded.iso : "";
+    runLog.push(`[${idx}] author="${author}" published="${publishedAt}" ts="${timestamp}" age=${ageMonths.toFixed(1)}mo`);
     const articleUrl = extractArticleUrl(contentEl);
     const postType = detectPostType(contentEl);
 
@@ -599,7 +624,9 @@ async function scrapePosts(options = {}) {
       post_url: postUrl || articleUrl,
       author,
       author_url: authorUrl,
-      timestamp,
+      timestamp,                  // relative display string, e.g. "2mo"
+      published_at: publishedAt,  // absolute ISO 8601, decoded from activity URN
+      published_ms: decoded ? decoded.ms : null,
       post_type: postType,
       text,
       images,
@@ -672,5 +699,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-const AAA_CONTENT_VERSION = "22";
+const AAA_CONTENT_VERSION = "23";
 console.log("[AAA LinkedIn Exporter] Content script v" + AAA_CONTENT_VERSION + " loaded on", window.location.href);

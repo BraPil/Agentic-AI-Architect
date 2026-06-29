@@ -1,6 +1,6 @@
 "use strict";
 
-const CONTENT_VERSION = "22";
+const CONTENT_VERSION = "23";
 
 let exportData = null;
 
@@ -191,6 +191,51 @@ $("btnCopy").addEventListener("click", async () => {
   await navigator.clipboard.writeText(JSON.stringify(exportData, null, 2));
   setStatus("Copied to clipboard.", "ok");
 });
+
+// ---------------------------------------------------------------------------
+// Batch mode — walk many profiles via the background worker
+// ---------------------------------------------------------------------------
+
+$("btnBatch").addEventListener("click", async () => {
+  const handles = $("batchHandles").value.split("\n").map(s => s.trim()).filter(Boolean);
+  if (!handles.length) { setBatchStatus("Paste at least one handle or profile URL.", "err"); return; }
+
+  const opts = {
+    maxScrolls: parseInt($("scrollCount").value) || 15,
+    maxPosts: parseInt($("maxPosts").value) || 0,
+    maxAgeMonths: parseFloat($("maxAge").value) || 0,
+  };
+
+  setBatchStatus(`Starting batch over ${handles.length} profile(s)… keep this tab focused and logged in.`, "info");
+  pollBatchProgress();
+  // Fire-and-forget; the background worker continues even if the popup closes.
+  chrome.runtime.sendMessage({ action: "batchStart", handles, opts }, res => {
+    if (chrome.runtime.lastError) {
+      setBatchStatus("Batch error: " + chrome.runtime.lastError.message, "err");
+    }
+  });
+});
+
+function setBatchStatus(msg, type = "") {
+  const el = $("batchStatus");
+  el.textContent = msg;
+  el.className = "status" + (type ? " " + type : "");
+}
+
+function pollBatchProgress() {
+  const timer = setInterval(async () => {
+    const { batchProgress: p } = await chrome.storage.local.get("batchProgress");
+    if (!p) return;
+    if (p.done) {
+      clearInterval(timer);
+      const ok = (p.results || []).filter(r => r.ok && r.count > 0).length;
+      const total = (p.results || []).reduce((a, r) => a + (r.count || 0), 0);
+      setBatchStatus(`Batch done: ${ok}/${p.n} profiles, ${total} posts downloaded.`, "ok");
+    } else {
+      setBatchStatus(`[${p.i}/${p.n}] ${p.stage}: ${p.handle}`, "info");
+    }
+  }, 1000);
+}
 
 // ---------------------------------------------------------------------------
 // Boot

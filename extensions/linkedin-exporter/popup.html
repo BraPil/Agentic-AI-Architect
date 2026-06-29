@@ -204,6 +204,19 @@
 
   <hr class="divider" />
 
+  <div class="section-label">Batch mode (walk many profiles)</div>
+  <div class="option-row" style="margin-bottom:6px;">
+    <label for="batchHandles" style="font-size:11px;color:#aaa;">
+      One handle or profile URL per line. Uses the options above (incl. max age).
+    </label>
+  </div>
+  <textarea id="batchHandles" rows="5" placeholder="alliekmiller&#10;brennhill&#10;https://www.linkedin.com/in/ownyourai/"
+    style="width:100%;background:#141414;border:1px solid #333;border-radius:4px;color:#e5e5e5;font-size:11px;padding:6px 8px;font-family:'SF Mono',monospace;margin-bottom:7px;resize:vertical;"></textarea>
+  <button class="btn btn-primary" id="btnBatch">▶ Run batch (downloads one JSON per profile)</button>
+  <div class="status" id="batchStatus"></div>
+
+  <hr class="divider" />
+
   <button class="btn btn-success" id="btnDownload" disabled>
     ⬇ Download JSON <span class="count-badge" id="countBadge">0</span>
   </button>

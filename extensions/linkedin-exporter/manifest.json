@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "AAA LinkedIn Exporter",
-  "version": "1.0.0",
-  "description": "Exports LinkedIn posts (text + images) from your reactions and feed pages for AAA ingestion.",
+  "version": "1.1.0",
+  "description": "Exports LinkedIn posts (text + images, with absolute timestamps) from reactions, feed, and profile recent-activity pages. Includes batch mode to walk multiple profiles in one run.",
   "permissions": [
     "activeTab",
     "downloads",
     "scripting",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "host_permissions": [
     "https://www.linkedin.com/*"

@@ -1,6 +1,8 @@
 # AAA LinkedIn Exporter — Chrome Extension
 
-Exports LinkedIn posts (text + images) from your reactions page, feed, or any LinkedIn profile page, then feeds them into the AAA knowledge pipeline.
+Exports LinkedIn posts (text + images, with **absolute timestamps**) from your reactions page, feed, or any profile's recent-activity page, then feeds them into the AAA knowledge pipeline. **v1.1 adds batch mode** to walk many profiles in one run.
+
+> **What automation is possible:** This runs in *your* logged-in browser, so it works with LinkedIn auth. Fully headless/server-side scraping is **not** viable — LinkedIn auth-walls anonymous access, blocks datacenter IPs, and bans automated scraping. Batch mode is the safe middle ground: one click, your session, all profiles. Keep the pace polite (delays are built in); aggressive scraping risks your account.
 
 ## Install
 
@@ -23,6 +25,17 @@ Exports LinkedIn posts (text + images) from your reactions page, feed, or any Li
 
 4. After scraping, click **Download JSON**
    - File saves to your Downloads folder as `linkedin_export_<page>_<timestamp>.json`
+
+### Batch mode (walk many profiles)
+
+For multiple people, use the **Batch mode** box:
+1. Paste one handle or profile URL per line (e.g. `alliekmiller`, `brennhill`, `https://www.linkedin.com/in/ownyourai/`).
+2. Set **Max age months** (e.g. `2` for the last 2 months) and the other options above.
+3. Click **▶ Run batch**. The extension navigates the active tab through each person's
+   `/recent-activity/all/`, scrolls, scrapes, and downloads one JSON per profile.
+4. Stay logged in and keep the tab focused while it runs.
+
+Then ingest each downloaded file with `process_linkedin_export.py` (or loop over them).
 
 ## Process the export in AAA
 
@@ -52,7 +65,11 @@ Each post in the JSON contains:
 - `images` — array of `{ src, alt, width, height }` for all images in the post
 - `post_type` — `text | image | video | article | document`
 - `external_links` — any non-LinkedIn URLs referenced in the post
-- `timestamp` — relative timestamp from LinkedIn UI
+- `timestamp` — relative timestamp from LinkedIn UI (e.g. "2mo")
+- `published_at` — **absolute ISO 8601 timestamp**, decoded from the activity URN
+  (LinkedIn IDs are snowflake-encoded: `id >> 22` = creation time in ms). Drift-proof,
+  and what enables real date filtering / "last N months" cutoffs.
+- `published_ms` — the same as epoch milliseconds
 
 ## Notes
 

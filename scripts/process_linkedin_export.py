@@ -276,7 +276,11 @@ def main() -> None:
         author = post.get("author", "")
         text = sanitize(post.get("text", ""))
         images = post.get("images", [])
-        timestamp = post.get("timestamp", "")
+        # Prefer the absolute ISO timestamp decoded from the activity URN
+        # (exporter v23+); fall back to the relative "2mo" string for old exports.
+        # published_at as YYYY-MM-DD keeps the store's min_date filter lexically sound.
+        published_at = post.get("published_at", "")
+        timestamp = published_at[:10] if published_at else post.get("timestamp", "")
 
         src_id = post_id_from_url(post_url)
         if src_id in existing_ids:
