@@ -2,7 +2,7 @@
 
 > Append-only ingest and update log. Never delete entries. Dates are ISO 8601.
 > Use for audit trail, git history, and automated parsing (unix-tool compatible).
-> Last entry: 2026-06-28 (pattern_claude_md_ecosystem added)
+> Last entry: 2026-06-29 (corpus reconciled to 417; CI regression fixed; LLM-wiki philosophy re-synthesized)
 
 ---
 
@@ -106,6 +106,11 @@
 | 2026-06-28 | Query | "principles for evaluating an AI knowledge retrieval system" | OK | Cycle vs installed OAA; synthesis 0.703 promoted; answer relevance 0.4617→0.7229; corpus 186→187 |
 | 2026-06-28 | Ingest | blog corpus (Willison/Weng/Huyen/Ruder/Yan) | OK | 115 blog posts re-ingested with Claude enrichment; store 187→302; grounding restored on security/eval/RL topics |
 | 2026-06-28 | Schema | schema/chromadb_snapshot.json | OK | Snapshot rebuilt: 302 items (235 external incl. 115 blogs, 65 internal, 2 grounded) |
+| 2026-06-29 | Ingest | June LinkedIn reactions export (+~75 posts) | OK | Authenticated Chrome-extension scrape; recurring dedup bug fixed at source; store 302→381 |
+| 2026-06-29 | Lint | data/linkedin_store/ | OK | Pruned 4 off-standard personal-contact personas (re-entered via June scrape); store 385→381 |
+| 2026-06-29 | Merge | CI weekly refresh (8b4ffb2) ∪ local | OK | CI run had regressed to 334 (dropped persona corpus); resolved as union not clobber → store 417; kept CI's fresh eval |
+| 2026-06-29 | Fix | scripts/refresh_corpus.py | OK | Restore-from-snapshot now runs BEFORE ingest so CI can no longer regress the corpus; +4 tests (test_refresh_corpus.py) |
+| 2026-06-29 | Ingest | data/seeds/karpathy_llm_wiki.md (re-synthesis) | OK | Refreshed pattern_llm_wiki.md to full authoritative gist; codified the index.md (where-we-are) + log.md (what-we-did) tracking discipline |
 
 ---
 

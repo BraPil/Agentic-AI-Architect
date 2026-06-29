@@ -3,9 +3,10 @@
 > Content catalog for the Agentic AI Architect knowledge wiki.  
 > Three layers: raw/ (source artifacts) → pages/ (curated synthesis) → schema/ (typed extracts).  
 > Operations: Ingest, Query, Lint.  
-> **Last rebuilt**: 2026-06-28 (updated 2026-06-28)
-> **Total items**: 261 indexed across 56 personas
-> **Phases referenced**: P0–P5 completed; P6–P7 planned
+> **Last rebuilt**: 2026-06-29 (corpus reconciled to 417 items)
+> **Total items**: 417 indexed (committed snapshot `schema/chromadb_snapshot.json`)
+> **Phases referenced**: P0–P5 completed; P6 (organic learning loop) in progress; P7 planned
+> **Tracking discipline**: see [pattern_llm_wiki](pages/pattern_llm_wiki.md) — `index.md` = where we are, `log.md` = what we did
 
 ---
 
@@ -64,7 +65,7 @@ Vector store: ChromaDB at `data/linkedin_store/` (12.4 MB).
 
 | Page | Category | Description | Status |
 |------|----------|-------------|--------|
-| [pattern_llm_wiki](pages/pattern_llm_wiki.md) | Pattern | Karpathy's LLM Wiki design — three-layer structure | reviewed |
+| [pattern_llm_wiki](pages/pattern_llm_wiki.md) | Pattern | Karpathy's LLM Wiki — full authoritative synthesis + AAA tracking discipline (index/log) | reviewed |
 | [pattern_dark_factory](pages/pattern_dark_factory.md) | Pattern | Cole Medin's dark-factory experiment framework | reviewed |
 | [pattern_autoresearch_loop](pages/pattern_autoresearch_loop.md) | Pattern | Andrej Karpathy's autonomous research orchestration | draft |
 | [pattern_archon_harness](pages/pattern_archon_harness.md) | Pattern | Cole Medin's Archon multi-agent orchestration | draft |
@@ -201,22 +202,20 @@ data/wiki/raw/
 
 **Last 30 Days**:
 
-- ✅ Added HTTP/SSE transport for MCP server (remote access)
-- ✅ Clarified persona discovery documentation
-- ✅ Completed AAA-ALARMv3 strategy document (637 lines)
-- ✅ Rebuilt wiki schema for June corpus state
-- ✅ Created comprehensive SCHEMA.md and RUNBOOKS.md
-- ✅ Eval baseline validated: 20/20 passing, 0.4633 avg relevance
-- ✅ MCP latency < 200ms (cached queries)
-- ✅ 56 personas indexed, 260 total items
+- ✅ P6 organic learning loop (OAA bridge) slices 0–3 built and proven (answer relevance lifts measured)
+- ✅ Full blog corpus re-ingested (115 posts); store grown and reconciled to **417 items**
+- ✅ Corpus re-curated: 4 off-standard personas pruned; CI weekly-refresh regression caught and merged as a union
+- ✅ Fixed CI corpus-regression bug: `refresh_corpus.py` now restores the snapshot **before** ingest (+4 tests)
+- ✅ Re-synthesized Karpathy LLM-Wiki philosophy; codified the index.md/log.md tracking discipline
+- ✅ LinkedIn exporter v1.1 (absolute timestamps + batch mode)
 
 **Next Actions**:
 
-- [ ] Ingest exMorbus integration docs and design contracts
-- [ ] Refresh 3 stale entries (last updated >90 days)
-- [ ] Build concept pages for enterprise overlay fields
-- [ ] Expand trend tracking for Q3 2026
-- [ ] Create evaluation trend history visualization
+- [ ] P6 outcome capture — record whether a recommendation was adopted + worked, then weight by it (true learning)
+- [ ] Retrieval ranking/density — reranking or hybrid keyword+vector (next lever per discovery-log)
+- [ ] Curation guard so non-practitioner personas are filtered at ingest, not pruned after
+- [ ] Full index.md rebuild against the 417-item snapshot (counts in tables below predate the merge)
+- [ ] Ingest ExMorbus integration docs and design contracts
 
 ---
 
