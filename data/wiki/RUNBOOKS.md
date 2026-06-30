@@ -4,10 +4,10 @@
 
 Quick reference guides for deploying, monitoring, and maintaining the Agentic AI Architect system in production.
 
-> ⚠️ **Not yet implemented (planned).** Some commands below reference scripts that do not
-> exist in the repo yet: `scripts/build_wiki_schema.py`, `scripts/lint_wiki.py`,
-> `scripts/benchmark_mcp.py`, `scripts/webhook_worker.py`. Treat those blocks as intended
-> operations to build, not working commands. (Discovered 2026-06-30.)
+> ⚠️ **Not yet implemented (planned).** Two commands below still reference scripts that do not
+> exist: `scripts/benchmark_mcp.py` and `scripts/webhook_worker.py`. Treat those blocks as
+> intended operations to build, not working commands. (`build_wiki_schema.py` and
+> `lint_wiki.py` were built 2026-06-30 and now work — see Wiki Maintenance.)
 
 ---
 

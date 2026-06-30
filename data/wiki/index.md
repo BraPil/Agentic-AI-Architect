@@ -48,15 +48,15 @@ Vector store: ChromaDB at `data/linkedin_store/`. Curation guard active (`data/c
 
 | Page | Name | Items | Status |
 |------|------|-------|--------|
-| [persona_chip_huyen](pages/persona_chip_huyen.md) | Chip Huyen | 10 | reviewed |
-| [persona_simon_willison](pages/persona_simon_willison.md) | Simon Willison | 32 | reviewed |
-| [persona_lilian_weng](pages/persona_lilian_weng.md) | Lilian Weng | 30 | reviewed |
-| [persona_eugene_yan](pages/persona_eugene_yan.md) | Eugene Yan | 30 | reviewed |
-| [persona_sebastian_ruder](pages/persona_sebastian_ruder.md) | Sebastian Ruder | 15 | reviewed |
-| [persona_arxiv_research](pages/persona_arxiv_research.md) | arXiv Research Community | 27 | reviewed |
-| [persona_mitko_vasilev](pages/persona_mitko_vasilev.md) | Mitko Vasilev | 17 | draft |
-| [persona_paolo_perrone](pages/persona_paolo_perrone.md) | Paolo Perrone | 8 | draft |
-| [persona_brandt_pileggi](pages/persona_brandt_pileggi.md) | Brandt Pileggi (self) | reactor | reviewed |
+| persona_chip_huyen *(page planned)* | Chip Huyen | 10 | reviewed |
+| persona_simon_willison *(page planned)* | Simon Willison | 32 | reviewed |
+| persona_lilian_weng *(page planned)* | Lilian Weng | 30 | reviewed |
+| persona_eugene_yan *(page planned)* | Eugene Yan | 30 | reviewed |
+| persona_sebastian_ruder *(page planned)* | Sebastian Ruder | 15 | reviewed |
+| persona_arxiv_research *(page planned)* | arXiv Research Community | 27 | reviewed |
+| persona_mitko_vasilev *(page planned)* | Mitko Vasilev | 17 | draft |
+| persona_paolo_perrone *(page planned)* | Paolo Perrone | 8 | draft |
+| persona_brandt_pileggi *(page planned)* | Brandt Pileggi (self) | reactor | reviewed |
 | Paolo Perrone, Stanislav Beliaev, Alex Wang, GenAI Works, Aishwarya N. Reganti… | Various | 5–11 each | draft/seed |
 | ~95 other indexed personas (long tail) | Various | 1–4 each | seed |
 
@@ -76,13 +76,13 @@ Vector store: ChromaDB at `data/linkedin_store/`. Curation guard active (`data/c
 |------|----------|-------------|--------|
 | [pattern_llm_wiki](pages/pattern_llm_wiki.md) | Pattern | Karpathy's LLM Wiki — full authoritative synthesis + AAA tracking discipline (index/log) | reviewed |
 | [pattern_dark_factory](pages/pattern_dark_factory.md) | Pattern | Cole Medin's dark-factory experiment framework | reviewed |
-| [pattern_autoresearch_loop](pages/pattern_autoresearch_loop.md) | Pattern | Andrej Karpathy's autonomous research orchestration | draft |
-| [pattern_archon_harness](pages/pattern_archon_harness.md) | Pattern | Cole Medin's Archon multi-agent orchestration | draft |
+| pattern_autoresearch_loop *(page planned)* | Pattern | Andrej Karpathy's autonomous research orchestration | draft |
+| pattern_archon_harness *(page planned)* | Pattern | Cole Medin's Archon multi-agent orchestration | draft |
 | [pattern_claude_md_ecosystem](pages/pattern_claude_md_ecosystem.md) | Pattern | AI Engineering OS — CLAUDE.md template with Architectural Constitution, companion docs, and initialization survey | reviewed |
-| [concept_orchestration](pages/concept_orchestration.md) | Concept | How agents coordinate work and share state | draft |
-| [concept_prompt_injection](pages/concept_prompt_injection.md) | Concept | Prompt injection defense and sanitization | draft |
-| [concept_evaluation](pages/concept_evaluation.md) | Concept | LLM eval frameworks and ground-truth scoring | reviewed |
-| [concept_source_weighting](pages/concept_source_weighting.md) | Concept | Source credibility and learned weighting models | draft |
+| concept_orchestration *(page planned)* | Concept | How agents coordinate work and share state | draft |
+| concept_prompt_injection *(page planned)* | Concept | Prompt injection defense and sanitization | draft |
+| concept_evaluation *(page planned)* | Concept | LLM eval frameworks and ground-truth scoring | reviewed |
+| concept_source_weighting *(page planned)* | Concept | Source credibility and learned weighting models | draft |
 
 ---
 
@@ -154,14 +154,18 @@ Vector store: ChromaDB at `data/linkedin_store/`. Curation guard active (`data/c
 
 ## Schema Extracts
 
-| File | Entities | Last Updated | Status |
-|------|----------|--------------|--------|
-| [schema/personas.json](schema/personas.json) | 56 profiles | 2026-06-28 | current |
-| [schema/patterns.json](schema/patterns.json) | 8 patterns | 2026-06-20 | current |
-| [schema/tools.json](schema/tools.json) | 40+ tools | 2026-06-15 | current |
-| [schema/frameworks.json](schema/frameworks.json) | 12 frameworks | 2026-06-10 | current |
-| [schema/trends.json](schema/trends.json) | 15 trends | 2026-06-28 | current |
-| [schema/research_sources.json](schema/research_sources.json) | 24 papers | 2026-06-15 | current |
+Counts verified against the files on 2026-06-30 (`scripts/lint_wiki.py` checks the catalog
+totals against this index).
+
+| File | Entities | Source | Status |
+|------|----------|--------|--------|
+| [schema/persona_catalog.json](schema/persona_catalog.json) | 105 personas | generated (`build_wiki_schema.py`) | current |
+| [schema/personas.json](schema/personas.json) | 2 curated core profiles | hand-curated | current |
+| [schema/patterns.json](schema/patterns.json) | 4 patterns | hand-curated | current |
+| [schema/research_sources.json](schema/research_sources.json) | 236 sources | generated (ingest) | current |
+| schema/tools.json | — | — | **planned (not built)** |
+| schema/frameworks.json | — | — | **planned (not built)** |
+| schema/trends.json | — | — | **planned (not built)** |
 
 ---
 
