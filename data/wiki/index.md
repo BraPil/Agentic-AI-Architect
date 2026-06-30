@@ -213,22 +213,25 @@ data/wiki/raw/
 
 ## Recent Updates (June 2026)
 
-**Last 30 Days**:
+**Retrieval-ranking sprint (2026-06-30)** — the whole thread, built and settled with evidence:
 
-- ✅ P6 organic learning loop (OAA bridge) slices 0–3 built and proven (answer relevance lifts measured)
-- ✅ P6 outcome capture slices 1–2 — record adopted+worked; signal re-ranks live retrieval (gated, inert until data)
-- ✅ Persona curation guard — non-practitioner personas barred at ingest (denylist enforced at `store.ingest()`); caught 2 that were still indexed → store **417 → 415**
-- ✅ Full blog corpus re-ingested (115 posts); store reconciled to 417, then 415 after curation prune
-- ✅ Fixed CI corpus-regression bug: `refresh_corpus.py` now restores the snapshot **before** ingest (+4 tests)
-- ✅ Re-synthesized Karpathy LLM-Wiki philosophy; codified the index.md/log.md tracking discipline
-- ✅ LinkedIn exporter v1.1 (absolute timestamps + batch mode)
+- ✅ **Persona curation guard** — non-practitioner personas barred at `store.ingest()` (denylist); caught 2 still indexed → store **417 → 415**
+- ✅ **Hybrid lexical+vector reranking** — BM25⊕vector, selectivity-gated; **ON by default**, re-confirmed on graded labels (nDCG 0.741→0.779, hit@1 0.75→0.80)
+- ✅ **Rank-aware eval** — MRR/nDCG@k/hit@1 with a label-free oracle, integrated into `run_eval.py`
+- ✅ **+5 exact-term eval questions** (mined & verified); search set 15→20
+- ✅ **LLM-judged graded relevance** (`judge_relevance.py`) — de-saturated the metric so rerankers can be judged; surfaced 2 corpus gaps
+- ✅ **Cross-encoder reranker** — built, opt-in; graded eval shows it helps accuracy but **~6s/query latency** (vs hybrid 60ms) keeps it OFF the live path
+- ✅ **Wiki tooling** — built `build_wiki_schema.py` (persona_catalog: 105) + `lint_wiki.py`; fixed real index drift
+
+**Earlier:** P6 organic learning loop (OAA bridge) slices 0–3; P6 outcome capture slices 1–2; CI corpus-regression fix; LinkedIn exporter v1.1.
 
 **Next Actions**:
 
-- [ ] **Retrieval ranking/density** — hybrid lexical+vector (RRF), then optional reranker; eval-gated (next lever per discovery-log) ← in progress
-- [ ] P6 slice 3 — segment-aware outcome multipliers, recency decay, surface per-entity track record (deferred until real outcome data accrues)
-- [ ] Ingest ExMorbus integration docs and design contracts
-- [ ] Regenerate schema extracts (`build_wiki_schema.py`) — `personas.json` still says 56, store now has 105
+- [ ] Fill the corpus gaps the judge surfaced (Karpathy LLM-OS, vibe-coding have no relevant docs)
+- [ ] P6 slice 3 — segment-aware outcome multipliers, recency decay, per-entity track record (deferred until real outcome data accrues)
+- [ ] Wire `lint_wiki.py` + the rank metrics into CI; build/prune the 2 remaining RUNBOOK scripts (`benchmark_mcp.py`, `webhook_worker.py`)
+- [ ] Put the cross-encoder on the live path only via GPU/quantized + `top_k` cap; spot-check judge grades vs humans
+- [ ] Create-or-drop the 15 planned-but-missing wiki pages; ingest ExMorbus integration docs
 
 ---
 

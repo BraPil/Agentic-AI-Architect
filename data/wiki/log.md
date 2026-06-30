@@ -116,6 +116,13 @@
 | 2026-06-30 | Feature | Persona curation guard | OK | src/pipeline/curation.py + data/curation_denylist.json (9 barred), enforced at store.ingest(); scripts/prune_persona.py (prune-and-bar atomic); kill-switch AAA_PERSONA_CURATION=0; 311 tests. First run caught kyle-faust + anthony-smith-mba-sta still indexed |
 | 2026-06-30 | Lint | data/linkedin_store/ | OK | Curation guard pruned the 2 leftover off-standard posts; store 417→415; snapshot re-exported |
 | 2026-06-30 | Docs | data/wiki/index.md | OK | Rebuilt drifted catalog against live store: total 260→415, personas 56→105, corpus overview re-derived by post_type, Recent Updates/Next Actions refreshed |
+| 2026-06-30 | Feature | hybrid lexical+vector reranking | OK | BM25⊕vector convex blend (α=0.25), selectivity-gated, re-order only; built OFF, then ON by default after rank-aware eval proved lift; kill-switch AAA_HYBRID_RANKING=0 |
+| 2026-06-30 | Feature | rank-aware eval (MRR/nDCG@k/hit@1) | OK | src/pipeline/ranking_metrics.py + scripts/eval_ranking.py; label-free graded oracle; integrated into run_eval.py; the instrument run_eval lacked |
+| 2026-06-30 | Eval | +5 exact-term questions (eval-016..020) | OK | Mined corpus + verified; search set 15→20; run_eval stays 20/20; hybrid re-confirmed |
+| 2026-06-30 | Feature | cross-encoder reranker (opt-in) | OK | ms-marco-MiniLM-L-6-v2, graceful/optional, AAA_CROSS_ENCODER=1; helps accuracy on graded labels but ~6s/query → OFF for live path |
+| 2026-06-30 | Eval | LLM-judged graded relevance | OK | scripts/judge_relevance.py (Haiku grades 0..3, sanitized, persisted to relevance_judgments.json); de-saturated the metric; surfaced 2 corpus gaps (eval-001/010) |
+| 2026-06-30 | Feature | wiki tooling | OK | Built scripts/build_wiki_schema.py (persona_catalog.json, 105) + scripts/lint_wiki.py (links/orphans/count drift); fixed 15 dead index links + wrong schema table |
+| 2026-06-30 | Docs | RUNBOOKS + index + logs consolidation | OK | Feature-flags table, graded-judge + curation commands, real latency numbers (hybrid 60ms / CE 6s); index Recent Updates refreshed; decision/discovery/lessons/work logs updated |
 
 ---
 

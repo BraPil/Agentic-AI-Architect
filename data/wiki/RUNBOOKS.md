@@ -1,6 +1,6 @@
 # AAA Operational Runbooks
 
-**Last Updated**: 2026-06-28 (project learning ingest added; corpus 167 items)
+**Last Updated**: 2026-06-30 (retrieval-ranking sprint: hybrid/cross-encoder/graded eval, feature flags, curation; corpus 415 items)
 
 Quick reference guides for deploying, monitoring, and maintaining the Agentic AI Architect system in production.
 
@@ -232,6 +232,40 @@ python3 scripts/eval_ranking.py --compare data/rank_off.json data/rank_on.json
 
 # Suppress HF Hub HTTP noise / speed up store init in any eval run
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+```
+
+**Graded relevance (LLM judge).** The heuristic oracle saturates once hybrid is on; build
+fine-grained graded labels so the rank metrics can discriminate rerankers. Requires
+`ANTHROPIC_API_KEY`. Rebuild after corpus or question-set changes.
+
+```bash
+# Judge every search question (incremental; --overwrite to redo), writes
+# data/wiki/schema/relevance_judgments.json. eval_ranking.py + run_eval.py auto-load it.
+python3 scripts/judge_relevance.py
+python3 scripts/judge_relevance.py --question eval-005 --overwrite
+python3 scripts/judge_relevance.py --dry-run            # show pool sizes, no LLM calls
+```
+
+### Feature Flags (Environment Variables)
+
+All default to the safe/standard behavior; set to override. Kill-switches for the ranking and
+learning machinery:
+
+| Variable | Default | Effect when changed |
+|----------|---------|---------------------|
+| `AAA_HYBRID_RANKING` | `1` (on) | `0` disables hybrid lexical+vector reranking → pure vector order |
+| `AAA_CROSS_ENCODER` | `0` (off) | `1` enables the cross-encoder second stage (accurate but ~6s/query — offline/GPU only) |
+| `AAA_PERSONA_CURATION` | `1` (on) | `0` disables the ingest denylist guard (non-practitioner personas no longer barred) |
+| `AAA_OUTCOME_WEIGHTING` | `1` (on) | `0` disables outcome-signal re-ranking in `get_architecture_recommendation` (inert until ≥5 outcomes/entity anyway) |
+| `ANTHROPIC_API_KEY` | — | required for LLM synthesis, `--synthesis` eval, and `judge_relevance.py` |
+| `HF_HUB_OFFLINE` / `TRANSFORMERS_OFFLINE` | — | `1` skips HF Hub HTTP checks (faster store init, no network noise) |
+
+### Curation (prune a non-practitioner persona)
+
+```bash
+python3 scripts/prune_persona.py --list                       # show barred personas
+python3 scripts/prune_persona.py --persona kyle-faust --reason "job-announcement persona"
+python3 scripts/export_chromadb_snapshot.py                    # persist the deletion
 ```
 
 ### Wiki Maintenance
@@ -482,21 +516,19 @@ conn.close()
 
 ### MCP Query Latency
 
-**Goal**: < 200 ms for cached queries
+**Goal**: < 200 ms for cached queries (the ExMorbus SLA).
 
-**Measurement**:
+**Measured 2026-06-30** (median over 5 warm queries, this CPU):
 
-```bash
-python3 scripts/benchmark_mcp.py
+```
+search_knowledge, hybrid only (default):  ~60 ms   (max ~121 ms)   ✅ under budget
+search_knowledge, hybrid + cross-encoder: ~6090 ms                 ❌ ~30× over budget
 ```
 
-**Output**:
-```
-search_knowledge (warm): 45ms
-search_knowledge (cold): 180ms
-get_architecture_recommendation (warm): 120ms
-get_trending_tools: 65ms
-```
+The cross-encoder (`AAA_CROSS_ENCODER=1`) runs a transformer pass per candidate and is far over
+budget on CPU — keep it OFF for the live path (it's opt-in for offline/GPU use only). Hybrid
+reranking adds negligible cost. (`scripts/benchmark_mcp.py` is referenced but not yet built —
+the numbers above came from an inline `time.perf_counter` loop over `search_knowledge`.)
 
 **If latency > 200ms**:
 
