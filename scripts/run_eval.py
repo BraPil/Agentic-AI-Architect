@@ -249,6 +249,7 @@ def main() -> None:
     all_questions = ground_truth["questions"]
 
     from src.api.mcp_server import _get_store, get_architecture_recommendation, search_knowledge  # noqa: PLC0415
+    from src.pipeline.ranking_metrics import score_ranking  # noqa: PLC0415
 
     if args.coverage:
         store = _get_store()
@@ -278,6 +279,7 @@ def main() -> None:
 
     eval_results = []
     passed = failed = 0
+    ranking_rows: list[dict] = []  # rank-aware metrics, computed from the same fetched results
 
     for q in search_questions:
         # Pass persona filter when the question is explicitly about a specific author
@@ -285,6 +287,9 @@ def main() -> None:
         raw = json.loads(search_knowledge(q["question"], persona=persona_arg, n_results=N_RESULTS))
         result = score_search_question(q, raw)
         eval_results.append(result)
+        # Rank-aware metrics (MRR / nDCG@k / hit@1) over the same ranked results — guards
+        # against ordering regressions the pass/fail checks can't see. See ranking_metrics.py.
+        ranking_rows.append(score_ranking(raw.get("results", []), q, k=N_RESULTS))
 
         status = "PASS" if result["passed"] else "FAIL"
         score_pct = f"{result['score']*100:.0f}%"
@@ -326,11 +331,26 @@ def main() -> None:
     overall_score = passed / total if total else 0.0
     search_relevances = [r["top_relevance"] for r in eval_results if r.get("top_relevance") is not None]
 
+    ranking_summary = None
+    if ranking_rows:
+        n = len(ranking_rows)
+        ranking_summary = {
+            "questions": n,
+            "mean_mrr": round(sum(r["mrr"] for r in ranking_rows) / n, 4),
+            "mean_ndcg_at_k": round(sum(r["ndcg_at_k"] for r in ranking_rows) / n, 4),
+            "mean_precision_at_5": round(sum(r["precision_at_5"] for r in ranking_rows) / n, 4),
+            "hit_at_1_rate": round(sum(1 for r in ranking_rows if r["hit_at_1"]) / n, 4),
+        }
+
     print(f"\n── Results {'─' * 40}")
     print(f"  Passed:  {passed}/{total} ({overall_score*100:.0f}%)")
     print(f"  Failed:  {failed}")
     if search_relevances:
         print(f"  Avg search relevance: {sum(search_relevances)/len(search_relevances):.4f}")
+    if ranking_summary:
+        rs = ranking_summary
+        print(f"  Ranking — MRR {rs['mean_mrr']:.4f}  nDCG@{N_RESULTS} {rs['mean_ndcg_at_k']:.4f}  "
+              f"P@5 {rs['mean_precision_at_5']:.4f}  hit@1 {rs['hit_at_1_rate']:.4f}")
 
     if not args.question:
         failed_results = [r for r in eval_results if not r["passed"]]
@@ -353,6 +373,7 @@ def main() -> None:
         "failed": failed,
         "overall_score": round(overall_score, 4),
         "avg_top_relevance": round(sum(search_relevances) / len(search_relevances), 4) if search_relevances else None,
+        "ranking": ranking_summary,
         "results": eval_results,
     }
 

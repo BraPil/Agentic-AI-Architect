@@ -215,6 +215,20 @@ python3 scripts/run_eval.py --coverage
 python3 scripts/run_eval.py --output data/eval_results_2026-06-28.json
 ```
 
+`run_eval.py` now prints a **Ranking** line (MRR / nDCG@k / P@5 / hit@1) alongside the
+pass-rate and persists it under `ranking` in the results JSON — ordering quality is tracked on
+every run. For A/B'ing a reranker, use the dedicated harness:
+
+```bash
+# Rank-aware A/B (hybrid reranking OFF vs ON)
+AAA_HYBRID_RANKING=0 python3 scripts/eval_ranking.py --output data/rank_off.json
+AAA_HYBRID_RANKING=1 python3 scripts/eval_ranking.py --output data/rank_on.json
+python3 scripts/eval_ranking.py --compare data/rank_off.json data/rank_on.json
+
+# Suppress HF Hub HTTP noise / speed up store init in any eval run
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+```
+
 ### Wiki Maintenance
 
 ```bash

@@ -66,8 +66,16 @@ low-document-frequency terms and verifying each against the indexed docs:
 All 20 keep `run_eval.py` green (20/20). On this expanded set the hybrid A/B re-confirmed the
 win: MRR 0.925→1.000, nDCG@10 0.889→0.957, P@5 0.870→0.910, hit@1 0.850→1.000.
 
-## 5. Limitations / follow-ups
+## 5. Integration
+
+`run_eval.py` now computes these metrics from the results it already fetches and prints a
+`Ranking — MRR … nDCG@k … P@5 … hit@1 …` line alongside the pass-rate, persisting them under
+`ranking` in `eval_results.json`. So every eval run tracks ordering quality, guarding against
+regressions the pass/fail checks can't see — no extra queries, no separate invocation needed.
+`scripts/eval_ranking.py` remains for A/B work (`--compare`, env toggles).
+
+## 6. Limitations / follow-ups
 - The oracle is binary-ish per signal (substring match); it cannot grade *partial* topical
   relevance beyond presence. Adequate for ordering comparison, not absolute quality.
 - Grow the set further as the corpus grows; keep adding exact-term cases.
-- Wire the rank metrics into `run_eval.py` / CI as a tracked metric alongside the pass-rate.
+- Track the `ranking` block over time / fail CI on a material drop.

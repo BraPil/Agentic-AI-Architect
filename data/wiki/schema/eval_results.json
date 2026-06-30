@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "run_at": "2026-06-30T18:39:00.212498+00:00",
+  "run_at": "2026-06-30T18:42:40.537382+00:00",
   "total_questions": 20,
   "search_questions": 20,
   "synthesis_questions": 0,
@@ -8,6 +8,13 @@
   "failed": 0,
   "overall_score": 1.0,
   "avg_top_relevance": 0.4372,
+  "ranking": {
+    "questions": 20,
+    "mean_mrr": 1.0,
+    "mean_ndcg_at_k": 0.9641,
+    "mean_precision_at_5": 0.9,
+    "hit_at_1_rate": 1.0
+  },
   "results": [
     {
       "question_id": "eval-001",
