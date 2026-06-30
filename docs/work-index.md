@@ -51,6 +51,7 @@ Current strategy:
 - `docs/persona-curation-guard-v0.md` — persona curation guard (denylist barring non-practitioner personas at store ingest)
 - `docs/hybrid-ranking-v0.md` — hybrid lexical+vector reranking (ON by default; vindicated by the rank-aware eval)
 - `docs/ranking-aware-eval-v0.md` — rank-aware retrieval eval (MRR/nDCG@k/hit@1, label-free graded relevance oracle)
+- `docs/cross-encoder-rerank-v0.md` — optional cross-encoder second-stage reranker (built; OFF by default — no gain on the ceiling eval)
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_operator_runbook_v1.md`
 - `docs/orchestration-strategy-spike-v1.md`

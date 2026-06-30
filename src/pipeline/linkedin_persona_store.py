@@ -311,6 +311,14 @@ class LinkedInPersonaStore:
             from src.pipeline.hybrid_ranking import rerank_hits  # noqa: PLC0415
             hits = rerank_hits(query, hits)
 
+        # Optional cross-encoder second stage: re-score the top candidates with a joint
+        # query-document model (more accurate, more expensive). Off by default; graceful
+        # no-op if the model is unavailable. See src/pipeline/cross_encoder_rerank.py.
+        if len(hits) > 1:
+            from src.pipeline.cross_encoder_rerank import enabled, get_reranker  # noqa: PLC0415
+            if enabled():
+                hits = get_reranker().rerank_hits(query, hits)
+
         return hits[:n_results]
 
     def get_personas(self) -> list[dict]:
