@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "description": "Persona IDs barred from the persona store — non-practitioner / personal-contact / job-announcement personas. Enforced at LinkedInPersonaStore.ingest(). See src/pipeline/curation.py.",
+  "blocked_personas": [
+    {
+      "persona_id": "alex-arend",
+      "reason": "personal-contact persona — not an AI/tech practitioner (pruned 2026-04)",
+      "blocked_at": "2026-04-01"
+    },
+    {
+      "persona_id": "alex-dobrenko",
+      "reason": "personal-contact persona — not an AI/tech practitioner (pruned 2026-04)",
+      "blocked_at": "2026-04-01"
+    },
+    {
+      "persona_id": "ans",
+      "reason": "personal-contact persona — not an AI/tech practitioner (pruned 2026-04)",
+      "blocked_at": "2026-04-01"
+    },
+    {
+      "persona_id": "anthony-smith-mba-sta",
+      "reason": "off-standard persona — incomplete June prune; removed by curation guard",
+      "blocked_at": "2026-06-30"
+    },
+    {
+      "persona_id": "jene-o",
+      "reason": "personal-contact persona — not an AI/tech practitioner (pruned 2026-04)",
+      "blocked_at": "2026-04-01"
+    },
+    {
+      "persona_id": "karen-robes-meeks",
+      "reason": "personal-contact persona — not an AI/tech practitioner (pruned 2026-04)",
+      "blocked_at": "2026-04-01"
+    },
+    {
+      "persona_id": "kyle-faust",
+      "reason": "off-standard persona — incomplete June prune; removed by curation guard",
+      "blocked_at": "2026-06-30"
+    },
+    {
+      "persona_id": "matt-luke",
+      "reason": "job-announcement / personal-contact persona — re-entered via June reactions scrape (pruned 2026-06-29)",
+      "blocked_at": "2026-06-29"
+    },
+    {
+      "persona_id": "paul-northrup-pe",
+      "reason": "job-announcement / personal-contact persona — re-entered via June reactions scrape (pruned 2026-06-29)",
+      "blocked_at": "2026-06-29"
+    }
+  ]
+}

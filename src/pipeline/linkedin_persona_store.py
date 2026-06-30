@@ -17,10 +17,13 @@ Storage layout:
 """
 
 import logging
+import os
 import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
+
+from src.pipeline.curation import PersonaCurationList
 
 logger = logging.getLogger(__name__)
 
@@ -99,11 +102,29 @@ class LinkedInPersonaStore:
         personas = store.get_personas()
     """
 
-    def __init__(self, store_path: str | Path = STORE_PATH) -> None:
+    def __init__(
+        self,
+        store_path: str | Path = STORE_PATH,
+        curation: PersonaCurationList | None = None,
+    ) -> None:
         self._store_path = Path(store_path)
         self._client = None
         self._collection = None
         self._initialized = False
+        # Curation guard — bars non-practitioner personas from ingest. Loaded from the
+        # default denylist unless one is injected (tests) or disabled via env kill-switch.
+        # See src/pipeline/curation.py.
+        if curation is not None:
+            self._curation: PersonaCurationList = curation
+        elif os.environ.get("AAA_PERSONA_CURATION", "1") == "0":
+            self._curation = PersonaCurationList()  # inert
+        else:
+            self._curation = PersonaCurationList.load()
+
+    @property
+    def curation(self) -> PersonaCurationList:
+        """The persona curation denylist consulted at ingest()."""
+        return self._curation
 
     def initialize(self) -> None:
         """Connect to ChromaDB and get/create the reactions collection."""
@@ -152,6 +173,17 @@ class LinkedInPersonaStore:
         Raises on unexpected errors.
         """
         self._check()
+
+        # Curation guard: barred (non-practitioner) personas never re-enter the store,
+        # even if a later reactions scrape surfaces them again. Enforced HERE at the store
+        # layer so every ingest path inherits the bar. See src/pipeline/curation.py.
+        if self._curation.is_blocked(record.persona_id):
+            logger.warning(
+                "Curation guard blocked persona '%s' (%s) — skipping ingest of %s",
+                record.persona_id, record.author, record.post_id,
+            )
+            return False
+
         document = build_document(
             record.text, record.summary, record.image_descriptions,
             {
@@ -299,6 +331,19 @@ class LinkedInPersonaStore:
                 results["ids"], results["documents"], results["metadatas"]
             )
         ]
+
+    def prune_persona(self, persona_id: str) -> int:
+        """
+        Remove all indexed posts for a persona. Returns the number of posts deleted.
+
+        This only deletes from the store; pair it with ``self.curation.block(...)`` (see
+        ``scripts/prune_persona.py``) so the persona is also barred from future re-ingest.
+        """
+        self._check()
+        ids = self._collection.get(where={"persona_id": persona_id}, include=[])["ids"]
+        if ids:
+            self._collection.delete(ids=ids)
+        return len(ids)
 
     def print_index_summary(self) -> None:
         """Print a human-readable summary of what's indexed."""

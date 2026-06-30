@@ -48,6 +48,7 @@ Current strategy:
 - `docs/segment-aware-evaluation-v2.md`
 - `docs/research-training-cycle-v1.md`
 - `docs/p6-outcome-capture-v0.md` — P6 outcome-capture spec (slice 1: record adopted/worked, expose source signal)
+- `docs/persona-curation-guard-v0.md` — persona curation guard (denylist barring non-practitioner personas at store ingest)
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_system_compendium_v1.md`
 - `workspaces/ExMorbus-v0.1/docs/exmorbus_operator_runbook_v1.md`
 - `docs/orchestration-strategy-spike-v1.md`
@@ -91,6 +92,7 @@ Repository memory system:
 - Explicit source weighting basis — see `docs/source-weighting-model-v0.md`
 - Learned and freshness-aware source weighting basis — see `docs/source-weighting-model-v2.md`
 - Segment-comparison evaluation path — see `docs/segment-aware-evaluation-v2.md`
+- Persona curation guard: denylist enforced at store ingest (prune-and-bar is one act) — see `docs/persona-curation-guard-v0.md`
 - Hardware scaling plan for 3-month 24/7 sprint at 1×, 10×, 100× scale — see `docs/hardware-scaling-plan-v1.md`
 
 ### Discoveries
