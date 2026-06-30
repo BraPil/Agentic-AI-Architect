@@ -1,10 +1,10 @@
 # Hybrid Retrieval Ranking — Spec v0
 
-> **Status**: Built, tested, measured — **OFF by default** (opt-in via `AAA_HYBRID_RANKING=1`).
+> **Status**: Built, tested, measured — **ON by default** (kill-switch `AAA_HYBRID_RANKING=0`).
 > **Owner**: Brandt (#12). 2026-06-30.
-> The mechanism is sound and proven deterministically; it is gated off because the current
-> evaluation cannot measure ranking quality, so there is no evidence to justify changing the
-> core retrieval order in production. The headline deliverable is that finding.
+> Arc: built the reranker → the existing eval couldn't judge it (a metric artifact looked like
+> a regression) → built a rank-aware eval → it showed hybrid clearly helps → enabled it. The
+> discipline avoided *both* shipping blind and discarding a good feature on a biased metric.
 
 ---
 
@@ -55,23 +55,44 @@ catastrophic regression (a check flips) but cannot distinguish a better ordering
 one among already-passing results. This is the binding gap for *all* ranking work (reranking,
 hybrid, query expansion), not just this slice.
 
-## 4. Decision
+## 4. Interim decision (now superseded): shipped OFF, built the instrument first
 
-Ship the mechanism **OFF by default**. Rationale:
-- No demonstrated benefit on the available eval; changing core retrieval order in production
-  without evidence it is net-positive violates the eval-gating discipline (the discipline P6
-  slice 2 established and that this slice deliberately followed).
-- The lever is ready: flip `AAA_HYBRID_RANKING=1` the moment a ranking-aware eval shows gain.
+The first measurement could not justify enabling hybrid, so it shipped OFF while the missing
+instrument was built. This was the correct interim call: don't change core retrieval order on
+a metric that can't credit a reorder.
 
-## 5. What candidate (b) actually needs next (re-scoped)
+## 5. The instrument — rank-aware eval
 
-Before any reranker can be *justified*, the eval must be able to **judge order**:
-1. **Ranking-aware metrics** — graded relevance judgments + MRR / nDCG@k, not just top-1
-   threshold + presence checks.
-2. **Exact-term / keyword questions** — queries with rare tool names, acronyms, API symbols
-   where dense retrieval is known to miss and lexical is known to help (e.g. expand on the
-   `vllm-turboquant` style question).
-3. Then measure hybrid (and a cross-encoder reranker, query expansion) against it, and enable
-   what wins.
+`src/pipeline/ranking_metrics.py` + `scripts/eval_ranking.py` add MRR, nDCG@k, precision@k,
+and hit@1, with a **label-free graded relevance oracle**: each result earns +1 per matched
+ground-truth signal (`must_cite_author`, `expected_tools`, `expected_topics`), grade 0..3.
+No manual judgments — it reuses fields the ground truth already carries and stays in sync with
+the question set. Run it `AAA_HYBRID_RANKING=0` vs `=1` and `--compare` the two runs.
 
-This reorders the (b) roadmap: **build the measurement instrument first, then the reranker.**
+## 6. Vindication — hybrid clearly helps (enabled by default)
+
+Rank-aware A/B over the 15 search questions (`scripts/eval_ranking.py`, n_results=10):
+
+| metric | hybrid OFF | hybrid ON | Δ |
+|--------|-----------:|----------:|----:|
+| MRR | 0.9000 | **1.0000** | +0.100 |
+| nDCG@10 | 0.8769 | **0.9469** | +0.070 |
+| Precision@5 | 0.8400 | **0.9067** | +0.067 |
+| hit@1 rate | 0.8000 | **1.0000** | +0.200 |
+
+All four improved. The decisive case: **eval-005 ("vllm-turboquant")** — the exact-term query
+hybrid was built for — went from hit@1=0 / first-relevant-at-rank-2 to **rank 1**. Three
+queries that had a *non-relevant* doc at rank 1 under pure vector now all lead with a relevant
+doc (hit@1 0.80→1.00). This confirms the earlier "avg relevance dropped" was the metric
+artifact, not harm. Hybrid is therefore **enabled by default**.
+
+Known cost (small, not overfit away): two conceptual queries (eval-002, eval-006) lost a little
+nDCG/P@5 when a pool-rare topic term fired lexical. Net aggregate is positive on every metric;
+tuning the selectivity threshold / α to remove those is a follow-up, deferred to avoid
+overfitting to 15 questions.
+
+## 7. Open follow-ups
+- Add exact-term/keyword questions to the ground truth so the instrument's discriminating
+  power grows (eval-005 is currently the only clear exact-term case).
+- Re-tune α / selectivity once the question set is larger; consider a cross-encoder reranker
+  as a second stage, measured on the same instrument.

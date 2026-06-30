@@ -303,12 +303,11 @@ class LinkedInPersonaStore:
         # Hybrid ranking: re-order the candidate pool by a vector+lexical blend before
         # trimming, so exact-term matches the embedding smoothed away can surface. The
         # reported `score` stays the vector similarity; only the order changes.
-        # OPT-IN (default OFF): set AAA_HYBRID_RANKING=1 to enable. On the current eval the
-        # lever shows no quality regression but no demonstrable gain either — the harness
-        # can't measure ranking quality (saturated pass-rate + a vector-biased relevance
-        # metric). It stays off until a ranking-aware eval justifies it. See
-        # src/pipeline/hybrid_ranking.py and docs/hybrid-ranking-v0.md.
-        if os.environ.get("AAA_HYBRID_RANKING", "0") == "1" and len(hits) > 1:
+        # ON by default — justified by the rank-aware eval (scripts/eval_ranking.py):
+        # hybrid raised MRR 0.90→1.00, nDCG@10 0.877→0.947, hit@1 0.80→1.00, and rescued
+        # the exact-term query from rank 2 to rank 1. Kill-switch: AAA_HYBRID_RANKING=0.
+        # See src/pipeline/hybrid_ranking.py and docs/hybrid-ranking-v0.md.
+        if os.environ.get("AAA_HYBRID_RANKING", "1") != "0" and len(hits) > 1:
             from src.pipeline.hybrid_ranking import rerank_hits  # noqa: PLC0415
             hits = rerank_hits(query, hits)
 

@@ -28,17 +28,15 @@ absent) gets pure vector order, an exact no-op. This restricts lexical to the ca
 Pure stdlib (no new dependency), and fast: BM25 over a few dozen candidates is microseconds,
 well inside the < 200ms cached-query budget.
 
-Status: built, tested, and measured — but **OFF by default** (opt-in via AAA_HYBRID_RANKING=1).
-On the current evaluation it shows no quality regression (every judgment check unchanged at
-15/15) yet no demonstrable gain, because that eval cannot measure ranking quality: its pass
-rate is saturated and its "avg relevance" metric is the mean top-1 *vector* similarity, which
-mathematically can only fall under any reorder (a promoted doc has lower vector sim than the
-max-vector doc it displaces). The mechanism is ready to enable the moment a ranking-aware eval
-(graded relevance / MRR / nDCG, with exact-term questions) demonstrates benefit. See
-docs/hybrid-ranking-v0.md.
+Status: built, tested, measured — and **ON by default**, justified by a rank-aware eval
+(scripts/eval_ranking.py). The first eval (run_eval.py) couldn't judge it: saturated pass-rate
++ a vector-biased "avg relevance" metric that can only fall under any reorder. A proper
+rank-aware eval (MRR / nDCG@k / hit@1 over label-free graded relevance) then showed hybrid
+clearly helps — MRR 0.90→1.00, nDCG@10 0.877→0.947, hit@1 0.80→1.00 — and rescued the
+exact-term query from rank 2 to rank 1. See docs/hybrid-ranking-v0.md.
 
 Configuration:
-    AAA_HYBRID_RANKING (env): set to "1" to enable fusion (default OFF → pure vector order).
+    AAA_HYBRID_RANKING (env): set to "0" to disable fusion (default ON → pure vector when off).
     alpha: lexical weight in [0, 1]. Default 0.25 — vector stays primary, lexical breaks ties
         and rescues exact-term matches the embedding missed. The lexical signal can only
         overturn a vector lead smaller than alpha/(1-alpha) ≈ 0.33 cosine, so a clear vector
