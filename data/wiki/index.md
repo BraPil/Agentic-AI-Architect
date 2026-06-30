@@ -3,8 +3,8 @@
 > Content catalog for the Agentic AI Architect knowledge wiki.  
 > Three layers: raw/ (source artifacts) → pages/ (curated synthesis) → schema/ (typed extracts).  
 > Operations: Ingest, Query, Lint.  
-> **Last rebuilt**: 2026-06-29 (corpus reconciled to 417 items)
-> **Total items**: 417 indexed (committed snapshot `schema/chromadb_snapshot.json`)
+> **Last rebuilt**: 2026-06-30 (corpus 415 after curation-guard prune of 2 off-standard posts)
+> **Total items**: 415 indexed (committed snapshot `schema/chromadb_snapshot.json`)
 > **Phases referenced**: P0–P5 completed; P6 (organic learning loop) in progress; P7 planned
 > **Tracking discipline**: see [pattern_llm_wiki](pages/pattern_llm_wiki.md) — `index.md` = where we are, `log.md` = what we did
 
@@ -12,22 +12,30 @@
 
 ## Corpus Overview
 
-| Source | Count | Status | Dates |
-|--------|-------|--------|-------|
-| LinkedIn posts (52 personas) | 79 | indexed | 2024-11–2026-06 |
-| Blog posts (Chip Huyen, Lilian Weng, Simon Willison, Eugene Yan, Sebastian Ruder) | 105 | indexed | 2019-03–2026-04 |
-| arXiv abstracts (7 queries) | 24 | indexed | 2026-04-16 |
-| YouTube transcripts (20 videos) | 20 | indexed | 2024-06–2026-03 |
-| GitHub READMEs (8 repos, 2 personas) | 14 | indexed | 2022-01–2026-04 |
-| Misc sources | 18 | indexed | 2024-01–2026-06 |
-| **Total** | **260** | **active** | **2019-03–2026-06** |
+Counts are by `post_type` from the live store (the ground truth), not by ingest batch.
 
+| Source (post_type) | Count | Tier | Dates |
+|--------------------|-------|------|-------|
+| LinkedIn persona posts (`image` 129, `text` 16, `video` 12, `article` 6) | 163 | external | 2024-11–2026-06 |
+| Blog posts — Willison, Weng, Yan, Ruder, Huyen (`blog_post`) | 117 | external | 2019-03–2026-04 |
+| Project learnings — AAA decision/discovery/lesson logs (`project_learning`) | 72 | internal | 2026-04–2026-06 |
+| arXiv abstracts (`arxiv_abstract`) | 27 | external | 2026-04–2026-06 |
+| YouTube transcripts (`youtube_transcript`) | 20 | external | 2024-06–2026-03 |
+| GitHub READMEs (`github_readme`) | 14 | external | 2022-01–2026-04 |
+| Promoted learning artifacts (`learning_artifact`) | 2 | grounded | 2026-06 |
+| **Total** | **415** | **active** | **2019-03–2026-06** |
+
+Tier split (by `source_tier`): 341 external (untagged), 72 internal, 2 grounded.
 Embedding model: `all-MiniLM-L6-v2` (384-dim, local, no API key required).  
-Vector store: ChromaDB at `data/linkedin_store/` (12.4 MB).
+Vector store: ChromaDB at `data/linkedin_store/`. Curation guard active (`data/curation_denylist.json`, 9 barred).
 
 ---
 
-## Personas (56 Indexed)
+## Personas (105 Indexed)
+
+> `aaa_project` (72 items) is AAA's own institutional memory (the `project_learning` internal
+> tier), not an external thought leader — it is the largest "persona" by count but is excluded
+> from trend/community aggregation. The external persona long tail is now ~95 (many seed-tier).
 
 ### Tier 1 — Core Founders (2)
 
@@ -41,15 +49,16 @@ Vector store: ChromaDB at `data/linkedin_store/` (12.4 MB).
 | Page | Name | Items | Status |
 |------|------|-------|--------|
 | [persona_chip_huyen](pages/persona_chip_huyen.md) | Chip Huyen | 10 | reviewed |
-| [persona_simon_willison](pages/persona_simon_willison.md) | Simon Willison | 31 | reviewed |
+| [persona_simon_willison](pages/persona_simon_willison.md) | Simon Willison | 32 | reviewed |
 | [persona_lilian_weng](pages/persona_lilian_weng.md) | Lilian Weng | 30 | reviewed |
 | [persona_eugene_yan](pages/persona_eugene_yan.md) | Eugene Yan | 30 | reviewed |
 | [persona_sebastian_ruder](pages/persona_sebastian_ruder.md) | Sebastian Ruder | 15 | reviewed |
-| [persona_arxiv_research](pages/persona_arxiv_research.md) | arXiv Research Community | 24 | reviewed |
+| [persona_arxiv_research](pages/persona_arxiv_research.md) | arXiv Research Community | 27 | reviewed |
 | [persona_mitko_vasilev](pages/persona_mitko_vasilev.md) | Mitko Vasilev | 17 | draft |
 | [persona_paolo_perrone](pages/persona_paolo_perrone.md) | Paolo Perrone | 8 | draft |
-| [persona_brandt_pileggi](pages/persona_brandt_pileggi.md) | Brandt Pileggi (self) | 37 | reviewed |
-| 45 other indexed personas | Various | ~45 | seed |
+| [persona_brandt_pileggi](pages/persona_brandt_pileggi.md) | Brandt Pileggi (self) | reactor | reviewed |
+| Paolo Perrone, Stanislav Beliaev, Alex Wang, GenAI Works, Aishwarya N. Reganti… | Various | 5–11 each | draft/seed |
+| ~95 other indexed personas (long tail) | Various | 1–4 each | seed |
 
 ### Coverage by Domain
 
@@ -203,19 +212,19 @@ data/wiki/raw/
 **Last 30 Days**:
 
 - ✅ P6 organic learning loop (OAA bridge) slices 0–3 built and proven (answer relevance lifts measured)
-- ✅ Full blog corpus re-ingested (115 posts); store grown and reconciled to **417 items**
-- ✅ Corpus re-curated: 4 off-standard personas pruned; CI weekly-refresh regression caught and merged as a union
+- ✅ P6 outcome capture slices 1–2 — record adopted+worked; signal re-ranks live retrieval (gated, inert until data)
+- ✅ Persona curation guard — non-practitioner personas barred at ingest (denylist enforced at `store.ingest()`); caught 2 that were still indexed → store **417 → 415**
+- ✅ Full blog corpus re-ingested (115 posts); store reconciled to 417, then 415 after curation prune
 - ✅ Fixed CI corpus-regression bug: `refresh_corpus.py` now restores the snapshot **before** ingest (+4 tests)
 - ✅ Re-synthesized Karpathy LLM-Wiki philosophy; codified the index.md/log.md tracking discipline
 - ✅ LinkedIn exporter v1.1 (absolute timestamps + batch mode)
 
 **Next Actions**:
 
-- [ ] P6 outcome capture — record whether a recommendation was adopted + worked, then weight by it (true learning)
-- [ ] Retrieval ranking/density — reranking or hybrid keyword+vector (next lever per discovery-log)
-- [ ] Curation guard so non-practitioner personas are filtered at ingest, not pruned after
-- [ ] Full index.md rebuild against the 417-item snapshot (counts in tables below predate the merge)
+- [ ] **Retrieval ranking/density** — hybrid lexical+vector (RRF), then optional reranker; eval-gated (next lever per discovery-log) ← in progress
+- [ ] P6 slice 3 — segment-aware outcome multipliers, recency decay, surface per-entity track record (deferred until real outcome data accrues)
 - [ ] Ingest ExMorbus integration docs and design contracts
+- [ ] Regenerate schema extracts (`build_wiki_schema.py`) — `personas.json` still says 56, store now has 105
 
 ---
 
@@ -247,4 +256,4 @@ This wiki serves as the knowledge reference layer for:
 
 *Wiki maintained by: Agentic AI Architect development team*  
 *Based on: Andrej Karpathy's LLM Wiki design*  
-*Last verified: 2026-06-28*
+*Last verified: 2026-06-30*

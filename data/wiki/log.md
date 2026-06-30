@@ -112,6 +112,10 @@
 | 2026-06-29 | Fix | scripts/refresh_corpus.py | OK | Restore-from-snapshot now runs BEFORE ingest so CI can no longer regress the corpus; +4 tests (test_refresh_corpus.py) |
 | 2026-06-29 | Ingest | data/seeds/karpathy_llm_wiki.md (re-synthesis) | OK | Refreshed pattern_llm_wiki.md to full authoritative gist; codified the index.md (where-we-are) + log.md (what-we-did) tracking discipline |
 | 2026-06-29 | Feature | P6 outcome capture (slice 1) | OK | src/learning/outcomes.py: record recommendation→outcome (adopted/worked), per-source Laplace-smoothed signal; +2 MCP tools, CLI, 14 tests (283 total). Capture+expose only; ranking integration deferred to slice 2 |
+| 2026-06-29 | Feature | P6 outcome capture (slice 2) | OK | src/learning/outcome_weighting.py re-ranks ChromaDB hits by relevance×outcome_multiplier in get_architecture_recommendation; min-evidence gate 5 (inert on empty ledger); kill-switch AAA_OUTCOME_WEIGHTING=0; 298 tests. Loop closed |
+| 2026-06-30 | Feature | Persona curation guard | OK | src/pipeline/curation.py + data/curation_denylist.json (9 barred), enforced at store.ingest(); scripts/prune_persona.py (prune-and-bar atomic); kill-switch AAA_PERSONA_CURATION=0; 311 tests. First run caught kyle-faust + anthony-smith-mba-sta still indexed |
+| 2026-06-30 | Lint | data/linkedin_store/ | OK | Curation guard pruned the 2 leftover off-standard posts; store 417→415; snapshot re-exported |
+| 2026-06-30 | Docs | data/wiki/index.md | OK | Rebuilt drifted catalog against live store: total 260→415, personas 56→105, corpus overview re-derived by post_type, Recent Updates/Next Actions refreshed |
 
 ---
 
