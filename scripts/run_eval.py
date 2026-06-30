@@ -251,6 +251,12 @@ def main() -> None:
     from src.api.mcp_server import _get_store, get_architecture_recommendation, search_knowledge  # noqa: PLC0415
     from src.pipeline.ranking_metrics import score_ranking  # noqa: PLC0415
 
+    _judgments_path = Path("data/wiki/schema/relevance_judgments.json")
+    ranking_judgments = (
+        json.loads(_judgments_path.read_text()).get("judgments", {})
+        if _judgments_path.exists() else None
+    )
+
     if args.coverage:
         store = _get_store()
         print_persona_coverage(store)
@@ -289,7 +295,8 @@ def main() -> None:
         eval_results.append(result)
         # Rank-aware metrics (MRR / nDCG@k / hit@1) over the same ranked results — guards
         # against ordering regressions the pass/fail checks can't see. See ranking_metrics.py.
-        ranking_rows.append(score_ranking(raw.get("results", []), q, k=N_RESULTS))
+        ranking_rows.append(score_ranking(raw.get("results", []), q, k=N_RESULTS,
+                                           judgments=ranking_judgments))
 
         status = "PASS" if result["passed"] else "FAIL"
         score_pct = f"{result['score']*100:.0f}%"

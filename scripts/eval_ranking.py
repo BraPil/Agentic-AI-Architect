@@ -33,7 +33,15 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.pipeline.ranking_metrics import DEFAULT_K, score_ranking  # noqa: E402
 
 GROUND_TRUTH_PATH = Path("data/wiki/schema/eval_ground_truth.json")
+JUDGMENTS_PATH = Path("data/wiki/schema/relevance_judgments.json")
 N_RESULTS = 10  # retrieve a deeper list than run_eval (8) so ranking has room to be judged
+
+
+def _load_judgments() -> dict | None:
+    """LLM-judged graded relevance, if it has been built (scripts/judge_relevance.py)."""
+    if JUDGMENTS_PATH.exists():
+        return json.loads(JUDGMENTS_PATH.read_text()).get("judgments", {})
+    return None
 
 
 def _aggregate(per_question: list[dict]) -> dict:
@@ -57,16 +65,18 @@ def run() -> dict:
 
     from src.api.mcp_server import search_knowledge  # noqa: PLC0415
 
+    judgments = _load_judgments()
     hybrid = os.environ.get("AAA_HYBRID_RANKING", "0") == "1"
+    grading = "LLM-judged" if judgments else "heuristic"
     print(f"Rank-aware eval — {len(search_questions)} search questions, "
-          f"n_results={N_RESULTS}, hybrid={'ON' if hybrid else 'OFF'}\n")
+          f"n_results={N_RESULTS}, hybrid={'ON' if hybrid else 'OFF'}, relevance={grading}\n")
 
     per_question = []
     for q in search_questions:
         persona_arg = q.get("expected_persona") or ""
         raw = json.loads(search_knowledge(q["question"], persona=persona_arg, n_results=N_RESULTS))
         results = raw.get("results", [])
-        metrics = score_ranking(results, q, k=DEFAULT_K)
+        metrics = score_ranking(results, q, k=DEFAULT_K, judgments=judgments)
         per_question.append({"id": q["id"], "question": q["question"], "metrics": metrics})
         fr = metrics["first_relevant_rank"]
         print(f"  {q['id']}  MRR {metrics['mrr']:.3f}  nDCG@{DEFAULT_K} {metrics['ndcg_at_k']:.3f}  "
@@ -79,7 +89,8 @@ def run() -> dict:
     print(f"  nDCG@{DEFAULT_K}          {agg['mean_ndcg_at_k']:.4f}")
     print(f"  Precision@5      {agg['mean_precision_at_5']:.4f}")
     print(f"  hit@1 rate       {agg['hit_at_1_rate']:.4f}")
-    return {"hybrid": hybrid, "n_results": N_RESULTS, "aggregate": agg, "questions": per_question}
+    return {"hybrid": hybrid, "n_results": N_RESULTS, "relevance": grading,
+            "aggregate": agg, "questions": per_question}
 
 
 def compare(path_a: str, path_b: str) -> None:

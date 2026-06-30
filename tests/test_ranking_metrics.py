@@ -16,6 +16,7 @@ from src.pipeline.ranking_metrics import (
     ndcg_at_k,
     precision_at_k,
     reciprocal_rank,
+    resolve_gains,
     score_ranking,
 )
 
@@ -108,6 +109,38 @@ class TestNDCG:
     def test_dcg_matches_manual(self):
         # gains [3, 0] → (2^3-1)/log2(2) + 0 = 7/1 = 7
         assert math.isclose(dcg([3, 0]), 7.0)
+
+
+class TestJudgedGrades:
+    def test_resolve_prefers_judged_grade(self):
+        q = {"id": "eval-x", "must_cite_author": None, "expected_tools": [], "expected_topics": ["rag"]}
+        results = [{"post_id": "p1", "topics": ["rag"], "snippet": ""},  # heuristic would be 1
+                   {"post_id": "p2", "topics": [], "snippet": ""}]       # heuristic 0
+        judgments = {"eval-x": {"p1": 3, "p2": 2}}
+        assert resolve_gains(results, q, judgments) == [3, 2]
+
+    def test_falls_back_to_heuristic_when_unjudged(self):
+        q = {"id": "eval-x", "must_cite_author": None, "expected_tools": [], "expected_topics": ["rag"]}
+        results = [{"post_id": "p1", "topics": ["rag"], "snippet": ""},
+                   {"post_id": "p9", "topics": ["rag"], "snippet": ""}]  # not in judgments
+        judgments = {"eval-x": {"p1": 3}}
+        assert resolve_gains(results, q, judgments) == [3, 1]  # p9 via heuristic
+
+    def test_no_judgments_uses_heuristic(self):
+        q = {"id": "eval-x", "must_cite_author": None, "expected_tools": [], "expected_topics": ["rag"]}
+        results = [{"post_id": "p1", "topics": ["rag"], "snippet": ""}]
+        assert resolve_gains(results, q, None) == [1]
+
+    def test_judged_grades_discriminate_ordering(self):
+        """The point of judging: fine grades let nDCG separate two orderings the heuristic ties."""
+        q = {"id": "eval-x", "must_cite_author": None, "expected_tools": [], "expected_topics": ["rag"]}
+        judgments = {"eval-x": {"a": 3, "b": 1}}
+        good = [{"post_id": "a", "topics": ["rag"]}, {"post_id": "b", "topics": ["rag"]}]
+        bad = [{"post_id": "b", "topics": ["rag"]}, {"post_id": "a", "topics": ["rag"]}]
+        # Heuristic would grade both docs 1 (topic match) → identical nDCG. Judged grades differ.
+        assert score_ranking(good, q, judgments=judgments)["ndcg_at_k"] > \
+               score_ranking(bad, q, judgments=judgments)["ndcg_at_k"]
+        assert score_ranking(good, q, judgments=judgments)["graded"] is True
 
 
 class TestScoreRanking:

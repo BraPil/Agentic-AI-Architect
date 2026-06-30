@@ -66,6 +66,36 @@ low-document-frequency terms and verifying each against the indexed docs:
 All 20 keep `run_eval.py` green (20/20). On this expanded set the hybrid A/B re-confirmed the
 win: MRR 0.925→1.000, nDCG@10 0.889→0.957, P@5 0.870→0.910, hit@1 0.850→1.000.
 
+## 4b. Graded judgments (LLM judge) — the de-saturation layer
+
+The heuristic oracle (§2) counts matched signal types, so most top docs tie at the same grade
+and — once hybrid was on — the eval *saturated* (MRR = hit@1 = 1.0), unable to separate rankers.
+`scripts/judge_relevance.py` fixes this with **LLM-judged graded relevance**: for each question
+it builds a ranker-independent pool (union of hybrid-OFF and hybrid-ON top-N), asks Claude Haiku
+to grade every (question, document) pair 0..3 against a rubric (3=directly answers … 0=irrelevant),
+and persists `data/wiki/schema/relevance_judgments.json` (keyed question_id → post_id → grade).
+Document text is `sanitize_text()`-firewalled before the prompt (P5). `score_ranking(...,
+judgments=...)` prefers judged grades, falling back to the heuristic per-result.
+
+**Effect — the eval de-saturated and stayed discriminating:**
+
+| | heuristic (binary-ish) | LLM-judged (graded) |
+|--|----------------------:|--------------------:|
+| hybrid-ON MRR | 1.0000 | 0.8500 |
+| hybrid-ON nDCG@10 | 0.9573 | 0.7794 |
+| hybrid-ON hit@1 | 1.0000 | 0.8000 |
+
+With headroom restored, the A/B re-confirmed **hybrid** (vector→+hybrid: nDCG 0.741→0.779,
+hit@1 0.750→0.800) *and* revealed that the **cross-encoder** helps too (+hybrid→+CE: every metric
+up) — a gain the saturated eval had hidden. See `docs/cross-encoder-rerank-v0.md §3`.
+
+The judge also surfaced **corpus gaps**: eval-001 (Karpathy "LLM OS") and eval-010 (Karpathy
+"vibe coding") had *no* relevant document in the pool — Karpathy's 14 indexed items don't cover
+those topics. A relevance judge doubles as a coverage probe.
+
+Rebuild judgments after corpus/question changes: `python3 scripts/judge_relevance.py` (needs
+`ANTHROPIC_API_KEY`; incremental, `--overwrite` to redo).
+
 ## 5. Integration
 
 `run_eval.py` now computes these metrics from the results it already fetches and prints a

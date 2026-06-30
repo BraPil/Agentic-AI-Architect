@@ -71,6 +71,28 @@ def is_relevant(result: dict, question: dict) -> bool:
     return grade_result(result, question) >= 1
 
 
+def resolve_gains(results: list[dict], question: dict,
+                  judgments: dict | None = None) -> list[int]:
+    """
+    Graded relevance for each result, preferring **LLM-judged** grades when available.
+
+    `judgments` maps question_id → {post_id: grade 0..3}. For a result whose post_id has a
+    judged grade, that grade is used; otherwise we fall back to the label-free heuristic
+    `grade_result`. Judged grades are finer (they distinguish "directly answers" from
+    "tangential" rather than counting matched signal types), which is what de-saturates the
+    eval enough for nDCG to discriminate between rankers.
+    """
+    q_judg = (judgments or {}).get(question.get("id"), {}) if judgments else {}
+    gains = []
+    for r in results:
+        pid = r.get("post_id")
+        if pid in q_judg:
+            gains.append(int(q_judg[pid]))
+        else:
+            gains.append(grade_result(r, question))
+    return gains
+
+
 # ---------------------------------------------------------------------------
 # Rank-aware metrics
 # ---------------------------------------------------------------------------
@@ -113,14 +135,19 @@ def ndcg_at_k(gains: list[float], k: int = DEFAULT_K) -> float:
     return (actual / ideal) if ideal > 0 else 0.0
 
 
-def score_ranking(results: list[dict], question: dict, k: int = DEFAULT_K) -> dict:
+def score_ranking(results: list[dict], question: dict, k: int = DEFAULT_K,
+                  judgments: dict | None = None) -> dict:
     """
     Compute all rank-aware metrics for one question's ranked result list.
 
-    Returns a dict with: mrr, ndcg@k, p@5, hit@1, n_relevant, n_results, first_relevant_rank.
+    When `judgments` (question_id → {post_id: grade}) is supplied, LLM-judged graded relevance
+    is used in preference to the heuristic oracle. Returns a dict with: mrr, ndcg@k, p@5, hit@1,
+    n_relevant, n_results, first_relevant_rank, graded (True if any judged grade was used).
     """
-    gains = [grade_result(r, question) for r in results]
+    gains = resolve_gains(results, question, judgments)
     rels = [g >= 1 for g in gains]
+    q_judg = (judgments or {}).get(question.get("id"), {}) if judgments else {}
+    used_judged = any(r.get("post_id") in q_judg for r in results)
     first_rel = next((i + 1 for i, r in enumerate(rels) if r), None)
     return {
         "mrr": round(reciprocal_rank(rels), 4),
@@ -130,4 +157,5 @@ def score_ranking(results: list[dict], question: dict, k: int = DEFAULT_K) -> di
         "n_relevant": sum(rels),
         "n_results": len(results),
         "first_relevant_rank": first_rel,
+        "graded": used_judged,
     }
