@@ -128,6 +128,11 @@ def rerank_by_outcomes(
     attached for auditability. Sorting is stable, so hits with equal ranking
     scores keep their incoming (relevance) order.
 
+    The base relevance is the hybrid score when the store produced one
+    (``hybrid_score``), else the raw vector ``score`` — so outcome weighting
+    scales the *hybrid* ranking rather than silently reverting to pure vector
+    order. See src/pipeline/hybrid_ranking.py.
+
     When nothing has cleared the evidence gate the input order is returned
     unchanged (an exact no-op) — the common case while the outcome ledger is
     still small.
@@ -141,9 +146,10 @@ def rerank_by_outcomes(
     ranked: list[dict[str, Any]] = []
     for h in hits:
         mult = hit_multiplier(h, persona_mults, tool_mults)
+        base = float(h.get("hybrid_score", h.get("score", 0.0)))
         new = dict(h)
         new["outcome_multiplier"] = round(mult, 4)
-        new["ranking_score"] = round(float(h.get("score", 0.0)) * mult, 6)
+        new["ranking_score"] = round(base * mult, 6)
         ranked.append(new)
 
     ranked.sort(key=lambda x: x["ranking_score"], reverse=True)

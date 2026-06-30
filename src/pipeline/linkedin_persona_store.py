@@ -299,6 +299,19 @@ class LinkedInPersonaStore:
         ]
         if not include_experimental:
             hits = [h for h in hits if h["metadata"].get("source_tier") != "experimental"]
+
+        # Hybrid ranking: re-order the candidate pool by a vector+lexical blend before
+        # trimming, so exact-term matches the embedding smoothed away can surface. The
+        # reported `score` stays the vector similarity; only the order changes.
+        # OPT-IN (default OFF): set AAA_HYBRID_RANKING=1 to enable. On the current eval the
+        # lever shows no quality regression but no demonstrable gain either — the harness
+        # can't measure ranking quality (saturated pass-rate + a vector-biased relevance
+        # metric). It stays off until a ranking-aware eval justifies it. See
+        # src/pipeline/hybrid_ranking.py and docs/hybrid-ranking-v0.md.
+        if os.environ.get("AAA_HYBRID_RANKING", "0") == "1" and len(hits) > 1:
+            from src.pipeline.hybrid_ranking import rerank_hits  # noqa: PLC0415
+            hits = rerank_hits(query, hits)
+
         return hits[:n_results]
 
     def get_personas(self) -> list[dict]:
