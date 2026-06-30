@@ -49,9 +49,25 @@ python3 scripts/eval_ranking.py --compare data/rank_off.json data/rank_on.json
 
 Tests: `tests/test_ranking_metrics.py` (17 — metrics + oracle, all deterministic).
 
-## 4. Limitations / follow-ups
+## 4. Question set
+
+20 search questions. eval-016..020 (added 2026-06-30) are **exact-term/keyword** cases — rare
+tokens a dense embedding tends to smooth away — chosen by mining the corpus for distinctive
+low-document-frequency terms and verifying each against the indexed docs:
+
+| id | exact term(s) | owner | min_rel |
+|----|---------------|-------|--------:|
+| eval-016 | BIG-Bench | Sebastian Ruder | 0.35 |
+| eval-017 | AGENTS.md | (multiple) | 0.40 |
+| eval-018 | adversarial attacks / jailbreaking | Lilian Weng | 0.35 |
+| eval-019 | llmfit | Stanislav Beliaev | 0.30 |
+| eval-020 | AWQ / GPTQ / vLLM | Mitko Vasilev | 0.15 |
+
+All 20 keep `run_eval.py` green (20/20). On this expanded set the hybrid A/B re-confirmed the
+win: MRR 0.925→1.000, nDCG@10 0.889→0.957, P@5 0.870→0.910, hit@1 0.850→1.000.
+
+## 5. Limitations / follow-ups
 - The oracle is binary-ish per signal (substring match); it cannot grade *partial* topical
   relevance beyond presence. Adequate for ordering comparison, not absolute quality.
-- Only 15 questions, one clear exact-term case (eval-005). Grow the set — especially
-  exact-term/keyword questions — so the instrument discriminates more finely.
-- Add it to `run_eval.py` or CI as a tracked metric alongside the pass-rate.
+- Grow the set further as the corpus grows; keep adding exact-term cases.
+- Wire the rank metrics into `run_eval.py` / CI as a tracked metric alongside the pass-rate.

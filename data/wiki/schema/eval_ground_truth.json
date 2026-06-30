@@ -2,14 +2,18 @@
   "schema_version": "1.1",
   "description": "Ground-truth evaluation set for AAA MCP recommendation quality",
   "created_at": "2026-04-19",
-  "updated_at": "2026-04-19",
+  "updated_at": "2026-06-30",
   "questions": [
     {
       "id": "eval-001",
       "type": "search",
       "question": "What does Andrej Karpathy say about the LLM OS concept?",
       "expected_persona": "andrej-karpathy",
-      "expected_topics": ["large language models", "LLM", "transformer"],
+      "expected_topics": [
+        "large language models",
+        "LLM",
+        "transformer"
+      ],
       "expected_tools": [],
       "must_cite_author": "Andrej Karpathy",
       "min_relevance_score": 0.25,
@@ -20,7 +24,11 @@
       "type": "search",
       "question": "How should I design memory for a multi-agent system?",
       "expected_persona": null,
-      "expected_topics": ["memory", "multi-agent", "architecture"],
+      "expected_topics": [
+        "memory",
+        "multi-agent",
+        "architecture"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -31,8 +39,14 @@
       "type": "search",
       "question": "What tools does Cole Medin recommend for agentic coding workflows?",
       "expected_persona": "cole-medin",
-      "expected_topics": ["agentic coding", "workflow", "tools"],
-      "expected_tools": ["Claude Code"],
+      "expected_topics": [
+        "agentic coding",
+        "workflow",
+        "tools"
+      ],
+      "expected_tools": [
+        "Claude Code"
+      ],
       "must_cite_author": "Cole Medin",
       "min_relevance_score": 0.4,
       "notes": "Cole Medin has 18 indexed items heavily focused on Claude Code"
@@ -42,7 +56,11 @@
       "type": "search",
       "question": "What are the current best practices for RAG architecture?",
       "expected_persona": null,
-      "expected_topics": ["RAG", "retrieval", "architecture"],
+      "expected_topics": [
+        "RAG",
+        "retrieval",
+        "architecture"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -53,8 +71,14 @@
       "type": "search",
       "question": "What is vllm-turboquant and why does it matter?",
       "expected_persona": "mitko-vasilev",
-      "expected_topics": ["quantization", "inference", "performance"],
-      "expected_tools": ["vLLM"],
+      "expected_topics": [
+        "quantization",
+        "inference",
+        "performance"
+      ],
+      "expected_tools": [
+        "vLLM"
+      ],
       "must_cite_author": "arXiv Research",
       "min_relevance_score": 0.3,
       "notes": "Mitko Vasilev's top repo — should surface GitHub README"
@@ -64,7 +88,11 @@
       "type": "search",
       "question": "How do leading practitioners think about agent reliability and failure modes?",
       "expected_persona": null,
-      "expected_topics": ["reliability", "agents", "failure"],
+      "expected_topics": [
+        "reliability",
+        "agents",
+        "failure"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -75,7 +103,11 @@
       "type": "search",
       "question": "What does Simon Willison say about LLM tool use and prompt injection risks?",
       "expected_persona": "simon-willison",
-      "expected_topics": ["tool use", "prompt injection", "security"],
+      "expected_topics": [
+        "tool use",
+        "prompt injection",
+        "security"
+      ],
       "expected_tools": [],
       "must_cite_author": "Simon Willison",
       "min_relevance_score": 0.4,
@@ -86,7 +118,11 @@
       "type": "search",
       "question": "What are the tradeoffs between fine-tuning and RAG for domain adaptation?",
       "expected_persona": null,
-      "expected_topics": ["fine-tuning", "RAG", "domain adaptation"],
+      "expected_topics": [
+        "fine-tuning",
+        "RAG",
+        "domain adaptation"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -97,7 +133,11 @@
       "type": "search",
       "question": "How should I think about evaluation for agentic systems?",
       "expected_persona": null,
-      "expected_topics": ["evaluation", "agentic", "benchmarks"],
+      "expected_topics": [
+        "evaluation",
+        "agentic",
+        "benchmarks"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -108,7 +148,11 @@
       "type": "search",
       "question": "What is Karpathy's perspective on vibe coding?",
       "expected_persona": "andrej-karpathy",
-      "expected_topics": ["vibe coding", "LLM", "software development"],
+      "expected_topics": [
+        "vibe coding",
+        "LLM",
+        "software development"
+      ],
       "expected_tools": [],
       "must_cite_author": "Andrej Karpathy",
       "min_relevance_score": 0.4,
@@ -119,8 +163,15 @@
       "type": "search",
       "question": "What are the most discussed AI tools and frameworks right now?",
       "expected_persona": null,
-      "expected_topics": ["tools", "frameworks"],
-      "expected_tools": ["Claude Code", "GitHub", "Cursor"],
+      "expected_topics": [
+        "tools",
+        "frameworks"
+      ],
+      "expected_tools": [
+        "Claude Code",
+        "GitHub",
+        "Cursor"
+      ],
       "must_cite_author": null,
       "min_relevance_score": 0.3,
       "notes": "get_trending_tools should clearly surface Claude Code at top"
@@ -130,7 +181,12 @@
       "type": "search",
       "question": "How do you build a self-evolving knowledge base for AI agents?",
       "expected_persona": null,
-      "expected_topics": ["knowledge base", "self-improving", "agents", "memory"],
+      "expected_topics": [
+        "knowledge base",
+        "self-improving",
+        "agents",
+        "memory"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -141,7 +197,11 @@
       "type": "search",
       "question": "What does Lilian Weng say about reward hacking in reinforcement learning?",
       "expected_persona": "lilian-weng",
-      "expected_topics": ["reward hacking", "reinforcement learning", "RLHF"],
+      "expected_topics": [
+        "reward hacking",
+        "reinforcement learning",
+        "RLHF"
+      ],
       "expected_tools": [],
       "must_cite_author": "Lilian Weng",
       "min_relevance_score": 0.4,
@@ -152,7 +212,11 @@
       "type": "search",
       "question": "What are the architectural patterns for multi-agent orchestration?",
       "expected_persona": null,
-      "expected_topics": ["orchestration", "multi-agent", "architecture"],
+      "expected_topics": [
+        "orchestration",
+        "multi-agent",
+        "architecture"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
@@ -163,17 +227,105 @@
       "type": "search",
       "question": "What are the key challenges in deploying LLMs in production?",
       "expected_persona": null,
-      "expected_topics": ["production", "deployment", "LLM", "challenges"],
+      "expected_topics": [
+        "production",
+        "deployment",
+        "LLM",
+        "challenges"
+      ],
       "expected_tools": [],
       "must_cite_author": null,
       "min_relevance_score": 0.35,
       "notes": "Broad question — should return diverse sources"
     },
     {
+      "id": "eval-016",
+      "type": "search",
+      "question": "What is BIG-Bench and how does it relate to NLP benchmark saturation?",
+      "expected_persona": "sebastian-ruder",
+      "expected_topics": [
+        "benchmarking",
+        "model evaluation"
+      ],
+      "expected_tools": [
+        "BIG-Bench"
+      ],
+      "must_cite_author": "Sebastian Ruder",
+      "min_relevance_score": 0.35,
+      "notes": "Exact-term query (BIG-Bench). Ruder NLP-benchmarking post. Added 2026-06-30 to test ranking on rare-token retrieval."
+    },
+    {
+      "id": "eval-017",
+      "type": "search",
+      "question": "What is the AGENTS.md convention for AI-driven development workflows?",
+      "expected_persona": null,
+      "expected_topics": [
+        "agentic-ai",
+        "developer-tools"
+      ],
+      "expected_tools": [
+        "AGENTS.md"
+      ],
+      "must_cite_author": null,
+      "min_relevance_score": 0.4,
+      "notes": "Exact-term query (AGENTS.md filename). Multiple authors; no single must-cite. Added 2026-06-30 for ranking eval."
+    },
+    {
+      "id": "eval-018",
+      "type": "search",
+      "question": "What does Lilian Weng say about adversarial attacks and jailbreaking of LLMs?",
+      "expected_persona": "lilian-weng",
+      "expected_topics": [
+        "adversarial-attacks",
+        "jailbreaking"
+      ],
+      "expected_tools": [],
+      "must_cite_author": "Lilian Weng",
+      "min_relevance_score": 0.35,
+      "notes": "Exact-term query (adversarial attacks, jailbreaking). Weng safety post. Added 2026-06-30 for ranking eval."
+    },
+    {
+      "id": "eval-019",
+      "type": "search",
+      "question": "What is llmfit and how does it check which LLMs my hardware can run?",
+      "expected_persona": "stanislav-beliaev",
+      "expected_topics": [
+        "hardware compatibility",
+        "local llm deployment"
+      ],
+      "expected_tools": [
+        "llmfit"
+      ],
+      "must_cite_author": "Stanislav Beliaev",
+      "min_relevance_score": 0.3,
+      "notes": "Exact-term query (llmfit tool name). Beliaev hardware-fit tool post. Added 2026-06-30 for ranking eval."
+    },
+    {
+      "id": "eval-020",
+      "type": "search",
+      "question": "Which quantization methods does the vLLM inference stack support?",
+      "expected_persona": "mitko-vasilev",
+      "expected_topics": [
+        "quantization",
+        "llm inference"
+      ],
+      "expected_tools": [
+        "AWQ",
+        "GPTQ"
+      ],
+      "must_cite_author": "Mitko Vasilev",
+      "min_relevance_score": 0.15,
+      "notes": "Exact-term query (AWQ/GPTQ/vLLM). Vasilev vLLM readme; low cosine (long readme) but exact-term rich. Added 2026-06-30 for ranking eval."
+    },
+    {
       "id": "eval-s01",
       "type": "synthesis",
       "question": "How should I design memory for a production multi-agent system?",
-      "expected_topics_in_recommendation": ["memory", "agent", "context"],
+      "expected_topics_in_recommendation": [
+        "memory",
+        "agent",
+        "context"
+      ],
       "expected_tools_in_recommendation": [],
       "min_confidence": "medium",
       "min_personas_cited": 2,
@@ -183,7 +335,10 @@
       "id": "eval-s02",
       "type": "synthesis",
       "question": "Should I use RAG or fine-tuning for domain adaptation in a production LLM system?",
-      "expected_topics_in_recommendation": ["RAG", "fine-tuning"],
+      "expected_topics_in_recommendation": [
+        "RAG",
+        "fine-tuning"
+      ],
       "expected_tools_in_recommendation": [],
       "min_confidence": "medium",
       "min_personas_cited": 2,
@@ -193,8 +348,14 @@
       "id": "eval-s03",
       "type": "synthesis",
       "question": "What are the best tools for agentic coding workflows in 2025?",
-      "expected_topics_in_recommendation": ["agentic", "coding", "workflow"],
-      "expected_tools_in_recommendation": ["Claude Code"],
+      "expected_topics_in_recommendation": [
+        "agentic",
+        "coding",
+        "workflow"
+      ],
+      "expected_tools_in_recommendation": [
+        "Claude Code"
+      ],
       "min_confidence": "high",
       "min_personas_cited": 1,
       "notes": "Claude Code dominates tool mentions — should appear in recommendation"
@@ -203,7 +364,10 @@
       "id": "eval-s04",
       "type": "synthesis",
       "question": "How should I approach evaluation for an agentic AI system I'm building?",
-      "expected_topics_in_recommendation": ["evaluation", "agent"],
+      "expected_topics_in_recommendation": [
+        "evaluation",
+        "agent"
+      ],
       "expected_tools_in_recommendation": [],
       "min_confidence": "medium",
       "min_personas_cited": 1,
@@ -213,7 +377,11 @@
       "id": "eval-s05",
       "type": "synthesis",
       "question": "What architectural patterns should I use for orchestrating multiple specialized AI agents?",
-      "expected_topics_in_recommendation": ["orchestration", "multi-agent", "architecture"],
+      "expected_topics_in_recommendation": [
+        "orchestration",
+        "multi-agent",
+        "architecture"
+      ],
       "expected_tools_in_recommendation": [],
       "min_confidence": "medium",
       "min_personas_cited": 2,

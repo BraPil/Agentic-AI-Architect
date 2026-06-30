@@ -91,8 +91,12 @@ nDCG/P@5 when a pool-rare topic term fired lexical. Net aggregate is positive on
 tuning the selectivity threshold / α to remove those is a follow-up, deferred to avoid
 overfitting to 15 questions.
 
+**Re-confirmed on the expanded set (2026-06-30).** Five exact-term questions (eval-016..020:
+BIG-Bench, AGENTS.md, adversarial-attacks, llmfit, AWQ/GPTQ) were added; on the 20-question
+set the A/B held — MRR 0.925→1.000, nDCG@10 0.889→0.957, P@5 0.870→0.910, hit@1 0.850→1.000,
+with run_eval still 20/20. See `docs/ranking-aware-eval-v0.md §4`.
+
 ## 7. Open follow-ups
-- Add exact-term/keyword questions to the ground truth so the instrument's discriminating
-  power grows (eval-005 is currently the only clear exact-term case).
-- Re-tune α / selectivity once the question set is larger; consider a cross-encoder reranker
-  as a second stage, measured on the same instrument.
+- Re-tune α / selectivity on the larger set; consider a cross-encoder reranker as a second
+  stage, measured on the same instrument.
+- Wire the rank metrics into `run_eval.py` / CI alongside the pass-rate.
