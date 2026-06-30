@@ -4,10 +4,10 @@
 
 Quick reference guides for deploying, monitoring, and maintaining the Agentic AI Architect system in production.
 
-> ⚠️ **Not yet implemented (planned).** Two commands below still reference scripts that do not
-> exist: `scripts/benchmark_mcp.py` and `scripts/webhook_worker.py`. Treat those blocks as
-> intended operations to build, not working commands. (`build_wiki_schema.py` and
-> `lint_wiki.py` were built 2026-06-30 and now work — see Wiki Maintenance.)
+> ⚠️ **Not yet implemented (planned).** One command below still references a script that does
+> not exist: `scripts/webhook_worker.py`. Treat that block as an intended operation to build,
+> not a working command. (`build_wiki_schema.py`, `lint_wiki.py`, and `benchmark_mcp.py` were
+> built 2026-06-30 and now work.)
 
 ---
 
@@ -518,17 +518,25 @@ conn.close()
 
 **Goal**: < 200 ms for cached queries (the ExMorbus SLA).
 
-**Measured 2026-06-30** (median over 5 warm queries, this CPU):
+**Measurement**:
+
+```bash
+python3 scripts/benchmark_mcp.py            # hybrid-off / hybrid-on / hybrid+CE
+python3 scripts/benchmark_mcp.py --cold     # also report the cold first-call (model load)
+python3 scripts/benchmark_mcp.py --no-cross-encoder --json data/latency.json
+```
+
+**Measured 2026-06-30** (median, warm, this CPU):
 
 ```
-search_knowledge, hybrid only (default):  ~60 ms   (max ~121 ms)   ✅ under budget
-search_knowledge, hybrid + cross-encoder: ~6090 ms                 ❌ ~30× over budget
+hybrid-off (pure vector):    ~30 ms    OK
+hybrid-on (default):         ~30-60 ms OK
+hybrid + cross-encoder:      ~5700 ms  OVER ~28x  ← AAA_CROSS_ENCODER=1
+cold first call:             ~8500 ms  (one-time model + index load)
 ```
 
-The cross-encoder (`AAA_CROSS_ENCODER=1`) runs a transformer pass per candidate and is far over
-budget on CPU — keep it OFF for the live path (it's opt-in for offline/GPU use only). Hybrid
-reranking adds negligible cost. (`scripts/benchmark_mcp.py` is referenced but not yet built —
-the numbers above came from an inline `time.perf_counter` loop over `search_knowledge`.)
+The cross-encoder runs a transformer pass per candidate and is far over budget on CPU — keep it
+OFF for the live path (opt-in for offline/GPU use only). Hybrid reranking adds negligible cost.
 
 **If latency > 200ms**:
 
